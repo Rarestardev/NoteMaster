@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Note Master</string>
+    <string name="drawer_desc">Drawer_Menu</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_notification">NotificationActivity</string>
+    <string name="notification_desc">NotificationActivity</string>
+    <string name="search_desc">SearchActivity</string>
+
+    <string name="title_activity_create_note">Create note</string>
+    <string name="title_activity_create_task">CreateTaskActivity</string>
+    <string name="title_activity_create_capital">CreateCapitalActivity</string>
+    <string name="back_activity_desc">Back Activity</string>
+    <string name="save">Save</string>
+    <string name="note_title">Title</string>
+    <string name="note_start_type">Type your note...</string>
+    <string name="note">Notes</string>
+    <string name="more">more</string>
+    <string name="title_activity_show_all_notes">ShowAllNotesActivity</string>
+    <string name="setflagonnote">SetFlagOnNote</string>
+</resources>

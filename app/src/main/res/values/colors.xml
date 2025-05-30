@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_light_mode">#FDFDFD</color>
+    <color name="text_light_mode">#1A1A1A</color>
+    <color name="second_light_mode">#E9E7E7</color>
+
+
+
+    <!-- DarkMode -->
+    <color name="background_night_mode">#1A1A1A</color>
+    <color name="text_night_mode">#FFFFFF</color>
+    <color name="second_night_mode">#E62C2C2C</color>
+
+
+    <color name="second_color_any_mode">#F2D5D5</color>
+    <color name="drawer_text_icon_color">#424242</color>
+    <color name="second_color_2">#BC7676</color>
+
+    <color name="text_field_label_color">#898989</color>
+
+</resources>
