@@ -143,7 +143,7 @@ private fun HomeScreen(viewModel: NoteViewModel) {
                     contentPadding = PaddingValues(top = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(notes) { note ->
+                    items(notes.take(15)) { note ->
                         Column {
                             NoteLazyItem(note)
                             Spacer(Modifier.width(6.dp))

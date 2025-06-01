@@ -17,4 +17,9 @@
     <string name="more">more</string>
     <string name="title_activity_show_all_notes">ShowAllNotesActivity</string>
     <string name="setflagonnote">SetFlagOnNote</string>
+
+
+    <string name="priority_low">LOW PRIORITY</string>
+    <string name="priority_medium">MEDIUM PRIORITY</string>
+    <string name="priority_high">HIGH PRIORITY</string>
 </resources>

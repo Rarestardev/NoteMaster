@@ -26,9 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.activities.CreateNoteActivity
 import com.rarestardev.notemaster.activities.ShowAllNotesActivity
 import com.rarestardev.notemaster.model.Note
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
+import com.rarestardev.notemaster.utilities.Constants
 
 @Preview
 @Composable
@@ -92,12 +94,18 @@ fun NoteLazyItemTitle() {
 
 @Composable
 fun NoteLazyItem(note: Note) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .size(120.dp)
             .clip(RoundedCornerShape(8.dp))
             .border(0.5.dp, MaterialTheme.colorScheme.onSecondary, RoundedCornerShape(8.dp))
             .padding(8.dp)
+            .clickable {
+                val createNoteActivity = Intent(context, CreateNoteActivity::class.java)
+                createNoteActivity.putExtra(Constants.STATE_NOTE_ACTIVITY, true)
+                context.startActivity(createNoteActivity)
+            }
     ) {
         Text(
             text = note.title,

@@ -38,6 +38,7 @@ import com.rarestardev.notemaster.activities.CreateCapitalActivity
 import com.rarestardev.notemaster.activities.CreateNoteActivity
 import com.rarestardev.notemaster.activities.CreateTaskActivity
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
+import com.rarestardev.notemaster.utilities.Constants
 
 @Preview
 @Composable
@@ -105,12 +106,13 @@ fun FloatingActionMenu() {
                                     when (item.title) {
                                         MenuItemFab.ITEM1.title -> {
                                             expanded = false
-                                            context.startActivity(
-                                                Intent(
-                                                    context,
-                                                    CreateNoteActivity::class.java
-                                                )
+                                            val createNoteActivity =
+                                                Intent(context, CreateNoteActivity::class.java)
+                                            createNoteActivity.putExtra(
+                                                Constants.STATE_NOTE_ACTIVITY,
+                                                false
                                             )
+                                            context.startActivity(createNoteActivity)
                                         }
 
                                         MenuItemFab.ITEM2.title -> {
