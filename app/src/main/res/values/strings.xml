@@ -22,4 +22,15 @@
     <string name="priority_low">LOW PRIORITY</string>
     <string name="priority_medium">MEDIUM PRIORITY</string>
     <string name="priority_high">HIGH PRIORITY</string>
+    <string name="font_style_icon_desc">FontStyle</string>
+    <string name="dot_bullet_icon_desc">DotBullet</string>
+    <string name="text_size_icon_desc">TextSize</string>
+    <string name="select_color_icon_desc">SelectColor</string>
+    <string name="text_align_icon_desc">TextAlign</string>
+    <string name="font_weight_icon_desc">FontWeight</string>
+    <string name="align_left_text_filed_desc">AlignLeft</string>
+    <string name="align_center_text_filed_desc">AlignCenter</string>
+    <string name="align_end_text_filed_desc">AlignEnd</string>
+    <string name="normal">Normal</string>
+    <string name="italic">Italic</string>
 </resources>

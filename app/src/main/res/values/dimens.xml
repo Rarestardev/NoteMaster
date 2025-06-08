@@ -2,4 +2,5 @@
 <resources>
 
     <dimen name="padding_start_end">12.dp</dimen>
+    <dimen name="bottom_bar_note_Activity_icon_size">24dp</dimen>
 </resources>
