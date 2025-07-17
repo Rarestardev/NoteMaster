@@ -34,8 +34,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
@@ -76,6 +78,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.components.CircularTaskStatusBar
 import com.rarestardev.notemaster.components.HorizontalPagerView
+import com.rarestardev.notemaster.components.NoteScreen
 import com.rarestardev.notemaster.components.TaskView
 import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.factory.NoteViewModelFactory
@@ -212,11 +215,11 @@ fun ScaffoldContent(
     viewModel: NoteEditorViewModel,
     taskViewModel: TaskViewModel
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
-            .padding(
-                top = paddingValues.calculateTopPadding() + 12.dp
-            )
+            .padding(top = paddingValues.calculateTopPadding() + 12.dp)
+            .verticalScroll(scrollState)
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -234,6 +237,18 @@ fun ScaffoldContent(
         SpacerView()
 
         AdsView()
+
+        SpacerView()
+
+        NoteScreen(viewModel)
+
+        SpacerView()
+
+        AdsView()
+
+        SpacerView()
+        SpacerView()
+        SpacerView()
     }
 }
 

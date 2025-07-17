@@ -62,205 +62,207 @@ private fun TaskItemPreview() {
 fun TaskView(viewModel: TaskViewModel) {
     val context = LocalContext.current
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(R.string.task_bottom_bar),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.padding(start = 12.dp)
-        )
-
-        Text(
-            text = stringResource(R.string.see_more),
-            style = MaterialTheme.typography.labelSmall,
-            color = colorResource(R.color.text_field_label_color),
-            modifier = Modifier
-                .clickable {
-                    context.startActivity(Intent(context, ShowAllTasksActivity::class.java))
-                }
-                .padding(end = 12.dp)
-        )
-    }
-
-    Spacer(Modifier.height(6.dp))
-
-    if (viewModel.taskElement.isNotEmpty()) {
-        LazyRow(
-            state = rememberLazyListState(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp),
-            contentPadding = PaddingValues(4.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            items(viewModel.taskElement.take(10)) { task ->
-                Box(
+            Text(
+                text = stringResource(R.string.task_bottom_bar),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(start = 12.dp)
+            )
+
+            if (viewModel.taskElement.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.see_more),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = colorResource(R.color.text_field_label_color),
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .width(240.dp)
-                        .padding(end = 8.dp)
-                        .background(
-                            MaterialTheme.colorScheme.onSecondaryContainer,
-                            MaterialTheme.shapes.small
-                        )
-                        .border(
-                            0.3.dp,
-                            MaterialTheme.colorScheme.onSecondary,
-                            MaterialTheme.shapes.small
-                        )
-                ) {
-                    ConstraintLayout(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp)
-                    ) {
-                        val (titleRef, dividerRef, flagRef, imageRef, dateRef, timeRef, subTaskSizeRef, reminderTypeRef) = createRefs()
-
-                        FlagView(
-                            color = task.priorityFlag,
-                            modifier = Modifier
-                                .constrainAs(flagRef) {
-                                    start.linkTo(parent.start)
-                                    top.linkTo(parent.top)
-                                }
-                        )
-
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Forward",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .constrainAs(createRef()) {
-                                    end.linkTo(parent.end)
-                                    top.linkTo(flagRef.top)
-                                    bottom.linkTo(flagRef.bottom)
-                                }
-                        )
-
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 4.dp, end = 4.dp)
-                                .constrainAs(dividerRef) {
-                                    top.linkTo(flagRef.bottom, 6.dp)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                },
-                            thickness = 0.3.dp,
-                            color = MaterialTheme.colorScheme.onSecondary
-                        )
-
-                        Text(
-                            text = task.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .constrainAs(titleRef) {
-                                    start.linkTo(parent.start, 6.dp)
-                                    top.linkTo(dividerRef.bottom)
-                                    end.linkTo(parent.end, 6.dp)
-                                    bottom.linkTo(subTaskSizeRef.top)
-                                    width = Dimension.fillToConstraints
-                                },
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Start
-                        )
-
-                        Text(
-                            text = "SubTasks : (  )",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .constrainAs(subTaskSizeRef) {
-                                    start.linkTo(parent.start, 6.dp)
-                                    bottom.linkTo(timeRef.top, 6.dp)
-                                }
-                        )
-
-                        Text(
-                            text = "Time : ${task.time}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .constrainAs(timeRef) {
-                                    start.linkTo(parent.start, 6.dp)
-                                    bottom.linkTo(dateRef.top, 6.dp)
-                                }
-                        )
-
-                        Text(
-                            text = "Date : ${task.date}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .constrainAs(dateRef) {
-                                    bottom.linkTo(parent.bottom, 6.dp)
-                                    start.linkTo(parent.start, 6.dp)
-                                }
-                        )
-
-                        if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
-                            if (task.reminderType == ReminderType.NOTIFICATION.name) {
-                                NotificationView(
-                                    modifier = Modifier
-                                        .constrainAs(reminderTypeRef) {
-                                            end.linkTo(parent.end, 6.dp)
-                                            bottom.linkTo(parent.bottom, 6.dp)
-                                        }
-                                )
-                            } else {
-                                AlarmView(
-                                    modifier = Modifier
-                                        .constrainAs(reminderTypeRef) {
-                                            end.linkTo(parent.end, 6.dp)
-                                            bottom.linkTo(parent.bottom, 6.dp)
-                                        }
-                                )
-                            }
-
-                            Log.d(
-                                Constants.APP_LOG,
-                                "TaskView Reminder type = ${task.reminderType}"
-                            )
+                        .clickable {
+                            context.startActivity(Intent(context, ShowAllTasksActivity::class.java))
                         }
+                        .padding(end = 12.dp)
+                )
+            }
+        }
 
-                        task.imagePath?.let {
-                            if (it.isNotEmpty()) {
+        Spacer(Modifier.height(6.dp))
+
+        if (viewModel.taskElement.isNotEmpty()) {
+            LazyRow(
+                state = rememberLazyListState(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp),
+                contentPadding = PaddingValues(4.dp)
+            ) {
+                if (viewModel.taskElement.isNotEmpty()) {
+                    items(viewModel.taskElement.take(10)) { task ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(240.dp)
+                                .padding(end = 8.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.onSecondaryContainer,
+                                    MaterialTheme.shapes.small
+                                )
+                                .border(
+                                    0.3.dp,
+                                    MaterialTheme.colorScheme.onSecondary,
+                                    MaterialTheme.shapes.small
+                                )
+                        ) {
+                            ConstraintLayout(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                            ) {
+                                val (titleRef, dividerRef, flagRef, imageRef, dateRef, timeRef, subTaskSizeRef, reminderTypeRef) = createRefs()
+
+                                FlagView(
+                                    color = task.priorityFlag,
+                                    modifier = Modifier
+                                        .constrainAs(flagRef) {
+                                            start.linkTo(parent.start)
+                                            top.linkTo(parent.top)
+                                        }
+                                )
+
                                 Icon(
-                                    painter = painterResource(R.drawable.icons_image),
-                                    contentDescription = "image",
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = "Forward",
                                     modifier = Modifier
                                         .size(20.dp)
-                                        .constrainAs(imageRef) {
-                                            bottom.linkTo(reminderTypeRef.bottom)
-                                            end.linkTo(reminderTypeRef.start, 8.dp)
-                                        },
-                                    tint = MaterialTheme.colorScheme.onSecondary
+                                        .constrainAs(createRef()) {
+                                            end.linkTo(parent.end)
+                                            top.linkTo(flagRef.top)
+                                            bottom.linkTo(flagRef.bottom)
+                                        }
                                 )
+
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 4.dp, end = 4.dp)
+                                        .constrainAs(dividerRef) {
+                                            top.linkTo(flagRef.bottom, 6.dp)
+                                            start.linkTo(parent.start)
+                                            end.linkTo(parent.end)
+                                        },
+                                    thickness = 0.3.dp,
+                                    color = MaterialTheme.colorScheme.onSecondary
+                                )
+
+                                Text(
+                                    text = task.title,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier
+                                        .constrainAs(titleRef) {
+                                            start.linkTo(parent.start, 6.dp)
+                                            top.linkTo(dividerRef.bottom)
+                                            end.linkTo(parent.end, 6.dp)
+                                            bottom.linkTo(subTaskSizeRef.top)
+                                            width = Dimension.fillToConstraints
+                                        },
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    textAlign = TextAlign.Start
+                                )
+
+                                Text(
+                                    text = "SubTasks : (  )",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier
+                                        .constrainAs(subTaskSizeRef) {
+                                            start.linkTo(parent.start, 6.dp)
+                                            bottom.linkTo(timeRef.top, 6.dp)
+                                        }
+                                )
+
+                                Text(
+                                    text = "Time : ${task.time}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier
+                                        .constrainAs(timeRef) {
+                                            start.linkTo(parent.start, 6.dp)
+                                            bottom.linkTo(dateRef.top, 6.dp)
+                                        }
+                                )
+
+                                Text(
+                                    text = "Date : ${task.date}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier
+                                        .constrainAs(dateRef) {
+                                            bottom.linkTo(parent.bottom, 6.dp)
+                                            start.linkTo(parent.start, 6.dp)
+                                        }
+                                )
+
+                                if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
+                                    if (task.reminderType == ReminderType.NOTIFICATION.name) {
+                                        NotificationView(
+                                            modifier = Modifier
+                                                .constrainAs(reminderTypeRef) {
+                                                    end.linkTo(parent.end, 6.dp)
+                                                    bottom.linkTo(parent.bottom, 6.dp)
+                                                }
+                                        )
+                                    } else {
+                                        AlarmView(
+                                            modifier = Modifier
+                                                .constrainAs(reminderTypeRef) {
+                                                    end.linkTo(parent.end, 6.dp)
+                                                    bottom.linkTo(parent.bottom, 6.dp)
+                                                }
+                                        )
+                                    }
+
+                                    Log.d(
+                                        Constants.APP_LOG,
+                                        "TaskView Reminder type = ${task.reminderType}"
+                                    )
+                                }
+
+                                task.imagePath?.let {
+                                    if (it.isNotEmpty()) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.icons_image),
+                                            contentDescription = "image",
+                                            modifier = Modifier
+                                                .size(20.dp)
+                                                .constrainAs(imageRef) {
+                                                    bottom.linkTo(reminderTypeRef.bottom)
+                                                    end.linkTo(reminderTypeRef.start, 8.dp)
+                                                },
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-    } else {
-        Column(
-            modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth()
-                .background(
-                    MaterialTheme.colorScheme.onSecondaryContainer,
-                    MaterialTheme.shapes.medium
-                ),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        } else {
             Text(
                 text = "Task list is empty ...",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp)
+                    .padding(top = 50.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Center
