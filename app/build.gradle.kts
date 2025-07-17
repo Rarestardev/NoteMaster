@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id ("kotlin-android")
-    id ("kotlin-kapt")
+    id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -42,7 +42,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -59,8 +58,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // PagerView
+    implementation("com.google.accompanist:accompanist-pager:0.13.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.13.0")
+
     // Data store
-    implementation ("androidx.datastore:datastore-preferences:1.1.7")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
     implementation("androidx.appcompat:appcompat:1.7.0")
 
 
@@ -68,9 +71,13 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
 
     // Room
-    implementation ("androidx.room:room-runtime:2.7.1")
-    implementation ("androidx.room:room-ktx:2.7.1")
-
+    implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
+    // Room Compiler
     kapt("androidx.room:room-compiler:2.7.1")
+
+    // Glide
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
 }

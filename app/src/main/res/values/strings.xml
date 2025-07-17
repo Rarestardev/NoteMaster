@@ -12,7 +12,7 @@
     <string name="back_activity_desc">Back Activity</string>
     <string name="save">Save</string>
     <string name="note_title">Title</string>
-    <string name="note_start_type">Type your note...</string>
+    <string name="note_start_type">Type your note…</string>
     <string name="note">Notes</string>
     <string name="more">more</string>
     <string name="title_activity_show_all_notes">ShowAllNotesActivity</string>
@@ -22,6 +22,7 @@
     <string name="priority_low">LOW PRIORITY</string>
     <string name="priority_medium">MEDIUM PRIORITY</string>
     <string name="priority_high">HIGH PRIORITY</string>
+
     <string name="font_style_icon_desc">FontStyle</string>
     <string name="dot_bullet_icon_desc">DotBullet</string>
     <string name="text_size_icon_desc">TextSize</string>
@@ -33,4 +34,30 @@
     <string name="align_end_text_filed_desc">AlignEnd</string>
     <string name="normal">Normal</string>
     <string name="italic">Italic</string>
+    <string name="more_features">More Features</string>
+    <string name="fabcreatenote">FabCreateNote</string>
+    <string name="search">Search</string>
+
+    <string name="settings_bottom_bar">Settings</string>
+    <string name="calender_bottom_bar">Calender</string>
+    <string name="task_bottom_bar">Task</string>
+    <string name="font_size_bottom_sheet">Font Size</string>
+    <string name="no_note">There are no notes.</string>
+    <string name="edit_note">Edit</string>
+    <string name="alarm_desc">Alarm</string>
+    <string name="new_category">New...</string>
+    <string name="description">Description...</string>
+    <string name="add_subtask">Add subtask</string>
+    <string name="delete">Delete</string>
+    <string name="see_more">See More</string>
+
+    <string-array name="task_categories">
+        <item>Personal</item>
+        <item>Work</item>
+        <item>University</item>
+        <item>Shopping</item>
+        <item>Reminder</item>
+    </string-array>
+    <string name="title_activity_show_all_tasks">ShowAllTasksActivity</string>
+    <string name="title_activity_user_performance">UserPerformanceActivity</string>
 </resources>
