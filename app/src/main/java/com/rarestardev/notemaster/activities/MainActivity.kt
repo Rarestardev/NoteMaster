@@ -131,6 +131,7 @@ private fun HomeScreen(
     taskViewModel: TaskViewModel
 ) {
     val backgroundColor = MaterialTheme.colorScheme.background
+    val mContext = LocalContext.current
 
     var expanded by remember { mutableStateOf(false) }
     val transition = updateTransition(targetState = expanded, label = "transition")
@@ -163,7 +164,21 @@ private fun HomeScreen(
                         contentPadding = PaddingValues(vertical = 6.dp)
                     ) {
                         itemsIndexed(items) { index, miniFab ->
-                            ExpandedFabItems(index, miniFab)
+                            ExpandedFabItems(miniFab){ b ->
+                                if (index == 0) {
+                                    val createNoteIntent = Intent(mContext, CreateNoteActivity::class.java)
+                                    createNoteIntent.putExtra(Constants.STATE_NOTE_ACTIVITY, false)
+                                    createNoteIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    mContext.startActivity(createNoteIntent)
+                                    expanded = b
+                                } else if (index == 1) {
+                                    val createTaskIntent = Intent(mContext, CreateTaskActivity::class.java)
+                                    createTaskIntent.putExtra(Constants.STATE_TASK_ACTIVITY, false)
+                                    createTaskIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    mContext.startActivity(createTaskIntent)
+                                    expanded = b
+                                }
+                            }
                         }
                     }
                 }
@@ -474,9 +489,7 @@ data class MiniFabItems(
 )
 
 @Composable
-private fun ExpandedFabItems(index: Int, miniFab: MiniFabItems) {
-    val mContext = LocalContext.current
-
+private fun ExpandedFabItems(miniFab: MiniFabItems,onClick: (Boolean) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
@@ -484,19 +497,7 @@ private fun ExpandedFabItems(index: Int, miniFab: MiniFabItems) {
             .width(100.dp)
             .background(MaterialTheme.colorScheme.onSecondaryContainer, RoundedCornerShape(12.dp))
             .padding(6.dp)
-            .clickable {
-                if (index == 0) {
-                    val createNoteIntent = Intent(mContext, CreateNoteActivity::class.java)
-                    createNoteIntent.putExtra(Constants.STATE_NOTE_ACTIVITY, false)
-                    createNoteIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    mContext.startActivity(createNoteIntent)
-                } else if (index == 1) {
-                    val createTaskIntent = Intent(mContext, CreateTaskActivity::class.java)
-                    createTaskIntent.putExtra(Constants.STATE_TASK_ACTIVITY, false)
-                    createTaskIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    mContext.startActivity(createTaskIntent)
-                }
-            }
+            .clickable {onClick(false)}
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
