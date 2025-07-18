@@ -2,9 +2,11 @@ package com.rarestardev.notemaster.components
 
 import android.content.Intent
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,32 +21,50 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.activities.CreateTaskActivity
 import com.rarestardev.notemaster.activities.ShowAllTasksActivity
 import com.rarestardev.notemaster.enums.ReminderType
+import com.rarestardev.notemaster.model.Task
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
@@ -58,9 +78,14 @@ private fun TaskItemPreview() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskView(viewModel: TaskViewModel) {
+    val taskElement by viewModel.taskElement.collectAsState(emptyList())
     val context = LocalContext.current
+    var expandedIndex by remember { mutableIntStateOf(-1) }
+    var menuOffset by remember { mutableStateOf(Offset.Zero) }
+    val lazyState = rememberLazyListState()
 
     Column(
         Modifier.fillMaxWidth(),
@@ -79,7 +104,7 @@ fun TaskView(viewModel: TaskViewModel) {
                 modifier = Modifier.padding(start = 12.dp)
             )
 
-            if (viewModel.taskElement.isNotEmpty()) {
+            if (taskElement.isNotEmpty()) {
                 Text(
                     text = stringResource(R.string.see_more),
                     style = MaterialTheme.typography.labelSmall,
@@ -95,21 +120,39 @@ fun TaskView(viewModel: TaskViewModel) {
 
         Spacer(Modifier.height(6.dp))
 
-        if (viewModel.taskElement.isNotEmpty()) {
+        if (taskElement.isNotEmpty()) {
             LazyRow(
-                state = rememberLazyListState(),
+                state = lazyState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp),
                 contentPadding = PaddingValues(4.dp)
             ) {
-                if (viewModel.taskElement.isNotEmpty()) {
-                    items(viewModel.taskElement.take(10)) { task ->
+                if (taskElement.isNotEmpty()) {
+                    itemsIndexed(taskElement.take(10)) { index,task ->
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .width(240.dp)
                                 .padding(end = 8.dp)
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onLongPress = { offset ->
+                                            expandedIndex = index
+                                            menuOffset = offset
+                                        },
+                                        onTap = {
+                                            val intent =
+                                                Intent(
+                                                    context,
+                                                    CreateTaskActivity::class.java
+                                                ).apply {
+                                                    putExtra(Constants.STATE_TASK_ACTIVITY, true)
+                                                }
+                                            context.startActivity(intent)
+                                        }
+                                    )
+                                }
                                 .background(
                                     MaterialTheme.colorScheme.onSecondaryContainer,
                                     MaterialTheme.shapes.small
@@ -125,7 +168,7 @@ fun TaskView(viewModel: TaskViewModel) {
                                     .fillMaxSize()
                                     .padding(8.dp)
                             ) {
-                                val (titleRef, dividerRef, flagRef, imageRef, dateRef, timeRef, subTaskSizeRef, reminderTypeRef) = createRefs()
+                                val (titleRef, dividerRef, flagRef, dateRef, timeRef, subTaskSizeRef, reminderTypeRef) = createRefs()
 
                                 FlagView(
                                     color = task.priorityFlag,
@@ -211,47 +254,48 @@ fun TaskView(viewModel: TaskViewModel) {
                                         }
                                 )
 
-                                if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
-                                    if (task.reminderType == ReminderType.NOTIFICATION.name) {
-                                        NotificationView(
-                                            modifier = Modifier
-                                                .constrainAs(reminderTypeRef) {
-                                                    end.linkTo(parent.end, 6.dp)
-                                                    bottom.linkTo(parent.bottom, 6.dp)
-                                                }
-                                        )
-                                    } else {
-                                        AlarmView(
-                                            modifier = Modifier
-                                                .constrainAs(reminderTypeRef) {
-                                                    end.linkTo(parent.end, 6.dp)
-                                                    bottom.linkTo(parent.bottom, 6.dp)
-                                                }
+                                Row(
+                                    Modifier
+                                        .constrainAs(reminderTypeRef) {
+                                            end.linkTo(parent.end, 6.dp)
+                                            bottom.linkTo(parent.bottom, 6.dp)
+                                        },
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
+                                        if (task.reminderType == ReminderType.NOTIFICATION.name) {
+                                            NotificationView()
+                                        } else {
+                                            AlarmView()
+                                        }
+
+                                        Log.d(
+                                            Constants.APP_LOG,
+                                            "TaskView Reminder type = ${task.reminderType}"
                                         )
                                     }
 
-                                    Log.d(
-                                        Constants.APP_LOG,
-                                        "TaskView Reminder type = ${task.reminderType}"
-                                    )
-                                }
-
-                                task.imagePath?.let {
-                                    if (it.isNotEmpty()) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.icons_image),
-                                            contentDescription = "image",
-                                            modifier = Modifier
-                                                .size(20.dp)
-                                                .constrainAs(imageRef) {
-                                                    bottom.linkTo(reminderTypeRef.bottom)
-                                                    end.linkTo(reminderTypeRef.start, 8.dp)
-                                                },
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
+                                    task.imagePath?.let {
+                                        if (it.isNotEmpty()) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.icons_image),
+                                                contentDescription = "image",
+                                                modifier = Modifier.size(20.dp),
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
                                 }
                             }
+
+                            CustomDropdownMenu(
+                                task = task,
+                                taskViewModel = viewModel,
+                                expanded = expandedIndex == index,
+                                onDismiss = {expandedIndex = it},
+                                offset = menuOffset
+                            )
                         }
                     }
                 }
@@ -269,6 +313,52 @@ fun TaskView(viewModel: TaskViewModel) {
             )
         }
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CustomDropdownMenu(
+    taskViewModel: TaskViewModel,
+    expanded: Boolean,
+    onDismiss: (Int) -> Unit,
+    offset: Offset,
+    task: Task
+){
+    val density = LocalDensity.current
+    val menuItem = listOf("Delete","Share")
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { onDismiss(-1) },
+        offset = with(density) {
+            DpOffset(x = offset.x.toDp(), y = offset.y.toDp())
+        },
+        properties = PopupProperties(focusable = true)
+    ) {
+        CustomDropdownMenuItem(menuItem[0]){
+            taskViewModel.deleteTask(task)
+            onDismiss(-1)
+        }
+
+        CustomDropdownMenuItem(menuItem[1]){
+
+        }
+    }
+}
+
+@Composable
+private fun CustomDropdownMenuItem(name: String,onClick:() -> Unit){
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = name,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontSize = 14.sp
+            )
+        },
+        onClick = onClick
+    )
 }
 
 @Composable

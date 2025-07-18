@@ -112,7 +112,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        taskViewModel.loadAllTask()
     }
 }
 
@@ -218,37 +217,26 @@ fun ScaffoldContent(
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
-            .padding(top = paddingValues.calculateTopPadding() + 12.dp)
+            .padding(top = paddingValues.calculateTopPadding())
             .verticalScroll(scrollState)
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         TopTaskProgress(viewModel, taskViewModel)
 
-        SpacerView()
-
         AdsView()
-
-        SpacerView()
 
         TaskView(taskViewModel)
 
-        SpacerView()
-
         AdsView()
-
-        SpacerView()
 
         NoteScreen(viewModel)
 
-        SpacerView()
-
         AdsView()
 
-        SpacerView()
-        SpacerView()
-        SpacerView()
+        Spacer(modifier = Modifier.height(60.dp))
     }
 }
 
@@ -266,10 +254,11 @@ private fun TopTaskProgress(
             .height(240.dp)
             .padding(
                 start = 12.dp,
-                end = 12.dp
+                end = 12.dp,
+                top = 12.dp
             )
     ) {
-        val (highPriorityLayoutRef, inProgressRef, allNoteRef) = createRefs()
+        val (highPriorityLayoutRef, inProgressRef, allNoteRef,tRef) = createRefs()
 
         HorizontalPagerView(
             modifier = Modifier
@@ -290,17 +279,17 @@ private fun TopTaskProgress(
                 .background(
                     MaterialTheme.colorScheme.onSecondaryContainer,
                     MaterialTheme.shapes.small
-                ).clickable {
+                )
+                .clickable {
                     context.startActivity(Intent(context, UserPerformanceActivity::class.java))
                 }
                 .fillMaxWidth()
                 .constrainAs(inProgressRef) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
-                    bottom.linkTo(allNoteRef.top, 8.dp)
                     start.linkTo(highPriorityLayoutRef.end, 12.dp)
                     width = Dimension.fillToConstraints
-                    height = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
                 },
             taskViewModel
         )
@@ -314,12 +303,49 @@ private fun TopTaskProgress(
                 .clickable {
                     context.startActivity(Intent(context, ShowAllNotesActivity::class.java))
                 }
-                .height(70.dp)
                 .fillMaxWidth()
                 .constrainAs(allNoteRef) {
                     end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
+                    top.linkTo(inProgressRef.bottom,12.dp)
                     start.linkTo(highPriorityLayoutRef.end, 12.dp)
+                    bottom.linkTo(tRef.top,12.dp)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.icon_note),
+                contentDescription = stringResource(R.string.note),
+                tint = MaterialTheme.colorScheme.onSecondary
+            )
+
+            Text(
+                text = "All notes : ( ${notes.size} )",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSecondary,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Serif
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.onSecondaryContainer,
+                    MaterialTheme.shapes.small
+                )
+                .clickable {
+                    context.startActivity(Intent(context, ShowAllNotesActivity::class.java))
+                }
+                .height(50.dp)
+                .fillMaxWidth()
+                .constrainAs(tRef) {
+                    end.linkTo(parent.end)
+                    start.linkTo(highPriorityLayoutRef.end, 12.dp)
+                    bottom.linkTo(parent.bottom)
                     width = Dimension.fillToConstraints
                 },
             verticalAlignment = Alignment.CenterVertically,
@@ -345,21 +371,23 @@ private fun TopTaskProgress(
 
 @Composable
 private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: TaskViewModel) {
+    val taskElement by taskViewModel.taskElement.collectAsState(emptyList())
     ConstraintLayout(
         modifier = modifier.padding(12.dp)
     ) {
-        val (progressRef, descLayoutRef) = createRefs()
-        val completeTask = taskViewModel.taskElement.filter { it.isComplete == true }
+        val (progressRef, descLayoutRef,inProgressLayoutRef) = createRefs()
+        val completeTask = taskElement.filter { it.isComplete == true }
             .sortedByDescending { it.isComplete }.size
-        val totalTaskListSize = taskViewModel.taskElement.size
-        val inProgressTask = totalTaskListSize - completeTask
+        val totalTaskListSize = taskElement.size
+        val inProgress = totalTaskListSize - completeTask
 
         CircularTaskStatusBar(
             totalTask = totalTaskListSize,
             complete = completeTask,
             modifier = Modifier.constrainAs(progressRef) {
                 start.linkTo(parent.start, 4.dp)
-                top.linkTo(parent.top, 6.dp)
+                top.linkTo(descLayoutRef.top)
+                bottom.linkTo(inProgressLayoutRef.bottom)
             }
         )
 
@@ -375,40 +403,92 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                     height = Dimension.wrapContent
                 },
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            UserStateText("Total task : $totalTaskListSize")
-            UserStateText("Complete : $completeTask")
-            UserStateText("In Progress : $inProgressTask")
+            Text(
+                text = stringResource(R.string.completed),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp,
+                        top = 2.dp,
+                        bottom = 2.dp
+                    ),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = "$completeTask / $totalTaskListSize tasks",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp,
+                        top = 2.dp,
+                        bottom = 2.dp
+                    ),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onSecondary,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
+                .padding(4.dp)
+                .constrainAs(inProgressLayoutRef) {
+                    end.linkTo(parent.end)
+                    top.linkTo(descLayoutRef.bottom,6.dp)
+                    start.linkTo(progressRef.end, 12.dp)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.in_progress),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp,
+                        top = 2.dp,
+                        bottom = 2.dp
+                    ),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = "$inProgress progress",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp,
+                        top = 2.dp,
+                        bottom = 2.dp
+                    ),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onSecondary,
+                textAlign = TextAlign.Center
+            )
         }
     }
-}
-
-@Composable
-private fun UserStateText(value: String) {
-    Text(
-        text = value,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                start = 4.dp,
-                end = 4.dp,
-                top = 2.dp,
-                bottom = 2.dp
-            ),
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Normal,
-        maxLines = 1,
-        color = MaterialTheme.colorScheme.onPrimary,
-        textAlign = TextAlign.Start
-    )
-}
-
-@Composable
-private fun SpacerView() {
-    Spacer(
-        modifier = Modifier.height(24.dp)
-    )
 }
 
 @Composable
@@ -512,7 +592,7 @@ private fun ExpandedFabItems(miniFab: MiniFabItems,onClick: (Boolean) -> Unit) {
             .width(100.dp)
             .background(MaterialTheme.colorScheme.onSecondaryContainer, RoundedCornerShape(12.dp))
             .padding(6.dp)
-            .clickable {onClick(false)}
+            .clickable { onClick(false) }
     ) {
         Spacer(modifier = Modifier.weight(1f))
 

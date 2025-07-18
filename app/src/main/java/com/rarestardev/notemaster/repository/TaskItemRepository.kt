@@ -8,7 +8,9 @@ class TaskItemRepository(
 ) {
     suspend fun insertTask(task: Task) = dao.insert(task)
 
-    suspend fun getAllTask() = dao.getAll()
+    fun getAllTask() = dao.getAll()
+
+    suspend fun deleteTask(task: Task) = dao.delete(task)
 
     suspend fun updateIsCompleteTask(isComplete: Boolean,id: Int) = dao.updateIsCompleteTask(isComplete,id)
 

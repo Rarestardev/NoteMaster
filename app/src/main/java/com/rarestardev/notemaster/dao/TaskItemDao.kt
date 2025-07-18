@@ -1,21 +1,25 @@
 package com.rarestardev.notemaster.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.rarestardev.notemaster.model.ReminderInfo
 import com.rarestardev.notemaster.model.Task
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskItemDao {
 
-    @Query("SELECT * FROM task_items ORDER BY date,time ASC")
-    suspend fun getAll(): List<Task>
+    @Query("SELECT * FROM task_items ORDER BY date DESC")
+    fun getAll(): Flow<List<Task>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: Task)
+
+    @Delete
+    suspend fun delete(item: Task)
 
     @Update
     suspend fun updateAllTaskItem(item: Task)

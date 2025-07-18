@@ -9,7 +9,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -17,12 +16,14 @@ import androidx.lifecycle.viewModelScope
 import com.rarestardev.notemaster.dao.TaskItemDao
 import com.rarestardev.notemaster.enums.ImageSize
 import com.rarestardev.notemaster.enums.ReminderType
-import com.rarestardev.notemaster.model.ReminderInfo
 import com.rarestardev.notemaster.model.Task
 import com.rarestardev.notemaster.receiver.ReminderReceiver
 import com.rarestardev.notemaster.repository.TaskItemRepository
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.CurrentTimeAndDate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
@@ -33,15 +34,13 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         private const val BROADCAST_REQ_CODE: Int = 456
     }
 
-    val taskElement = mutableStateListOf<Task>()
+    val taskElement : Flow<List<Task>> = taskItemDao.getAll().flowOn(Dispatchers.IO)
 
-    fun loadAllTask() {
+    fun deleteTask(task: Task){
         viewModelScope.launch {
-            val taskList = repository.getAllTask()
-            taskElement.clear()
-            taskElement.addAll(taskList)
+            taskItemDao.delete(task)
 
-            Log.d(Constants.APP_LOG, "Success load all task.")
+            Log.d(Constants.APP_LOG, "Delete task.")
         }
     }
 

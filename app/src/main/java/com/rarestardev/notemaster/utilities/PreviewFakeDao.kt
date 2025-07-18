@@ -56,11 +56,15 @@ fun previewFakeViewModel() : NoteEditorViewModel{
 
 fun previewFakeTaskViewModel() : TaskViewModel{
     val fakeDao = object : TaskItemDao {
-        override suspend fun getAll(): List<Task> {
+        override fun getAll(): Flow<List<Task>> {
             TODO("Not yet implemented")
         }
 
         override suspend fun insert(item: Task) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun delete(item: Task) {
             TODO("Not yet implemented")
         }
 

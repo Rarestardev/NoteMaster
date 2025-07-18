@@ -60,4 +60,6 @@
     </string-array>
     <string name="title_activity_show_all_tasks">ShowAllTasksActivity</string>
     <string name="title_activity_user_performance">UserPerformanceActivity</string>
+    <string name="completed">Completed</string>
+    <string name="in_progress">In Progress</string>
 </resources>

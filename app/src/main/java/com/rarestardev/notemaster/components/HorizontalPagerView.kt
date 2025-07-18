@@ -46,7 +46,7 @@ fun HorizontalPagerView(
 
     LaunchedEffect(pagerState) {
         while (true) {
-            delay(4000)
+            delay(6000)
             val nextPage = (pagerState.currentPage + 1) % 2
             pagerState.animateScrollToPage(nextPage)
         }

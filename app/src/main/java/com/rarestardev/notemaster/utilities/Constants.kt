@@ -13,6 +13,6 @@ class Constants {
         const val ALARM_TYPE = "alarmType"
 
 
-        const val ADS_VIEW : Boolean = false
+        const val ADS_VIEW : Boolean = true
     }
 }
