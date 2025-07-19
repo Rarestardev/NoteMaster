@@ -45,6 +45,7 @@ fun CategorySelector(viewModel: TaskViewModel){
                 focusedLeadingIconColor = transparentColor,
                 unfocusedLeadingIconColor = transparentColor
             ),
+            textStyle = MaterialTheme.typography.labelMedium,
             shape = MaterialTheme.shapes.medium,
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },

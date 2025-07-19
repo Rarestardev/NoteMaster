@@ -127,9 +127,9 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         priorityFlag = index
     }
 
-    var selectedCategory by mutableStateOf("Category")
+    var selectedCategory by mutableStateOf("Category (Personal)")
     fun updateCategoryList(newCategory: String) {
-        selectedCategory = newCategory
+        selectedCategory = "Category ($newCategory)"
     }
 
     var reminderTime by mutableLongStateOf(0)

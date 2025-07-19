@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -110,126 +109,124 @@ class CreateTaskActivity : ComponentActivity() {
 @Composable
 private fun TaskActivityPreview() {
     NoteMasterTheme(darkTheme = true) {
-        TaskEditorScreen(viewModel = previewFakeTaskViewModel(), subTaskViewModel = previewSubTaskViewModel())
+        TaskEditorScreen(
+            viewModel = previewFakeTaskViewModel(),
+            subTaskViewModel = previewSubTaskViewModel()
+        )
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
+    val subTaskViews = getSubTaskItems(subTaskViewModel)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = { TopAppBarView(viewModel,subTaskViewModel) },
+        topBar = { TopAppBarView(viewModel, subTaskViewModel) },
         bottomBar = { BottomAppBarView(viewModel, subTaskViewModel) }
     ) { paddingValues ->
-
-        Column(
+        LazyColumn (
             modifier = Modifier
-                .padding(
-                    top = paddingValues.calculateTopPadding() + 12.dp,
-                    start = 12.dp,
-                    end = 12.dp,
-                    bottom = paddingValues.calculateBottomPadding() + 12.dp
-                )
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .fillMaxWidth()
+                .padding(paddingValues),
+            state = rememberLazyListState(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            subTaskViewModel.updateSubTaskPosition(0)
+            item{
+                subTaskViewModel.updateSubTaskPosition(0)
 
-            TitleLabelTextField(viewModel = viewModel)
+                TitleLabelTextField(viewModel = viewModel)
 
-            CategorySelector(viewModel = viewModel)
+                CategorySelector(viewModel = viewModel)
 
-            DescriptionTextField(viewModel = viewModel)
+                Spacer(Modifier.height(12.dp))
 
-            if (viewModel.imagePath.isNotEmpty()) {
-                ResizableImageItem(viewModel.imagePath.toUri()) {
-                    viewModel.updateImagePath("")
+                DescriptionTextField(viewModel = viewModel)
+
+                if (viewModel.imagePath.isNotEmpty()) {
+                    ResizableImageItem(viewModel.imagePath.toUri()) {
+                        viewModel.updateImagePath("")
+                    }
                 }
             }
 
-            SubTaskLazyColumn(subTaskViewModel)
+            items(subTaskViews.size) { index ->
+                subTaskViews[index]()
+            }
         }
     }
 }
 
-@Composable
-private fun SubTaskLazyColumn(subTaskViewModel: SubTaskViewModel) {
+private fun getSubTaskItems(subTaskViewModel: SubTaskViewModel): List<@Composable () -> Unit> {
     val transparentColor = Color.Transparent
+    return subTaskViewModel.subTaskItems.mapIndexed { index, subTask ->
+        {
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                        MaterialTheme.shapes.medium
+                    )
+            ) {
+                val (checkBoxRef, textFieldRef, deleteRef) = createRefs()
+                Checkbox(
+                    checked = false,
+                    onCheckedChange = {},
+                    modifier = Modifier.constrainAs(checkBoxRef) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
+                )
 
-    if (subTaskViewModel.subTaskItems.isNotEmpty()) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            state = rememberLazyListState()
-        ) {
-            items(subTaskViewModel.subTaskItems) { subTask ->
-                ConstraintLayout(
+                TextField(
+                    value = subTask.subTaskDescription,
+                    onValueChange = {
+                        subTaskViewModel.updateDescriptionState(it)
+
+                        if (subTask.subTaskDescription != it) {
+                            subTaskViewModel.subTaskItems[index] = subTask.copy(subTaskDescription = it)
+                        }
+                    },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            MaterialTheme.colorScheme.onSecondaryContainer,
-                            MaterialTheme.shapes.medium
-                        )
-                ) {
-                    val (checkBoxRef, textFieldRef, deleteRef) = createRefs()
-                    Checkbox(
-                        checked = false,
-                        onCheckedChange = {},
-                        modifier = Modifier.constrainAs(checkBoxRef) {
-                            start.linkTo(parent.start)
+                        .padding(start = 8.dp, end = 8.dp)
+                        .constrainAs(textFieldRef) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(checkBoxRef.end, 8.dp)
+                            end.linkTo(deleteRef.start, 8.dp)
+                            width = Dimension.fillToConstraints
+                        },
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    colors = TextFieldDefaults.colors().copy(
+                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        unfocusedIndicatorColor = transparentColor,
+                        focusedIndicatorColor = transparentColor,
+                        focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        cursorColor = MaterialTheme.colorScheme.onSecondary
+                    )
+                )
+
+                Text(
+                    text = stringResource(R.string.delete),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier
+                        .clickable {
+                            subTaskViewModel.viewModelScope.launch {
+                                subTaskViewModel.subTaskItems.remove(subTask)
+                            }
+                        }
+                        .constrainAs(deleteRef) {
+                            end.linkTo(parent.end, 12.dp)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                         }
-                    )
-
-                    TextField(
-                        value = subTask.subTaskDescription,
-                        onValueChange = { subTaskViewModel.updateDescriptionState(it) },
-                        modifier = Modifier
-                            .padding(
-                                start = 8.dp,
-                                end = 8.dp
-                            )
-                            .constrainAs(textFieldRef) {
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                                start.linkTo(checkBoxRef.end, 8.dp)
-                                end.linkTo(deleteRef.start, 8.dp)
-                                width = Dimension.fillToConstraints
-                            },
-                        textStyle = MaterialTheme.typography.bodyMedium,
-                        colors = TextFieldDefaults.colors().copy(
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            unfocusedIndicatorColor = transparentColor,
-                            focusedIndicatorColor = transparentColor,
-                            focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            cursorColor = MaterialTheme.colorScheme.onSecondary,
-                            focusedLeadingIconColor = transparentColor,
-                            unfocusedLeadingIconColor = transparentColor
-                        )
-                    )
-
-                    Text(
-                        text = stringResource(R.string.delete),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        modifier = Modifier
-                            .clickable {
-                                subTaskViewModel.viewModelScope.launch {
-                                    subTaskViewModel.subTaskItems.remove(subTask)
-                                }
-                            }
-                            .constrainAs(deleteRef) {
-                                end.linkTo(parent.end, 12.dp)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
-                    )
-                }
-
-                Spacer(Modifier.height(8.dp))
+                )
             }
         }
     }
@@ -259,7 +256,7 @@ private fun DescriptionTextField(viewModel: TaskViewModel) {
             unfocusedLeadingIconColor = transparentColor
         ),
         shape = MaterialTheme.shapes.medium,
-        minLines = 5
+        minLines = 8
     )
 }
 
@@ -269,7 +266,9 @@ private fun TitleLabelTextField(viewModel: TaskViewModel) {
     TextField(
         value = viewModel.titleState,
         onValueChange = { viewModel.updateTitleFieldValue(it) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp),
         shape = MaterialTheme.shapes.medium,
         label = {
             Text(
