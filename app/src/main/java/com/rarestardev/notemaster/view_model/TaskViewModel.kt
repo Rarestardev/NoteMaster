@@ -34,7 +34,7 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         private const val BROADCAST_REQ_CODE: Int = 456
     }
 
-    val taskElement : Flow<List<Task>> = taskItemDao.getAll().flowOn(Dispatchers.IO)
+    val taskElement : Flow<List<Task>> = repository.getAllTask().flowOn(Dispatchers.IO)
 
     fun deleteTask(task: Task){
         viewModelScope.launch {

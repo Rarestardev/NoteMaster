@@ -12,39 +12,31 @@ import com.rarestardev.notemaster.dao.SubTaskDao
 import com.rarestardev.notemaster.model.SubTask
 import com.rarestardev.notemaster.repository.SubTaskRepository
 import com.rarestardev.notemaster.utilities.Constants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class SubTaskViewModel(private val subTaskDao: SubTaskDao) : ViewModel() {
 
     private val repository = SubTaskRepository(subTaskDao)
 
-    val subTaskList = mutableStateListOf<SubTask>()
-
-    fun loadAllSubTasksWithTaskName(taskId: String) {
-        viewModelScope.launch {
-            val subTasks = repository.getAllSubTaskWithTaskName(taskId)
-            subTaskList.clear()
-            subTaskList.addAll(subTasks)
-
-            Log.d(Constants.APP_LOG, "Success load all sub tasks with task name.")
-        }
-    }
-
-    fun loadAllSubTasks() {
-        viewModelScope.launch {
-            val subTasks = repository.getAllSubTask()
-            subTaskList.clear()
-            subTaskList.addAll(subTasks)
-
-            Log.d(Constants.APP_LOG, "Success load all sub tasks.")
-        }
-    }
+    val subTaskList : Flow<List<SubTask>> = repository.getAllSubTask().flowOn(Dispatchers.IO)
+    var subTaskItems = mutableStateListOf<SubTask>()
 
     fun deleteSubTask(subTask: SubTask) {
         viewModelScope.launch {
             repository.deleteSubTask(subTask)
 
             Log.d(Constants.APP_LOG, "Deleted sub tasks.")
+        }
+    }
+
+    fun deleteSubTaskWithTaskId(taskTitle: String){
+        viewModelScope.launch {
+            repository.deleteSubTaskWithTaskId(taskTitle)
+
+            Log.d(Constants.APP_LOG, "deleteSubTaskWithTaskId")
         }
     }
 
@@ -58,8 +50,10 @@ class SubTaskViewModel(private val subTaskDao: SubTaskDao) : ViewModel() {
 
     fun insertSubTask() {
         viewModelScope.launch {
-            repository.insertSubTask(subTaskList)
-            Log.d(Constants.APP_LOG, "Success insert sub task.")
+            if (subTaskItems.isNotEmpty()){
+                repository.insertSubTask(subTaskItems)
+                Log.d(Constants.APP_LOG, "Success insert sub task.")
+            }
         }
     }
 

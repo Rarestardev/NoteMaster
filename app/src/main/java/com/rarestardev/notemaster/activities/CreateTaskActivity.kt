@@ -68,24 +68,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.rarestardev.notemaster.R
-import com.rarestardev.notemaster.dao.SubTaskDao
-import com.rarestardev.notemaster.dao.TaskItemDao
-import com.rarestardev.notemaster.database.NoteDatabase
-import com.rarestardev.notemaster.factory.SubTaskViewModelFactory
-import com.rarestardev.notemaster.feature.CategorySelector
-import com.rarestardev.notemaster.feature.ReminderBottomSheet
-import com.rarestardev.notemaster.model.Task
-import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
-import com.rarestardev.notemaster.view_model.TaskViewModel
-import com.rarestardev.notemaster.factory.TaskViewModelFactory
-import com.rarestardev.notemaster.feature.ResizableImageItem
-import com.rarestardev.notemaster.model.SubTask
-import com.rarestardev.notemaster.view_model.SubTaskViewModel
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
+import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.database.NoteDatabase
+import com.rarestardev.notemaster.factory.SubTaskViewModelFactory
+import com.rarestardev.notemaster.factory.TaskViewModelFactory
+import com.rarestardev.notemaster.feature.CategorySelector
+import com.rarestardev.notemaster.feature.ReminderBottomSheet
+import com.rarestardev.notemaster.feature.ResizableImageItem
+import com.rarestardev.notemaster.model.SubTask
+import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
 import com.rarestardev.notemaster.utilities.previewSubTaskViewModel
+import com.rarestardev.notemaster.view_model.SubTaskViewModel
+import com.rarestardev.notemaster.view_model.TaskViewModel
 import kotlinx.coroutines.launch
 
 class CreateTaskActivity : ComponentActivity() {
@@ -161,12 +158,13 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
 @Composable
 private fun SubTaskLazyColumn(subTaskViewModel: SubTaskViewModel) {
     val transparentColor = Color.Transparent
-    if (subTaskViewModel.subTaskList.isNotEmpty()) {
+
+    if (subTaskViewModel.subTaskItems.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             state = rememberLazyListState()
         ) {
-            items(subTaskViewModel.subTaskList) { subTask ->
+            items(subTaskViewModel.subTaskItems) { subTask ->
                 ConstraintLayout(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -220,7 +218,7 @@ private fun SubTaskLazyColumn(subTaskViewModel: SubTaskViewModel) {
                         modifier = Modifier
                             .clickable {
                                 subTaskViewModel.viewModelScope.launch {
-                                    subTaskViewModel.subTaskList.remove(subTask)
+                                    subTaskViewModel.subTaskItems.remove(subTask)
                                 }
                             }
                             .constrainAs(deleteRef) {
@@ -435,7 +433,7 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
                     onClick = {
                         subTaskViewModel.updateSubTaskPosition(subTaskViewModel.subTaskPosition++)
                         if (viewModel.titleState.isNotEmpty() && !viewModel.isError) {
-                            subTaskViewModel.subTaskList.add(
+                            subTaskViewModel.subTaskItems.add(
                                 SubTask(
                                     subChecked = false,
                                     subTaskDescription = subTaskViewModel.descriptionState,

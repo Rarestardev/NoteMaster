@@ -68,23 +68,22 @@ import com.rarestardev.notemaster.model.Task
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
+import com.rarestardev.notemaster.utilities.previewSubTaskViewModel
+import com.rarestardev.notemaster.view_model.SubTaskViewModel
 import com.rarestardev.notemaster.view_model.TaskViewModel
 
 @Preview
 @Composable
 private fun TaskItemPreview() {
     NoteMasterTheme {
-        TaskView(previewFakeTaskViewModel())
+        TaskView(previewFakeTaskViewModel(), previewSubTaskViewModel())
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TaskView(viewModel: TaskViewModel) {
+fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     val taskElement by viewModel.taskElement.collectAsState(emptyList())
-    val context = LocalContext.current
-    var expandedIndex by remember { mutableIntStateOf(-1) }
-    var menuOffset by remember { mutableStateOf(Offset.Zero) }
     val lazyState = rememberLazyListState()
 
     Column(
@@ -92,33 +91,7 @@ fun TaskView(viewModel: TaskViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(R.string.task_bottom_bar),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(start = 12.dp)
-            )
-
-            if (taskElement.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.see_more),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = colorResource(R.color.text_field_label_color),
-                    modifier = Modifier
-                        .clickable {
-                            context.startActivity(Intent(context, ShowAllTasksActivity::class.java))
-                        }
-                        .padding(end = 12.dp)
-                )
-            }
-        }
-
-        Spacer(Modifier.height(6.dp))
+        TitleList(taskElement)
 
         if (taskElement.isNotEmpty()) {
             LazyRow(
@@ -129,174 +102,8 @@ fun TaskView(viewModel: TaskViewModel) {
                 contentPadding = PaddingValues(4.dp)
             ) {
                 if (taskElement.isNotEmpty()) {
-                    itemsIndexed(taskElement.take(10)) { index,task ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(240.dp)
-                                .padding(end = 8.dp)
-                                .pointerInput(Unit) {
-                                    detectTapGestures(
-                                        onLongPress = { offset ->
-                                            expandedIndex = index
-                                            menuOffset = offset
-                                        },
-                                        onTap = {
-                                            val intent =
-                                                Intent(
-                                                    context,
-                                                    CreateTaskActivity::class.java
-                                                ).apply {
-                                                    putExtra(Constants.STATE_TASK_ACTIVITY, true)
-                                                }
-                                            context.startActivity(intent)
-                                        }
-                                    )
-                                }
-                                .background(
-                                    MaterialTheme.colorScheme.onSecondaryContainer,
-                                    MaterialTheme.shapes.small
-                                )
-                                .border(
-                                    0.3.dp,
-                                    MaterialTheme.colorScheme.onSecondary,
-                                    MaterialTheme.shapes.small
-                                )
-                        ) {
-                            ConstraintLayout(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(8.dp)
-                            ) {
-                                val (titleRef, dividerRef, flagRef, dateRef, timeRef, subTaskSizeRef, reminderTypeRef) = createRefs()
-
-                                FlagView(
-                                    color = task.priorityFlag,
-                                    modifier = Modifier
-                                        .constrainAs(flagRef) {
-                                            start.linkTo(parent.start)
-                                            top.linkTo(parent.top)
-                                        }
-                                )
-
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = "Forward",
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .constrainAs(createRef()) {
-                                            end.linkTo(parent.end)
-                                            top.linkTo(flagRef.top)
-                                            bottom.linkTo(flagRef.bottom)
-                                        }
-                                )
-
-                                HorizontalDivider(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 4.dp, end = 4.dp)
-                                        .constrainAs(dividerRef) {
-                                            top.linkTo(flagRef.bottom, 6.dp)
-                                            start.linkTo(parent.start)
-                                            end.linkTo(parent.end)
-                                        },
-                                    thickness = 0.3.dp,
-                                    color = MaterialTheme.colorScheme.onSecondary
-                                )
-
-                                Text(
-                                    text = task.title,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier
-                                        .constrainAs(titleRef) {
-                                            start.linkTo(parent.start, 6.dp)
-                                            top.linkTo(dividerRef.bottom)
-                                            end.linkTo(parent.end, 6.dp)
-                                            bottom.linkTo(subTaskSizeRef.top)
-                                            width = Dimension.fillToConstraints
-                                        },
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    textAlign = TextAlign.Start
-                                )
-
-                                Text(
-                                    text = "SubTasks : (  )",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier
-                                        .constrainAs(subTaskSizeRef) {
-                                            start.linkTo(parent.start, 6.dp)
-                                            bottom.linkTo(timeRef.top, 6.dp)
-                                        }
-                                )
-
-                                Text(
-                                    text = "Time : ${task.time}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier
-                                        .constrainAs(timeRef) {
-                                            start.linkTo(parent.start, 6.dp)
-                                            bottom.linkTo(dateRef.top, 6.dp)
-                                        }
-                                )
-
-                                Text(
-                                    text = "Date : ${task.date}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier
-                                        .constrainAs(dateRef) {
-                                            bottom.linkTo(parent.bottom, 6.dp)
-                                            start.linkTo(parent.start, 6.dp)
-                                        }
-                                )
-
-                                Row(
-                                    Modifier
-                                        .constrainAs(reminderTypeRef) {
-                                            end.linkTo(parent.end, 6.dp)
-                                            bottom.linkTo(parent.bottom, 6.dp)
-                                        },
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                ) {
-                                    if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
-                                        if (task.reminderType == ReminderType.NOTIFICATION.name) {
-                                            NotificationView()
-                                        } else {
-                                            AlarmView()
-                                        }
-
-                                        Log.d(
-                                            Constants.APP_LOG,
-                                            "TaskView Reminder type = ${task.reminderType}"
-                                        )
-                                    }
-
-                                    task.imagePath?.let {
-                                        if (it.isNotEmpty()) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.icons_image),
-                                                contentDescription = "image",
-                                                modifier = Modifier.size(20.dp),
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                            CustomDropdownMenu(
-                                task = task,
-                                taskViewModel = viewModel,
-                                expanded = expandedIndex == index,
-                                onDismiss = {expandedIndex = it},
-                                offset = menuOffset
-                            )
-                        }
+                    itemsIndexed(taskElement.take(10)) { index, task ->
+                        LazyItems(index, task, subTaskViewModel, viewModel)
                     }
                 }
             }
@@ -315,18 +122,234 @@ fun TaskView(viewModel: TaskViewModel) {
     }
 }
 
+@Composable
+private fun TitleList(taskElement: List<Task>) {
+    val context = LocalContext.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(R.string.task_bottom_bar),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(start = 12.dp)
+        )
+
+        if (taskElement.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.see_more),
+                style = MaterialTheme.typography.labelSmall,
+                color = colorResource(R.color.text_field_label_color),
+                modifier = Modifier
+                    .clickable {
+                        context.startActivity(Intent(context, ShowAllTasksActivity::class.java))
+                    }
+                    .padding(end = 12.dp)
+            )
+        }
+    }
+
+    Spacer(Modifier.height(6.dp))
+}
+
+@Composable
+private fun LazyItems(
+    index: Int,
+    task: Task,
+    subTaskViewModel: SubTaskViewModel,
+    viewModel: TaskViewModel
+) {
+    val context = LocalContext.current
+    var expandedIndex by remember { mutableIntStateOf(-1) }
+    var menuOffset by remember { mutableStateOf(Offset.Zero) }
+    val subtaskList by subTaskViewModel.subTaskList.collectAsState(emptyList())
+    val subtaskFilterList =
+        subtaskList.filter { it.taskTitle == task.title }.sortedByDescending { it.taskTitle }.size
+
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(240.dp)
+            .padding(end = 8.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { offset ->
+                        expandedIndex = index
+                        menuOffset = offset
+                    },
+                    onTap = {
+                        val intent =
+                            Intent(
+                                context,
+                                CreateTaskActivity::class.java
+                            ).apply {
+                                putExtra(Constants.STATE_TASK_ACTIVITY, true)
+                            }
+                        context.startActivity(intent)
+                    }
+                )
+            }
+            .background(
+                MaterialTheme.colorScheme.onSecondaryContainer,
+                MaterialTheme.shapes.small
+            )
+            .border(
+                0.3.dp,
+                MaterialTheme.colorScheme.onSecondary,
+                MaterialTheme.shapes.small
+            )
+    ) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            val (titleRef, dividerRef, flagRef, dateRef, timeRef, subTaskSizeRef, reminderTypeRef) = createRefs()
+
+            FlagView(
+                color = task.priorityFlag,
+                modifier = Modifier
+                    .constrainAs(flagRef) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                    }
+            )
+
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Forward",
+                modifier = Modifier
+                    .size(20.dp)
+                    .constrainAs(createRef()) {
+                        end.linkTo(parent.end)
+                        top.linkTo(flagRef.top)
+                        bottom.linkTo(flagRef.bottom)
+                    }
+            )
+
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 4.dp, end = 4.dp)
+                    .constrainAs(dividerRef) {
+                        top.linkTo(flagRef.bottom, 6.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                thickness = 0.3.dp,
+                color = MaterialTheme.colorScheme.onSecondary
+            )
+
+            Text(
+                text = task.title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .constrainAs(titleRef) {
+                        start.linkTo(parent.start, 6.dp)
+                        top.linkTo(dividerRef.bottom)
+                        end.linkTo(parent.end, 6.dp)
+                        bottom.linkTo(subTaskSizeRef.top)
+                        width = Dimension.fillToConstraints
+                    },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start
+            )
+
+            Text(
+                text = "SubTasks : ( $subtaskFilterList )",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .constrainAs(subTaskSizeRef) {
+                        start.linkTo(parent.start, 6.dp)
+                        bottom.linkTo(timeRef.top, 6.dp)
+                    }
+            )
+
+            Text(
+                text = "Time : ${task.time}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .constrainAs(timeRef) {
+                        start.linkTo(parent.start, 6.dp)
+                        bottom.linkTo(dateRef.top, 6.dp)
+                    }
+            )
+
+            Text(
+                text = "Date : ${task.date}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .constrainAs(dateRef) {
+                        bottom.linkTo(parent.bottom, 6.dp)
+                        start.linkTo(parent.start, 6.dp)
+                    }
+            )
+
+            Row(
+                Modifier
+                    .constrainAs(reminderTypeRef) {
+                        end.linkTo(parent.end, 6.dp)
+                        bottom.linkTo(parent.bottom, 6.dp)
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
+                    if (task.reminderType == ReminderType.NOTIFICATION.name) {
+                        NotificationView()
+                    } else {
+                        AlarmView()
+                    }
+
+                    Log.d(
+                        Constants.APP_LOG,
+                        "TaskView Reminder type = ${task.reminderType}"
+                    )
+                }
+
+                task.imagePath?.let {
+                    if (it.isNotEmpty()) {
+                        Icon(
+                            painter = painterResource(R.drawable.icons_image),
+                            contentDescription = task.title,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
+                }
+            }
+        }
+
+        CustomDropdownMenu(
+            subTaskViewModel = subTaskViewModel,
+            task = task,
+            taskViewModel = viewModel,
+            expanded = expandedIndex == index,
+            onDismiss = { expandedIndex = it },
+            offset = menuOffset
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomDropdownMenu(
+    subTaskViewModel: SubTaskViewModel,
     taskViewModel: TaskViewModel,
     expanded: Boolean,
     onDismiss: (Int) -> Unit,
     offset: Offset,
     task: Task
-){
+) {
     val density = LocalDensity.current
-    val menuItem = listOf("Delete","Share")
+    val menuItem = listOf("Delete", "Share")
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = { onDismiss(-1) },
@@ -335,19 +358,20 @@ private fun CustomDropdownMenu(
         },
         properties = PopupProperties(focusable = true)
     ) {
-        CustomDropdownMenuItem(menuItem[0]){
+        CustomDropdownMenuItem(menuItem[0]) {
+            subTaskViewModel.deleteSubTaskWithTaskId(task.title)
             taskViewModel.deleteTask(task)
             onDismiss(-1)
         }
 
-        CustomDropdownMenuItem(menuItem[1]){
+        CustomDropdownMenuItem(menuItem[1]) {
 
         }
     }
 }
 
 @Composable
-private fun CustomDropdownMenuItem(name: String,onClick:() -> Unit){
+private fun CustomDropdownMenuItem(name: String, onClick: () -> Unit) {
     DropdownMenuItem(
         text = {
             Text(

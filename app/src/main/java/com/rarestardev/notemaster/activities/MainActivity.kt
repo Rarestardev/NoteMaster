@@ -82,12 +82,15 @@ import com.rarestardev.notemaster.components.NoteScreen
 import com.rarestardev.notemaster.components.TaskView
 import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.factory.NoteViewModelFactory
+import com.rarestardev.notemaster.factory.SubTaskViewModelFactory
 import com.rarestardev.notemaster.factory.TaskViewModelFactory
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
 import com.rarestardev.notemaster.utilities.previewFakeViewModel
+import com.rarestardev.notemaster.utilities.previewSubTaskViewModel
 import com.rarestardev.notemaster.view_model.NoteEditorViewModel
+import com.rarestardev.notemaster.view_model.SubTaskViewModel
 import com.rarestardev.notemaster.view_model.TaskViewModel
 
 class MainActivity : ComponentActivity() {
@@ -100,12 +103,16 @@ class MainActivity : ComponentActivity() {
         TaskViewModelFactory(NoteDatabase.getInstance(this).taskItemDao())
     }
 
+    private val subTaskViewModel : SubTaskViewModel by viewModels {
+        SubTaskViewModelFactory(NoteDatabase.getInstance(this).subTaskDao())
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             NoteMasterTheme {
-                HomeScreen(viewModel, taskViewModel)
+                HomeScreen(viewModel, taskViewModel,subTaskViewModel)
             }
         }
     }
@@ -121,7 +128,8 @@ private fun HomeScreenPreview() {
     NoteMasterTheme(darkTheme = true) {
         HomeScreen(
             previewFakeViewModel(),
-            previewFakeTaskViewModel()
+            previewFakeTaskViewModel(),
+            previewSubTaskViewModel()
         )
     }
 }
@@ -130,7 +138,8 @@ private fun HomeScreenPreview() {
 @Composable
 private fun HomeScreen(
     viewModel: NoteEditorViewModel,
-    taskViewModel: TaskViewModel
+    taskViewModel: TaskViewModel,
+    subTaskViewModel: SubTaskViewModel
 ) {
     val backgroundColor = MaterialTheme.colorScheme.background
     val mContext = LocalContext.current
@@ -204,7 +213,7 @@ private fun HomeScreen(
         floatingActionButtonPosition = FabPosition.End
     ) { paddingValues ->
 
-        ScaffoldContent(paddingValues, viewModel, taskViewModel)
+        ScaffoldContent(paddingValues, viewModel, taskViewModel,subTaskViewModel)
     }
 }
 
@@ -212,7 +221,8 @@ private fun HomeScreen(
 fun ScaffoldContent(
     paddingValues: PaddingValues,
     viewModel: NoteEditorViewModel,
-    taskViewModel: TaskViewModel
+    taskViewModel: TaskViewModel,
+    subTaskViewModel: SubTaskViewModel
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -228,7 +238,7 @@ fun ScaffoldContent(
 
         AdsView()
 
-        TaskView(taskViewModel)
+        TaskView(taskViewModel,subTaskViewModel)
 
         AdsView()
 

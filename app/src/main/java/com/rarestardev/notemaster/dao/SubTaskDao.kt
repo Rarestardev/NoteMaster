@@ -6,15 +6,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.rarestardev.notemaster.model.SubTask
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SubTaskDao {
 
-    @Query("SELECT * FROM sub_tasks WHERE taskTitle = :taskId ORDER BY position DESC")
-    suspend fun getAllSubTaskWithTaskName(taskId: String) : List<SubTask>
-
     @Query("SELECT * FROM sub_tasks  ORDER BY position DESC")
-    suspend fun getAllSubTask() : List<SubTask>
+    fun getAllSubTask(): Flow<List<SubTask>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSubTask(subTask: List<SubTask>)
@@ -22,6 +20,9 @@ interface SubTaskDao {
     @Delete
     suspend fun deleteSubTask(subTask: SubTask)
 
-    @Query("UPDATE sub_tasks SET subChecked = :isCheck WHERE subTaskId = :id")
-    suspend fun updateSubTaskCompleted(isCheck : Boolean,id: Int)
+    @Query("DELETE FROM sub_tasks WHERE taskTitle = :taskId")
+    suspend fun deleteSubTaskWithTaskId(taskId: String)
+
+    @Query("UPDATE sub_tasks SET subChecked = :isCheck WHERE subTaskId = :subTaskId")
+    suspend fun updateSubTaskCompleted(isCheck: Boolean, subTaskId: Int)
 }
