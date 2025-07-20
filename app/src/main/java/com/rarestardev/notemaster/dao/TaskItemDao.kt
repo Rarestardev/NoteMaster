@@ -25,8 +25,11 @@ interface TaskItemDao {
     suspend fun updateAllTaskItem(item: Task)
 
     @Query("UPDATE task_items SET isComplete = :isComplete WHERE id = :id")
-    suspend fun updateIsCompleteTask(isComplete: Boolean,id: Int)
+    suspend fun updateIsCompleteTask(isComplete: Boolean, id: Int)
 
     @Query("SELECT EXISTS (SELECT 1 FROM task_items WHERE id =:taskId)")
-    suspend fun checkIsId(taskId: Int):  Boolean
+    suspend fun checkIsId(taskId: Int): Boolean
+
+    @Query("UPDATE task_items SET priorityFlag = :flag WHERE id = :id")
+    suspend fun updateFlag(flag: Int, id: Int)
 }

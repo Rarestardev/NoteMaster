@@ -70,4 +70,6 @@
     <string name="good_job">Good job!</string>
     <string name="rebuild">Rebuild</string>
     <string name="task_completed">Task Compeleted</string>
+    <string name="share">Share</string>
+    <string name="change_priority">Change Priority</string>
 </resources>

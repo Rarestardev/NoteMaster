@@ -12,9 +12,12 @@ class TaskItemRepository(
 
     suspend fun deleteTask(task: Task) = dao.delete(task)
 
-    suspend fun updateIsCompleteTask(isComplete: Boolean,id: Int) = dao.updateIsCompleteTask(isComplete,id)
+    suspend fun updateIsCompleteTask(isComplete: Boolean, id: Int) =
+        dao.updateIsCompleteTask(isComplete, id)
 
-    suspend fun checkIsId(taskId : Int) : Boolean = dao.checkIsId(taskId)
+    suspend fun checkIsId(taskId: Int): Boolean = dao.checkIsId(taskId)
 
     suspend fun updateAllTaskItem(task: Task) = dao.updateAllTaskItem(task)
+
+    suspend fun updateFlagPriority(flag: Int, id: Int) = dao.updateFlag(flag, id)
 }

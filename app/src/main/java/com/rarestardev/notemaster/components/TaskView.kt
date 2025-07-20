@@ -2,6 +2,7 @@ package com.rarestardev.notemaster.components
 
 import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,19 +21,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,11 +48,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,10 +59,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.PopupProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.notemaster.R
@@ -92,7 +95,7 @@ fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TitleList(stringResource(R.string.task_bottom_bar),taskElement)
+        TitleList(stringResource(R.string.task_bottom_bar), taskElement)
 
         if (taskElement.isNotEmpty()) {
             LazyRow(
@@ -135,7 +138,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TitleList(stringResource(R.string.task_completed),taskElement)
+        TitleList(stringResource(R.string.task_completed), taskElement)
 
         if (taskElement.isNotEmpty()) {
             LazyRow(
@@ -207,7 +210,6 @@ private fun LazyItems(
 ) {
     val context = LocalContext.current
     var expandedIndex by remember { mutableIntStateOf(-1) }
-    var menuOffset by remember { mutableStateOf(Offset.Zero) }
     val subtaskList by subTaskViewModel.subTaskList.collectAsState(emptyList())
     val subtaskFilterList =
         subtaskList.filter { it.taskId == task.id }.sortedByDescending { it.taskId }.size
@@ -219,9 +221,8 @@ private fun LazyItems(
             .padding(end = 8.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onLongPress = { offset ->
+                    onLongPress = {
                         expandedIndex = index
-                        menuOffset = offset
                     },
                     onTap = {
                         val intent =
@@ -372,62 +373,238 @@ private fun LazyItems(
             }
         }
 
-        CustomDropdownMenu(
-            subTaskViewModel = subTaskViewModel,
-            task = task,
-            taskViewModel = viewModel,
-            expanded = expandedIndex == index,
-            onDismiss = { expandedIndex = it },
-            offset = menuOffset
-        )
+        if (expandedIndex == index) {
+            CustomDropdownMenu(
+                subTaskViewModel = subTaskViewModel,
+                task = task,
+                taskViewModel = viewModel,
+                onDismiss = { expandedIndex = it }
+            )
+        }
     }
 }
+
+private data class Flags(
+    val name: String,
+    val color: Int
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomDropdownMenu(
     subTaskViewModel: SubTaskViewModel,
     taskViewModel: TaskViewModel,
-    expanded: Boolean,
     onDismiss: (Int) -> Unit,
-    offset: Offset,
     task: Task
 ) {
-    val density = LocalDensity.current
-    val menuItem = listOf("Delete", "Share")
-    DropdownMenu(
-        expanded = expanded,
+    val menuItem = listOf(
+        stringResource(R.string.delete),
+        stringResource(R.string.share),
+        stringResource(R.string.change_priority)
+    )
+
+    val flagItems = listOf(
+        Flags(stringResource(R.string.priority_low), R.color.priority_low),
+        Flags(stringResource(R.string.priority_medium), R.color.priority_medium),
+        Flags(stringResource(R.string.priority_high), R.color.priority_high)
+    )
+
+    val sheetState = rememberModalBottomSheetState()
+    var priorityFlagShowPage by remember { mutableStateOf(false) }
+
+    BackHandler {
+        if (priorityFlagShowPage) priorityFlagShowPage = false
+    }
+
+    ModalBottomSheet(
         onDismissRequest = { onDismiss(-1) },
-        offset = with(density) {
-            DpOffset(x = offset.x.toDp(), y = offset.y.toDp())
-        },
-        properties = PopupProperties(focusable = true)
+        sheetState = sheetState,
+        scrimColor = Color.Transparent,
+        containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
     ) {
-        CustomDropdownMenuItem(menuItem[0]) {
-            subTaskViewModel.deleteSubTaskWithTaskId(task.id)
-            taskViewModel.deleteTask(task)
-            onDismiss(-1)
-        }
+        if (!priorityFlagShowPage) {
+            BottomSheetItems(
+                menuItem[0],
+                ImageResource.Vector(Icons.Default.Delete)
+            ) {
+                subTaskViewModel.deleteSubTaskWithTaskId(task.id)
+                taskViewModel.deleteTask(task)
+                onDismiss(-1)
+            }
 
-        CustomDropdownMenuItem(menuItem[1]) {
+            BottomSheetItems(
+                menuItem[1],
+                ImageResource.Vector(Icons.Default.Share)
+            ) {
 
+            }
+
+            BottomSheetItems(
+                menuItem[2],
+                ImageResource.Painter(R.drawable.icons_flag)
+            ) { priorityFlagShowPage = true }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                IconButton(
+                    onClick = { priorityFlagShowPage = false }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+
+                flagItems.forEach { flag ->
+                    ConstraintLayout(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 6.dp,
+                                bottom = 6.dp,
+                                start = 12.dp,
+                                end = 12.dp
+                            )
+                            .background(
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.shapes.small
+                            )
+                            .clickable {
+                                val flagIndex = when (flag.name) {
+                                    "LOW PRIORITY" -> {
+                                        0
+                                    }
+
+                                    "MEDIUM PRIORITY" -> {
+                                        1
+                                    }
+
+                                    "HIGH PRIORITY" -> {
+                                        2
+                                    }
+
+                                    else -> {
+                                        0
+                                    }
+                                }
+
+                                taskViewModel.updatePriorityFlag(flagIndex, task.id)
+                                priorityFlagShowPage = false
+                            }
+                    ) {
+                        val (iconRef, textRef) = createRefs()
+
+                        Icon(
+                            painter = painterResource(R.drawable.icons_flag),
+                            contentDescription = flag.name,
+                            tint = colorResource(flag.color),
+                            modifier = Modifier.constrainAs(iconRef) {
+                                start.linkTo(parent.start, 12.dp)
+                                top.linkTo(parent.top, 12.dp)
+                                bottom.linkTo(parent.bottom, 12.dp)
+                            }
+                        )
+
+                        Text(
+                            text = flag.name,
+                            fontWeight = FontWeight.Normal,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 14.sp,
+                            modifier = Modifier.constrainAs(textRef) {
+                                start.linkTo(iconRef.end, 12.dp)
+                                top.linkTo(iconRef.top)
+                                bottom.linkTo(iconRef.bottom)
+                                end.linkTo(parent.end, 12.dp)
+                                width = Dimension.fillToConstraints
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
+private sealed class ImageResource {
+    data class Vector(val vector: ImageVector) : ImageResource()
+    data class Painter(val drawable: Int) : ImageResource()
+}
+
 @Composable
-private fun CustomDropdownMenuItem(name: String, onClick: () -> Unit) {
-    DropdownMenuItem(
-        text = {
-            Text(
-                text = name,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 14.sp
+private fun BottomSheetItems(name: String, source: ImageResource, onClick: () -> Unit) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = 6.dp,
+                bottom = 6.dp,
+                start = 12.dp,
+                end = 12.dp
             )
-        },
-        onClick = onClick
-    )
+            .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
+            .clickable { onClick() }
+    ) {
+        val (iconRef, textRef, forwardRef) = createRefs()
+
+        when (source) {
+            is ImageResource.Vector -> {
+                Icon(
+                    imageVector = source.vector,
+                    contentDescription = name,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.constrainAs(iconRef) {
+                        start.linkTo(parent.start, 12.dp)
+                        top.linkTo(parent.top, 12.dp)
+                        bottom.linkTo(parent.bottom, 12.dp)
+                    }
+                )
+            }
+
+            is ImageResource.Painter -> {
+                Icon(
+                    painter = painterResource(source.drawable),
+                    contentDescription = name,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.constrainAs(iconRef) {
+                        start.linkTo(parent.start, 12.dp)
+                        top.linkTo(parent.top, 12.dp)
+                        bottom.linkTo(parent.bottom, 12.dp)
+                    }
+                )
+            }
+        }
+
+        Text(
+            text = name,
+            fontWeight = FontWeight.Normal,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 14.sp,
+            modifier = Modifier.constrainAs(textRef) {
+                start.linkTo(iconRef.end, 12.dp)
+                top.linkTo(iconRef.top)
+                bottom.linkTo(iconRef.bottom)
+                end.linkTo(forwardRef.start, 12.dp)
+                width = Dimension.fillToConstraints
+            }
+        )
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = name,
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.constrainAs(forwardRef) {
+                end.linkTo(parent.end, 12.dp)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            }
+        )
+    }
 }
 
 @Composable

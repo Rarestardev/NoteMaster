@@ -117,6 +117,13 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         }
     }
 
+    fun updatePriorityFlag(flag: Int, id: Int) {
+        viewModelScope.launch {
+            repository.updateFlagPriority(flag, id)
+            Log.d(Constants.APP_LOG, "Updated flag success.")
+        }
+    }
+
     var taskId by mutableIntStateOf(0)
     fun updateTaskId(id: Int) {
         taskId = id
