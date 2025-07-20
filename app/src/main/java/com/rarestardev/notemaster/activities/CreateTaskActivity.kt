@@ -5,7 +5,6 @@ import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -52,7 +51,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -114,8 +112,8 @@ class CreateTaskActivity : ComponentActivity() {
                 if (!viewModel.isPreviewTask) {
                     TaskEditorScreen(viewModel, subTaskViewModel)
                 } else {
-                    TaskPreviewScreen(viewModel, subTaskViewModel,taskId)
-                    Log.d(Constants.APP_LOG,"TaskPreviewScreen item id : $taskId")
+                    TaskPreviewScreen(viewModel, subTaskViewModel, taskId)
+                    Log.d(Constants.APP_LOG, "TaskPreviewScreen item id : $taskId")
                 }
             }
         }
@@ -137,6 +135,7 @@ private fun TaskActivityPreview() {
 @Composable
 private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     val subTaskViews = getSubTaskItems(subTaskViewModel)
+    val activity = LocalContext.current as? Activity
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -147,16 +146,20 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
 
         BackHandler {
             viewModel.updateTaskId(0)
+            activity?.finish()
         }
 
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(paddingValues),
-            state = rememberLazyListState(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = paddingValues.calculateBottomPadding()
+                ),
+            state = rememberLazyListState()
         ) {
-
             item {
                 subTaskViewModel.updateSubTaskPosition(0)
 
@@ -391,10 +394,8 @@ private fun TitleTrailingIcon(viewModel: TaskViewModel) {
 private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     var showReminderSheet by remember { mutableStateOf(false) }
     var showSubTaskSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-    val transparentColor = Color.Transparent
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         if (viewModel.taskId == 0) {
             viewModel.updateTaskId(generateUniqueTaskId(viewModel))
         }
@@ -413,68 +414,11 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
     }
 
     if (showSubTaskSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showSubTaskSheet = false },
-            sheetState = sheetState,
-            scrimColor = Color.Transparent,
-            containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+        AddSubTaskBottomSheet(
+            viewModel,
+            subTaskViewModel
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                TextField(
-                    value = subTaskViewModel.descriptionState,
-                    onValueChange = { subTaskViewModel.updateDescriptionState(it) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = {
-                        Text(
-                            text = stringResource(R.string.description),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = colorResource(R.color.text_field_label_color)
-                        )
-                    },
-                    minLines = 1,
-                    colors = TextFieldDefaults.colors().copy(
-                        unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        unfocusedIndicatorColor = transparentColor,
-                        focusedIndicatorColor = transparentColor,
-                        focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        cursorColor = MaterialTheme.colorScheme.onSecondary,
-                        focusedLeadingIconColor = transparentColor,
-                        unfocusedLeadingIconColor = transparentColor
-                    )
-                )
-
-                TextButton(
-                    onClick = {
-                        subTaskViewModel.updateSubTaskPosition(subTaskViewModel.subTaskPosition++)
-
-                        subTaskViewModel.subTaskItems.add(
-                            SubTask(
-                                subChecked = false,
-                                subTaskDescription = subTaskViewModel.descriptionState,
-                                taskId = viewModel.taskId,
-                                position = subTaskViewModel.subTaskPosition
-                            )
-                        )
-                        subTaskViewModel.updateDescriptionState("")
-                        showSubTaskSheet = false
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors()
-                        .copy(containerColor = MaterialTheme.colorScheme.onSecondary)
-                ) {
-                    Text(
-                        text = stringResource(R.string.add_subtask),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White
-                    )
-                }
-            }
+            showSubTaskSheet = it
         }
     }
 
@@ -487,6 +431,7 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
     BottomAppBar(
         modifier = Modifier
             .fillMaxWidth()
+            .height(80.dp)
             .imePadding()
             .clip(MaterialTheme.shapes.medium)
             .padding(
@@ -514,6 +459,81 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
             }
 
             BottomBarItem(R.drawable.icons_alarm_clock) { showReminderSheet = true }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddSubTaskBottomSheet(
+    taskViewModel: TaskViewModel,
+    subTaskViewModel: SubTaskViewModel,
+    onDismiss: (Boolean) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState()
+    val transparentColor = Color.Transparent
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss(false) },
+        sheetState = sheetState,
+        scrimColor = Color.Transparent,
+        containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            TextField(
+                value = subTaskViewModel.descriptionState,
+                onValueChange = { subTaskViewModel.updateDescriptionState(it) },
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text(
+                        text = stringResource(R.string.description),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = colorResource(R.color.text_field_label_color)
+                    )
+                },
+                minLines = 1,
+                colors = TextFieldDefaults.colors().copy(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    unfocusedIndicatorColor = transparentColor,
+                    focusedIndicatorColor = transparentColor,
+                    focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    cursorColor = MaterialTheme.colorScheme.onSecondary,
+                    focusedLeadingIconColor = transparentColor,
+                    unfocusedLeadingIconColor = transparentColor
+                )
+            )
+
+            TextButton(
+                onClick = {
+                    subTaskViewModel.updateSubTaskPosition(subTaskViewModel.subTaskPosition++)
+
+                    subTaskViewModel.subTaskItems.add(
+                        SubTask(
+                            subChecked = false,
+                            subTaskDescription = subTaskViewModel.descriptionState,
+                            taskId = taskViewModel.taskId,
+                            position = subTaskViewModel.subTaskPosition
+                        )
+                    )
+                    subTaskViewModel.updateDescriptionState("")
+                    onDismiss(false)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors()
+                    .copy(containerColor = MaterialTheme.colorScheme.onSecondary)
+            ) {
+                Text(
+                    text = stringResource(R.string.add_subtask),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
+            }
         }
     }
 }

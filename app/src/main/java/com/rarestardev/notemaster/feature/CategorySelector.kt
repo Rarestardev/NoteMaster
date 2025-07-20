@@ -1,6 +1,7 @@
 package com.rarestardev.notemaster.feature
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -18,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.view_model.TaskViewModel
 
@@ -27,15 +30,19 @@ fun CategorySelector(viewModel: TaskViewModel){
     val categories = stringArrayResource(id = R.array.task_categories)
     var expanded by remember { mutableStateOf(false) }
     val transparentColor = Color.Transparent
+    if (viewModel.selectedCategory.isEmpty()){ viewModel.updateCategoryList(stringArrayResource(R.array.task_categories)[0]) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
         TextField(
-            value = "( " + viewModel.selectedCategory + " )",
+            value = stringResource(R.string.category) + " ( " + viewModel.selectedCategory + " )",
             onValueChange = {},
-            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.SecondaryEditable,true),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+                .menuAnchor(MenuAnchorType.SecondaryEditable, true),
             colors = TextFieldDefaults.colors().copy(
                 unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 unfocusedIndicatorColor = transparentColor,

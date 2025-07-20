@@ -137,7 +137,7 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         priorityFlag = index
     }
 
-    var selectedCategory by mutableStateOf("Category (Personal)")
+    var selectedCategory by mutableStateOf("")
     fun updateCategoryList(newCategory: String) {
         selectedCategory = newCategory
     }
