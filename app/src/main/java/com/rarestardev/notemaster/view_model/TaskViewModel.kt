@@ -34,9 +34,9 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         private const val BROADCAST_REQ_CODE: Int = 456
     }
 
-    val taskElement : Flow<List<Task>> = repository.getAllTask().flowOn(Dispatchers.IO)
+    val taskElement: Flow<List<Task>> = repository.getAllTask().flowOn(Dispatchers.IO)
 
-    fun deleteTask(task: Task){
+    fun deleteTask(task: Task) {
         viewModelScope.launch {
             taskItemDao.delete(task)
 
@@ -47,8 +47,8 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
     fun insertTask(context: Context) {
         viewModelScope.launch {
             val currentTimeAndDate = CurrentTimeAndDate()
-
             val insertTask = Task(
+                id = taskId,
                 isComplete = false,
                 title = titleState,
                 description = descriptionState,
@@ -62,9 +62,11 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
                 time = currentTimeAndDate.currentTime()
             )
 
-            if (!checkTitleInDatabase(titleState)){
+            if (!checkIdInDatabase(taskId)) {
                 repository.insertTask(task = insertTask)
                 Log.d(Constants.APP_LOG, "Success insert task.")
+            } else {
+                updateAllTask(insertTask)
             }
 
             sendReminderReceiver(
@@ -72,6 +74,13 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
                 reminderTime,
                 reminderType
             )
+        }
+    }
+
+    fun updateAllTask(task: Task) {
+        viewModelScope.launch {
+            repository.updateAllTaskItem(task)
+            Log.d(Constants.APP_LOG, "Success update task.")
         }
     }
 
@@ -98,19 +107,20 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         }
     }
 
-    suspend fun checkTitleInDatabase(taskTitle: String): Boolean {
-        return repository.checkIsTitle(taskTitle)
+    suspend fun checkIdInDatabase(taskId: Int): Boolean {
+        return repository.checkIsId(taskId)
     }
 
-    fun updateIsTaskComplete(id: Int) {
+    fun updateIsTaskComplete(id: Int, isDone: Boolean) {
         viewModelScope.launch {
-            repository.updateIsCompleteTask(true, id)
+            repository.updateIsCompleteTask(isDone, id)
         }
     }
 
-//    suspend fun getAlarmInfo(taskId: Int): ReminderInfo? {
-//        return repository.getAlarmInfo(taskId)
-//    }
+    var taskId by mutableIntStateOf(0)
+    fun updateTaskId(id: Int) {
+        taskId = id
+    }
 
     var titleState by mutableStateOf("")
     fun updateTitleFieldValue(value: String) {
@@ -129,7 +139,7 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
 
     var selectedCategory by mutableStateOf("Category (Personal)")
     fun updateCategoryList(newCategory: String) {
-        selectedCategory = "Category ($newCategory)"
+        selectedCategory = newCategory
     }
 
     var reminderTime by mutableLongStateOf(0)
@@ -152,8 +162,30 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
         imagePath = path
     }
 
-    var isError by mutableStateOf(false)
-    fun updateIsError(why: Boolean){
-        isError = why
+    var isPreviewTask by mutableStateOf(false)
+    fun updateIsPreviewTask(b: Boolean) {
+        isPreviewTask = b
+    }
+
+    fun updateAllValueForEditing(task: Task) {
+        updateTaskId(task.id)
+        updateTitleFieldValue(task.title)
+        updateDescriptionFieldValue(task.description)
+        updatePriority(task.priorityFlag)
+        task.category?.let { updateCategoryList(it) }
+        task.reminderTime?.let { updateReminderTime(it) }
+
+        val type = when (task.reminderType) {
+            "NONE" -> ReminderType.NONE
+            "NOTIFICATION" -> ReminderType.NOTIFICATION
+            "ALARM" -> ReminderType.ALARM
+            else -> {
+                ReminderType.NONE
+            }
+        }
+        updateReminderType(type)
+        task.imagePath?.let { updateImagePath(it) }
+
+        Log.d(Constants.APP_LOG, "Update all value on task view model")
     }
 }

@@ -26,7 +26,7 @@ private fun PreviewProgressBar() {
     NoteMasterTheme {
         CircularTaskStatusBar(
             10,
-            3
+            0
         )
     }
 }
@@ -42,15 +42,6 @@ fun CircularTaskStatusBar(
     val progressBackground = colorResource(R.color.text_field_label_color)
     val progressColor = MaterialTheme.colorScheme.onSecondary
 
-    val textColor = when (progressPercent.toInt()) {
-        in 0..25 -> Color.Red
-        in 26..50 -> Color(0xFFFF3800) // orange
-        in 51..75 -> Color(0xFFFFEB3B) // yellow
-        in 76..99 -> Color(0xFF2196F3) // blue
-        100 -> Color(0xFF4CAF50) // green
-        else -> Color.Gray
-    }
-
     Box(
         contentAlignment = Alignment.Center, modifier = modifier.size(50.dp)
     ) {
@@ -64,7 +55,7 @@ fun CircularTaskStatusBar(
                 startAngle = startAngle,
                 sweepAngle = 360f,
                 useCenter = false,
-                style = Stroke(width = 30f, cap = StrokeCap.Round)
+                style = Stroke(width = 25f, cap = StrokeCap.Round)
             )
 
             drawArc(
@@ -72,14 +63,14 @@ fun CircularTaskStatusBar(
                 startAngle = startAngle,
                 sweepAngle = sweepAngle,
                 useCenter = false,
-                style = Stroke(width = 30f, cap = StrokeCap.Round)
+                style = Stroke(width = 25f, cap = StrokeCap.Round)
             )
 
         }
 
         Text(
             text = "${progressPercent.toInt()}%",
-            color = textColor,
+            color = progressColor,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp
         )

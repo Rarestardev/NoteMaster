@@ -77,6 +77,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.components.CircularTaskStatusBar
+import com.rarestardev.notemaster.components.CompleteTaskView
 import com.rarestardev.notemaster.components.HorizontalPagerView
 import com.rarestardev.notemaster.components.NoteScreen
 import com.rarestardev.notemaster.components.TaskView
@@ -246,7 +247,11 @@ fun ScaffoldContent(
 
         AdsView()
 
-        Spacer(modifier = Modifier.height(60.dp))
+        CompleteTaskView(taskViewModel,subTaskViewModel)
+
+        AdsView()
+
+        Spacer(modifier = Modifier.height(65.dp))
     }
 }
 

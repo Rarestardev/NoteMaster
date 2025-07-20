@@ -83,15 +83,59 @@ private fun TaskItemPreview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
-    val taskElement by viewModel.taskElement.collectAsState(emptyList())
+    val allTasks by viewModel.taskElement.collectAsState(emptyList())
     val lazyState = rememberLazyListState()
+    val taskElement = allTasks.filter { it.isComplete == false }
 
     Column(
         Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TitleList(taskElement)
+        TitleList(stringResource(R.string.task_bottom_bar),taskElement)
+
+        if (taskElement.isNotEmpty()) {
+            LazyRow(
+                state = lazyState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp),
+                contentPadding = PaddingValues(4.dp)
+            ) {
+                if (taskElement.isNotEmpty()) {
+                    itemsIndexed(taskElement.take(10)) { index, task ->
+                        LazyItems(index, task, subTaskViewModel, viewModel)
+                    }
+                }
+            }
+        } else {
+            Text(
+                text = "Task list is empty ...",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp)
+                    .padding(top = 50.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSecondary,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
+    val allTasks by viewModel.taskElement.collectAsState(emptyList())
+    val lazyState = rememberLazyListState()
+    val taskElement = allTasks.filter { it.isComplete == true }
+
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TitleList(stringResource(R.string.task_completed),taskElement)
 
         if (taskElement.isNotEmpty()) {
             LazyRow(
@@ -123,7 +167,7 @@ fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
 }
 
 @Composable
-private fun TitleList(taskElement: List<Task>) {
+private fun TitleList(title: String, taskElement: List<Task>) {
     val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -131,7 +175,7 @@ private fun TitleList(taskElement: List<Task>) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = stringResource(R.string.task_bottom_bar),
+            text = title,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(start = 12.dp)
@@ -166,7 +210,7 @@ private fun LazyItems(
     var menuOffset by remember { mutableStateOf(Offset.Zero) }
     val subtaskList by subTaskViewModel.subTaskList.collectAsState(emptyList())
     val subtaskFilterList =
-        subtaskList.filter { it.taskTitle == task.title }.sortedByDescending { it.taskTitle }.size
+        subtaskList.filter { it.taskId == task.id }.sortedByDescending { it.taskId }.size
 
     Box(
         modifier = Modifier
@@ -186,6 +230,7 @@ private fun LazyItems(
                                 CreateTaskActivity::class.java
                             ).apply {
                                 putExtra(Constants.STATE_TASK_ACTIVITY, true)
+                                putExtra(Constants.STATE_TASK_ID_ACTIVITY, task.id)
                             }
                         context.startActivity(intent)
                     }
@@ -359,7 +404,7 @@ private fun CustomDropdownMenu(
         properties = PopupProperties(focusable = true)
     ) {
         CustomDropdownMenuItem(menuItem[0]) {
-            subTaskViewModel.deleteSubTaskWithTaskId(task.title)
+            subTaskViewModel.deleteSubTaskWithTaskId(task.id)
             taskViewModel.deleteTask(task)
             onDismiss(-1)
         }

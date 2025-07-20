@@ -14,7 +14,7 @@ class TaskItemRepository(
 
     suspend fun updateIsCompleteTask(isComplete: Boolean,id: Int) = dao.updateIsCompleteTask(isComplete,id)
 
-    suspend fun checkIsTitle(taskTitle : String) : Boolean = dao.checkIsTitle(taskTitle) == true
+    suspend fun checkIsId(taskId : Int) : Boolean = dao.checkIsId(taskId)
 
-//    suspend fun getAlarmInfo(taskId: Int) = dao.getAlarmInfo(taskId)
+    suspend fun updateAllTaskItem(task: Task) = dao.updateAllTaskItem(task)
 }

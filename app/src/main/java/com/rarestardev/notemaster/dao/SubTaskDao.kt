@@ -20,8 +20,8 @@ interface SubTaskDao {
     @Delete
     suspend fun deleteSubTask(subTask: SubTask)
 
-    @Query("DELETE FROM sub_tasks WHERE taskTitle = :taskId")
-    suspend fun deleteSubTaskWithTaskId(taskId: String)
+    @Query("DELETE FROM sub_tasks WHERE taskId = :taskId")
+    suspend fun deleteSubTaskWithTaskId(taskId: Int)
 
     @Query("UPDATE sub_tasks SET subChecked = :isCheck WHERE subTaskId = :subTaskId")
     suspend fun updateSubTaskCompleted(isCheck: Boolean, subTaskId: Int)

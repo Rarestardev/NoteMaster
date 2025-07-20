@@ -33,7 +33,7 @@ fun CategorySelector(viewModel: TaskViewModel){
         onExpandedChange = { expanded = !expanded },
     ) {
         TextField(
-            value = viewModel.selectedCategory,
+            value = "( " + viewModel.selectedCategory + " )",
             onValueChange = {},
             modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.SecondaryEditable,true),
             colors = TextFieldDefaults.colors().copy(

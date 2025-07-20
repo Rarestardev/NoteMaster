@@ -76,7 +76,7 @@ fun previewFakeTaskViewModel() : TaskViewModel{
             TODO("Not yet implemented")
         }
 
-        override suspend fun checkIsTitle(taskTitle: String): Boolean {
+        override suspend fun checkIsId(taskId: Int): Boolean {
             TODO("Not yet implemented")
         }
     }
@@ -86,11 +86,7 @@ fun previewFakeTaskViewModel() : TaskViewModel{
 
 fun previewSubTaskViewModel() : SubTaskViewModel{
     val fakeDao = object : SubTaskDao {
-        override suspend fun getAllSubTaskWithTaskName(taskId: String): List<SubTask> {
-            TODO("Not yet implemented")
-        }
-
-        override suspend fun getAllSubTask(): List<SubTask> {
+        override fun getAllSubTask(): Flow<List<SubTask>> {
             TODO("Not yet implemented")
         }
 
@@ -99,6 +95,10 @@ fun previewSubTaskViewModel() : SubTaskViewModel{
         }
 
         override suspend fun deleteSubTask(subTask: SubTask) {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteSubTaskWithTaskId(taskId: Int) {
             TODO("Not yet implemented")
         }
 

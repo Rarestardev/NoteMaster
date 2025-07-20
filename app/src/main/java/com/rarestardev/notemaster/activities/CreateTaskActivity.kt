@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -46,8 +48,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +75,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.components.TaskPreviewScreen
 import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.factory.SubTaskViewModelFactory
 import com.rarestardev.notemaster.factory.TaskViewModelFactory
@@ -78,11 +84,13 @@ import com.rarestardev.notemaster.feature.ReminderBottomSheet
 import com.rarestardev.notemaster.feature.ResizableImageItem
 import com.rarestardev.notemaster.model.SubTask
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
+import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
 import com.rarestardev.notemaster.utilities.previewSubTaskViewModel
 import com.rarestardev.notemaster.view_model.SubTaskViewModel
 import com.rarestardev.notemaster.view_model.TaskViewModel
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class CreateTaskActivity : ComponentActivity() {
 
@@ -97,9 +105,18 @@ class CreateTaskActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        viewModel.updateIsPreviewTask(intent.getBooleanExtra(Constants.STATE_TASK_ACTIVITY, false))
+        val taskId = intent.getIntExtra(Constants.STATE_TASK_ID_ACTIVITY, 0)
+
         setContent {
             NoteMasterTheme {
-                TaskEditorScreen(viewModel, subTaskViewModel)
+                if (!viewModel.isPreviewTask) {
+                    TaskEditorScreen(viewModel, subTaskViewModel)
+                } else {
+                    TaskPreviewScreen(viewModel, subTaskViewModel,taskId)
+                    Log.d(Constants.APP_LOG,"TaskPreviewScreen item id : $taskId")
+                }
             }
         }
     }
@@ -127,7 +144,12 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
         topBar = { TopAppBarView(viewModel, subTaskViewModel) },
         bottomBar = { BottomAppBarView(viewModel, subTaskViewModel) }
     ) { paddingValues ->
-        LazyColumn (
+
+        BackHandler {
+            viewModel.updateTaskId(0)
+        }
+
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
@@ -135,7 +157,7 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            item{
+            item {
                 subTaskViewModel.updateSubTaskPosition(0)
 
                 TitleLabelTextField(viewModel = viewModel)
@@ -173,15 +195,17 @@ private fun getSubTaskItems(subTaskViewModel: SubTaskViewModel): List<@Composabl
                     )
             ) {
                 val (checkBoxRef, textFieldRef, deleteRef) = createRefs()
-                Checkbox(
-                    checked = false,
-                    onCheckedChange = {},
-                    modifier = Modifier.constrainAs(checkBoxRef) {
-                        start.linkTo(parent.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }
-                )
+                subTask.subChecked?.let {
+                    Checkbox(
+                        checked = it,
+                        onCheckedChange = {},
+                        modifier = Modifier.constrainAs(checkBoxRef) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
+                    )
+                }
 
                 TextField(
                     value = subTask.subTaskDescription,
@@ -189,7 +213,8 @@ private fun getSubTaskItems(subTaskViewModel: SubTaskViewModel): List<@Composabl
                         subTaskViewModel.updateDescriptionState(it)
 
                         if (subTask.subTaskDescription != it) {
-                            subTaskViewModel.subTaskItems[index] = subTask.copy(subTaskDescription = it)
+                            subTaskViewModel.subTaskItems[index] =
+                                subTask.copy(subTaskDescription = it)
                         }
                     },
                     modifier = Modifier
@@ -276,14 +301,6 @@ private fun TitleLabelTextField(viewModel: TaskViewModel) {
                 style = MaterialTheme.typography.labelMedium,
                 color = colorResource(R.color.text_field_label_color)
             )
-        },
-        isError = viewModel.isError,
-        supportingText = {
-            if (viewModel.isError) {
-                Text(
-                    text = "Title is repeating!"
-                )
-            }
         },
         trailingIcon = { TitleTrailingIcon(viewModel) },
         colors = TextFieldDefaults.colors().copy(
@@ -374,10 +391,14 @@ private fun TitleTrailingIcon(viewModel: TaskViewModel) {
 private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     var showReminderSheet by remember { mutableStateOf(false) }
     var showSubTaskSheet by remember { mutableStateOf(false) }
-
     val sheetState = rememberModalBottomSheetState()
     val transparentColor = Color.Transparent
-    val context = LocalContext.current
+
+    LaunchedEffect(Unit){
+        if (viewModel.taskId == 0) {
+            viewModel.updateTaskId(generateUniqueTaskId(viewModel))
+        }
+    }
 
     if (showReminderSheet) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -431,26 +452,17 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
                 TextButton(
                     onClick = {
                         subTaskViewModel.updateSubTaskPosition(subTaskViewModel.subTaskPosition++)
-                        if (viewModel.titleState.isNotEmpty() && !viewModel.isError) {
-                            subTaskViewModel.subTaskItems.add(
-                                SubTask(
-                                    subChecked = false,
-                                    subTaskDescription = subTaskViewModel.descriptionState,
-                                    taskTitle = viewModel.titleState,
-                                    position = subTaskViewModel.subTaskPosition
-                                )
-                            )
-                            subTaskViewModel.updateDescriptionState("")
-                            showSubTaskSheet = false
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "Please fill the title field!",
-                                Toast.LENGTH_LONG
-                            ).show()
 
-                            showSubTaskSheet = false
-                        }
+                        subTaskViewModel.subTaskItems.add(
+                            SubTask(
+                                subChecked = false,
+                                subTaskDescription = subTaskViewModel.descriptionState,
+                                taskId = viewModel.taskId,
+                                position = subTaskViewModel.subTaskPosition
+                            )
+                        )
+                        subTaskViewModel.updateDescriptionState("")
+                        showSubTaskSheet = false
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors()
@@ -506,6 +518,14 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
     }
 }
 
+private suspend fun generateUniqueTaskId(taskViewModel: TaskViewModel): Int {
+    var newId: Int
+    do {
+        newId = Random.nextInt()
+    } while (taskViewModel.checkIdInDatabase(newId))
+    return newId
+}
+
 @Composable
 private fun BottomBarItem(
     icon: Int,
@@ -540,6 +560,9 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
                 )
             }
         },
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        ),
         actions = {
             Button(
                 onClick = {

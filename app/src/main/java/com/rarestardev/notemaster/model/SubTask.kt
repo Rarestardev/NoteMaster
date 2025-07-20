@@ -8,6 +8,6 @@ data class SubTask(
     @PrimaryKey(autoGenerate = true) val subTaskId: Int = 0,
     val subChecked : Boolean? = null,
     val subTaskDescription : String,
-    val taskTitle : String,
+    val taskId : Int,
     val position: Int
 )

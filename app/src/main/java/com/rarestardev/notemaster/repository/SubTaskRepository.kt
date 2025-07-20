@@ -2,7 +2,6 @@ package com.rarestardev.notemaster.repository
 
 import com.rarestardev.notemaster.dao.SubTaskDao
 import com.rarestardev.notemaster.model.SubTask
-import kotlinx.coroutines.flow.Flow
 
 class SubTaskRepository(private val subTaskDao: SubTaskDao) {
 
@@ -12,7 +11,7 @@ class SubTaskRepository(private val subTaskDao: SubTaskDao) {
 
     suspend fun deleteSubTask(subTask: SubTask) = subTaskDao.deleteSubTask(subTask)
 
-    suspend fun deleteSubTaskWithTaskId(taskTitle: String) = subTaskDao.deleteSubTaskWithTaskId(taskTitle)
+    suspend fun deleteSubTaskWithTaskId(taskId: Int) = subTaskDao.deleteSubTaskWithTaskId(taskId)
 
     suspend fun updateSubTaskCompleted(check: Boolean,id : Int) = subTaskDao.updateSubTaskCompleted(check,id)
 }

@@ -62,4 +62,11 @@
     <string name="title_activity_user_performance">UserPerformanceActivity</string>
     <string name="completed">Completed</string>
     <string name="in_progress">In Progress</string>
+    <string name="priority">Priority</string>
+    <string name="category">Category</string>
+    <string name="reminder">Reminder</string>
+    <string name="done">Done</string>
+    <string name="good_job">Good job!</string>
+    <string name="rebuild">Rebuild</string>
+    <string name="task_completed">Task Compeleted</string>
 </resources>

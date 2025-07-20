@@ -27,9 +27,6 @@ interface TaskItemDao {
     @Query("UPDATE task_items SET isComplete = :isComplete WHERE id = :id")
     suspend fun updateIsCompleteTask(isComplete: Boolean,id: Int)
 
-    @Query("SELECT title FROM task_items WHERE title = :taskTitle LIMIT 1")
-    suspend fun checkIsTitle(taskTitle: String) : Boolean? = false
-
-//    @Query("SELECT reminderTime,reminderType FROM task_items WHERE id = :taskId")
-//    suspend fun getAlarmInfo(taskId: Int): ReminderInfo
+    @Query("SELECT EXISTS (SELECT 1 FROM task_items WHERE id =:taskId)")
+    suspend fun checkIsId(taskId: Int):  Boolean
 }

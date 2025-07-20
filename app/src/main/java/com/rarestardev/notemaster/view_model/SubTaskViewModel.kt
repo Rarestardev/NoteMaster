@@ -32,9 +32,9 @@ class SubTaskViewModel(private val subTaskDao: SubTaskDao) : ViewModel() {
         }
     }
 
-    fun deleteSubTaskWithTaskId(taskTitle: String){
+    fun deleteSubTaskWithTaskId(taskId: Int){
         viewModelScope.launch {
-            repository.deleteSubTaskWithTaskId(taskTitle)
+            repository.deleteSubTaskWithTaskId(taskId)
 
             Log.d(Constants.APP_LOG, "deleteSubTaskWithTaskId")
         }
@@ -67,8 +67,8 @@ class SubTaskViewModel(private val subTaskDao: SubTaskDao) : ViewModel() {
         subTaskPosition = position
     }
 
-    var taskTitle by mutableStateOf("")
-    fun updateTaskId(text: String) {
-        taskTitle = text
+    var taskId by mutableIntStateOf(0)
+    fun updateTaskId(id: Int) {
+        taskId = id
     }
 }

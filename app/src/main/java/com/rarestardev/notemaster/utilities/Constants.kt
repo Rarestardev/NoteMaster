@@ -6,7 +6,9 @@ class Constants {
         const val APP_LOG : String =  "NoteMasterLogs"
 
         const val STATE_NOTE_ACTIVITY = "IS_PREVIEW"
+
         const val STATE_TASK_ACTIVITY = "IS_PREVIEW"
+        const val STATE_TASK_ID_ACTIVITY = "TASK_ID"
 
 
         const val ALARM_TIME = "alarmTime"
