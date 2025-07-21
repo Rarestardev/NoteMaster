@@ -76,8 +76,10 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.components.CategoryListView
 import com.rarestardev.notemaster.components.CircularTaskStatusBar
 import com.rarestardev.notemaster.components.CompleteTaskView
+import com.rarestardev.notemaster.components.DailyTaskProgress
 import com.rarestardev.notemaster.components.HorizontalPagerView
 import com.rarestardev.notemaster.components.NoteScreen
 import com.rarestardev.notemaster.components.TaskView
@@ -104,7 +106,7 @@ class MainActivity : ComponentActivity() {
         TaskViewModelFactory(NoteDatabase.getInstance(this).taskItemDao())
     }
 
-    private val subTaskViewModel : SubTaskViewModel by viewModels {
+    private val subTaskViewModel: SubTaskViewModel by viewModels {
         SubTaskViewModelFactory(NoteDatabase.getInstance(this).subTaskDao())
     }
 
@@ -113,7 +115,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NoteMasterTheme {
-                HomeScreen(viewModel, taskViewModel,subTaskViewModel)
+                HomeScreen(viewModel, taskViewModel, subTaskViewModel)
             }
         }
     }
@@ -176,15 +178,17 @@ private fun HomeScreen(
                         contentPadding = PaddingValues(vertical = 6.dp)
                     ) {
                         itemsIndexed(items) { index, miniFab ->
-                            ExpandedFabItems(miniFab){ b ->
+                            ExpandedFabItems(miniFab) { b ->
                                 if (index == 0) {
-                                    val createNoteIntent = Intent(mContext, CreateNoteActivity::class.java)
+                                    val createNoteIntent =
+                                        Intent(mContext, CreateNoteActivity::class.java)
                                     createNoteIntent.putExtra(Constants.STATE_NOTE_ACTIVITY, false)
                                     createNoteIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     mContext.startActivity(createNoteIntent)
                                     expanded = b
                                 } else if (index == 1) {
-                                    val createTaskIntent = Intent(mContext, CreateTaskActivity::class.java)
+                                    val createTaskIntent =
+                                        Intent(mContext, CreateTaskActivity::class.java)
                                     createTaskIntent.putExtra(Constants.STATE_TASK_ACTIVITY, false)
                                     createTaskIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     mContext.startActivity(createTaskIntent)
@@ -214,7 +218,7 @@ private fun HomeScreen(
         floatingActionButtonPosition = FabPosition.End
     ) { paddingValues ->
 
-        ScaffoldContent(paddingValues, viewModel, taskViewModel,subTaskViewModel)
+        ScaffoldContent(paddingValues, viewModel, taskViewModel, subTaskViewModel)
     }
 }
 
@@ -239,7 +243,7 @@ fun ScaffoldContent(
 
         AdsView()
 
-        TaskView(taskViewModel,subTaskViewModel)
+        TaskView(taskViewModel, subTaskViewModel)
 
         AdsView()
 
@@ -247,7 +251,11 @@ fun ScaffoldContent(
 
         AdsView()
 
-        CompleteTaskView(taskViewModel,subTaskViewModel)
+        CompleteTaskView(taskViewModel, subTaskViewModel)
+
+        AdsView()
+
+        CategoryListView()
 
         AdsView()
 
@@ -273,7 +281,7 @@ private fun TopTaskProgress(
                 top = 12.dp
             )
     ) {
-        val (highPriorityLayoutRef, inProgressRef, allNoteRef,tRef) = createRefs()
+        val (highPriorityLayoutRef, inProgressRef, allNoteRef, dailyTaskRef) = createRefs()
 
         HorizontalPagerView(
             modifier = Modifier
@@ -321,9 +329,9 @@ private fun TopTaskProgress(
                 .fillMaxWidth()
                 .constrainAs(allNoteRef) {
                     end.linkTo(parent.end)
-                    top.linkTo(inProgressRef.bottom,12.dp)
+                    top.linkTo(inProgressRef.bottom, 12.dp)
                     start.linkTo(highPriorityLayoutRef.end, 12.dp)
-                    bottom.linkTo(tRef.top,12.dp)
+                    bottom.linkTo(dailyTaskRef.top, 12.dp)
                     width = Dimension.fillToConstraints
                     height = Dimension.fillToConstraints
                 },
@@ -346,41 +354,21 @@ private fun TopTaskProgress(
             )
         }
 
-        Row(
+        DailyTaskProgress(
             modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.onSecondaryContainer,
-                    MaterialTheme.shapes.small
-                )
                 .clickable {
-                    context.startActivity(Intent(context, ShowAllNotesActivity::class.java))
+                    context.startActivity(Intent(context, CalenderActivity::class.java))
                 }
                 .height(50.dp)
                 .fillMaxWidth()
-                .constrainAs(tRef) {
+                .constrainAs(dailyTaskRef) {
                     end.linkTo(parent.end)
                     start.linkTo(highPriorityLayoutRef.end, 12.dp)
                     bottom.linkTo(parent.bottom)
                     width = Dimension.fillToConstraints
                 },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Absolute.SpaceEvenly
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.icon_note),
-                contentDescription = stringResource(R.string.note),
-                tint = MaterialTheme.colorScheme.onSecondary
-            )
-
-            Text(
-                text = "All notes : ( ${notes.size} )",
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSecondary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif
-            )
-        }
+            taskViewModel = taskViewModel
+        )
     }
 }
 
@@ -390,7 +378,7 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
     ConstraintLayout(
         modifier = modifier.padding(12.dp)
     ) {
-        val (progressRef, descLayoutRef,inProgressLayoutRef) = createRefs()
+        val (progressRef, descLayoutRef, inProgressLayoutRef) = createRefs()
         val completeTask = taskElement.filter { it.isComplete == true }
             .sortedByDescending { it.isComplete }.size
         val totalTaskListSize = taskElement.size
@@ -461,7 +449,7 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                 .padding(4.dp)
                 .constrainAs(inProgressLayoutRef) {
                     end.linkTo(parent.end)
-                    top.linkTo(descLayoutRef.bottom,6.dp)
+                    top.linkTo(descLayoutRef.bottom, 6.dp)
                     start.linkTo(progressRef.end, 12.dp)
                     width = Dimension.fillToConstraints
                     height = Dimension.wrapContent
@@ -599,7 +587,7 @@ data class MiniFabItems(
 )
 
 @Composable
-private fun ExpandedFabItems(miniFab: MiniFabItems,onClick: (Boolean) -> Unit) {
+private fun ExpandedFabItems(miniFab: MiniFabItems, onClick: (Boolean) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,

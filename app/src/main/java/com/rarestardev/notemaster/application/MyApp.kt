@@ -2,6 +2,7 @@ package com.rarestardev.notemaster.application
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.rarestardev.notemaster.settings.ThemePreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +12,7 @@ class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AndroidThreeTen.init(this)
 
         val themePreferences = ThemePreferences(this)
 

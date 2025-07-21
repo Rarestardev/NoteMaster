@@ -72,4 +72,7 @@
     <string name="task_completed">Task Compeleted</string>
     <string name="share">Share</string>
     <string name="change_priority">Change Priority</string>
+    <string name="title_activity_show_all_category">ShowAllCategoryActivity</string>
+    <string name="title_activity_calender">CalenderActivity</string>
+    <string name="calender">Calender</string>
 </resources>

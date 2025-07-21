@@ -7,7 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -201,6 +200,7 @@ private fun TitleList(title: String, taskElement: List<Task>) {
     Spacer(Modifier.height(6.dp))
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyItems(
     index: Int,
@@ -219,24 +219,22 @@ private fun LazyItems(
             .fillMaxHeight()
             .width(240.dp)
             .padding(end = 8.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = {
-                        expandedIndex = index
-                    },
-                    onTap = {
-                        val intent =
-                            Intent(
-                                context,
-                                CreateTaskActivity::class.java
-                            ).apply {
-                                putExtra(Constants.STATE_TASK_ACTIVITY, true)
-                                putExtra(Constants.STATE_TASK_ID_ACTIVITY, task.id)
-                            }
-                        context.startActivity(intent)
-                    }
-                )
-            }
+            .combinedClickable(
+                onClick = {
+                    val intent =
+                        Intent(
+                            context,
+                            CreateTaskActivity::class.java
+                        ).apply {
+                            putExtra(Constants.STATE_TASK_ACTIVITY, true)
+                            putExtra(Constants.STATE_TASK_ID_ACTIVITY, task.id)
+                        }
+                    context.startActivity(intent)
+                },
+                onLongClick = {
+                    expandedIndex = index
+                }
+            )
             .background(
                 MaterialTheme.colorScheme.onSecondaryContainer,
                 MaterialTheme.shapes.small

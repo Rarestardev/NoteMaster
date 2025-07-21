@@ -1,0 +1,463 @@
+package com.rarestardev.notemaster.activities
+
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.database.NoteDatabase
+import com.rarestardev.notemaster.enums.CalenderType
+import com.rarestardev.notemaster.enums.ReminderType
+import com.rarestardev.notemaster.factory.CalendarViewModelFactory
+import com.rarestardev.notemaster.factory.TaskViewModelFactory
+import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
+import com.rarestardev.notemaster.view_model.CalenderViewModel
+import com.rarestardev.notemaster.view_model.TaskViewModel
+import org.threeten.bp.LocalDate
+import org.threeten.bp.YearMonth
+import saman.zamani.persiandate.PersianDate
+import saman.zamani.persiandate.PersianDateFormat
+import saman.zamani.persiandate.PersianDateFormat.PersianDateNumberCharacter
+import java.util.Calendar
+import java.util.Locale
+
+class CalenderActivity : ComponentActivity() {
+
+    private val calenderViewModel: CalenderViewModel by viewModels {
+        CalendarViewModelFactory(applicationContext)
+    }
+
+    private val taskViewModel: TaskViewModel by viewModels {
+        TaskViewModelFactory(NoteDatabase.getInstance(this).taskItemDao())
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            NoteMasterTheme {
+                CalenderScreen(calenderViewModel,taskViewModel)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+private fun CalenderScreen(viewModel: CalenderViewModel, taskViewModel: TaskViewModel) {
+    val calenderType by viewModel.calenderType.collectAsState()
+    val activity = LocalContext.current as? Activity
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.calender),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors().copy(
+                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ),
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            activity?.finish()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back_activity_desc)
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(
+                    top = paddingValues.calculateTopPadding() + 12.dp,
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 12.dp
+                )
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Calender Type :", Modifier.padding(end = 8.dp))
+
+                Switch(
+                    checked = calenderType == CalenderType.PERSIAN,
+                    onCheckedChange = { viewModel.toggleType(context) }
+                )
+
+                Spacer(Modifier.width(8.dp))
+                Text(text = if (calenderType == CalenderType.PERSIAN) "Persian" else "Gregorian")
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            when (calenderType) {
+                CalenderType.GREGORIAN -> GregorianCalendarScreen(taskViewModel)
+                CalenderType.PERSIAN -> PersianCalendarScreen(taskViewModel)
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
+    var selectedDay by remember { mutableIntStateOf(-1) }
+    var millis by remember { mutableLongStateOf(0L) }
+
+    var currentDate by remember { mutableStateOf(LocalDate.now()) }
+    val monthText = currentDate.month.getDisplayName(
+        org.threeten.bp.format.TextStyle.FULL_STANDALONE,
+        Locale.getDefault()
+    )
+    val yearMonth = YearMonth.of(currentDate.year, currentDate.month)
+    val firstDayOfWeek = (yearMonth.atDay(1).dayOfWeek.value % 7)
+    val daysInMonth = yearMonth.lengthOfMonth()
+
+    Column(
+        Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
+        // Header with navigation
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            IconButton(onClick = { currentDate = currentDate.minusMonths(1) }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_back_ios_24),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+            Text(
+                "$monthText ${currentDate.year}",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSecondary
+            )
+            IconButton(onClick = { currentDate = currentDate.plusMonths(1) }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_forward_ios_24),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        MyDivider()
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            listOf("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa").forEach {
+                Text(it, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val today = LocalDate.now()
+
+        LazyVerticalGrid(columns = GridCells.Fixed(7), content = {
+            items(firstDayOfWeek) {
+                Box(modifier = Modifier.size(40.dp))
+            }
+            items(daysInMonth) { dayIndex ->
+                val dayNumber = dayIndex + 1
+                val isToday =
+                    currentDate.year == today.year &&
+                            currentDate.month == today.month &&
+                            dayNumber == today.dayOfMonth
+
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(2.dp)
+                        .clickable{
+                            selectedDay = dayNumber
+                            val clickedDate = LocalDate.of(currentDate.year, currentDate.monthValue, dayNumber)
+                            millis = clickedDate.atStartOfDay(org.threeten.bp.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        }
+                        .then(
+                            if (isToday)
+                                Modifier
+                                    .border(
+                                        0.4.dp,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                        CircleShape
+                                    )
+                                    .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
+                            else Modifier
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "$dayNumber",
+                        style = if (isToday) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        else MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+
+                    if (isToday) {
+                        selectedDay = dayNumber
+                        val clickedDate = LocalDate.of(currentDate.year, currentDate.monthValue, dayNumber)
+                        millis = clickedDate.atStartOfDay(org.threeten.bp.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    }
+                }
+            }
+        })
+
+        Spacer(Modifier.height(12.dp))
+
+        MyDivider()
+
+        Spacer(Modifier.height(12.dp))
+
+        TaskItemInCalender(taskViewModel,millis)
+    }
+}
+
+@Composable
+private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
+    var selectedMonth by remember { mutableIntStateOf(PersianDate().shMonth) }
+    var selectedYear by remember { mutableIntStateOf(PersianDate().shYear) }
+    var selectedDay by remember { mutableIntStateOf(-1) }
+    var millis by remember { mutableLongStateOf(0L) }
+
+    val date = PersianDate().setShYear(selectedYear).setShMonth(selectedMonth)
+    val monthName = PersianDateFormat("F", PersianDateNumberCharacter.FARSI).format(date)
+    val firstDay = date.setShDay(1).dayOfWeek()
+    val monthLength = date.monthLength
+    val cal = Calendar.getInstance()
+    val pDate = PersianDate()
+
+    Column(
+        Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            IconButton(onClick = {
+                if (selectedMonth == 1) {
+                    selectedMonth = 12; selectedYear--
+                } else selectedMonth--
+            }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_back_ios_24),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+
+            Text(
+                "$monthName - $selectedYear",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSecondary
+            )
+
+            IconButton(onClick = {
+                if (selectedMonth == 12) {
+                    selectedMonth = 1; selectedYear++
+                } else selectedMonth++
+            }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_forward_ios_24),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        MyDivider()
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            listOf("ش", "ی", "د", "س", "چ", "پ", "ج").forEach {
+                Text(it, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val dayOffset = (firstDay + 1) % 7
+
+        val today = remember { PersianDate() }
+        val isCurrentMonth = selectedMonth == today.shMonth && selectedYear == today.shYear
+        val todayDay = today.shDay
+
+        LazyVerticalGrid(columns = GridCells.Fixed(7), content = {
+            items(dayOffset) {
+                Box(modifier = Modifier.size(40.dp))
+            }
+
+            items(monthLength) { day ->
+                val dayNumber = day + 1
+                val isToday = isCurrentMonth && todayDay == dayNumber
+
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(2.dp)
+                        .clickable{
+                            selectedDay = dayNumber
+                            val gYear = pDate.grgYear
+                            val gMonth = pDate.grgMonth
+                            val gDay = pDate.grgDay
+                            cal.set(gYear, gMonth - 1, gDay, 0, 0, 0)
+                            millis = cal.timeInMillis
+                        }
+                        .then(
+                            if (isToday)
+                                Modifier
+                                    .border(
+                                        0.4.dp,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                        CircleShape
+                                    )
+                                    .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
+                            else Modifier
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "$dayNumber",
+                        style = if (isToday) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        else MaterialTheme.typography.bodyMedium
+                    )
+
+                    if (isToday) {
+                        selectedDay = dayNumber
+                        val gYear = pDate.grgYear
+                        val gMonth = pDate.grgMonth
+                        val gDay = pDate.grgDay
+                        cal.set(gYear, gMonth - 1, gDay, 0, 0, 0)
+                        millis = cal.timeInMillis
+                    }
+                }
+            }
+        })
+
+        Spacer(Modifier.height(12.dp))
+
+        MyDivider()
+
+        Spacer(Modifier.height(12.dp))
+
+        TaskItemInCalender(taskViewModel,millis)
+    }
+}
+
+@Composable
+private fun MyDivider() {
+    HorizontalDivider(
+        modifier = Modifier.fillMaxWidth(),
+        thickness = 0.4.dp,
+        color = MaterialTheme.colorScheme.onSecondary
+    )
+}
+
+@Composable
+private fun TaskItemInCalender(taskViewModel: TaskViewModel, today: Long) {
+    val allTask by taskViewModel.taskElement.collectAsState(emptyList())
+    val di = extractGregorianDateFromMillis(today)
+    val filterTask = allTask
+        .filter { it.reminderType != ReminderType.NONE.name }
+        .filter { extractGregorianDateFromMillis(it.reminderTime) == di }
+        .sortedByDescending { it.id }
+
+    if (allTask.isNotEmpty()) {
+        filterTask.forEach {
+            Text(text = it.title)
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "There is nothing today",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSecondary
+            )
+        }
+    }
+}
+
+fun extractGregorianDateFromMillis(millis: Long?): String {
+    val instant = org.threeten.bp.Instant.ofEpochMilli(millis!!)
+    val localDate = org.threeten.bp.LocalDateTime.ofInstant(instant, org.threeten.bp.ZoneId.systemDefault())
+    val formatter = org.threeten.bp.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return formatter.format(localDate)
+}

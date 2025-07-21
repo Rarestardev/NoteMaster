@@ -60,14 +60,12 @@ import com.rarestardev.notemaster.enums.ReminderType
 import com.rarestardev.notemaster.feature.ResizableImageItem
 import com.rarestardev.notemaster.model.Task
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
+import com.rarestardev.notemaster.utilities.CurrentTimeAndDate
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
 import com.rarestardev.notemaster.utilities.previewSubTaskViewModel
 import com.rarestardev.notemaster.view_model.SubTaskViewModel
 import com.rarestardev.notemaster.view_model.TaskViewModel
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 
 @Preview
@@ -150,25 +148,27 @@ fun TaskPreviewScreen(
                 ),
 
                 actions = {
-                    TextButton(
-                        onClick = {
-                            viewModel.updateIsPreviewTask(false)
-                            filterTaskWithId.forEach { task ->
-                                viewModel.updateAllValueForEditing(task)
-                                subTaskViewModel.subTaskItems.clear()
-                                val filterSubTaskWithTitle =
-                                    allSubTask.filter { it.taskId == task.id }
-                                filterSubTaskWithTitle.forEach {
-                                    subTaskViewModel.subTaskItems.add(it)
+                    if (!isDoneTask){
+                        TextButton(
+                            onClick = {
+                                viewModel.updateIsPreviewTask(false)
+                                filterTaskWithId.forEach { task ->
+                                    viewModel.updateAllValueForEditing(task)
+                                    subTaskViewModel.subTaskItems.clear()
+                                    val filterSubTaskWithTitle =
+                                        allSubTask.filter { it.taskId == task.id }
+                                    filterSubTaskWithTitle.forEach {
+                                        subTaskViewModel.subTaskItems.add(it)
+                                    }
                                 }
                             }
+                        ) {
+                            Text(
+                                text = stringResource(R.string.edit_note),
+                                color = MaterialTheme.colorScheme.onSecondary,
+                                style = MaterialTheme.typography.titleMedium
+                            )
                         }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.edit_note),
-                            color = MaterialTheme.colorScheme.onSecondary,
-                            style = MaterialTheme.typography.titleMedium
-                        )
                     }
                 }
             )
@@ -335,6 +335,7 @@ private fun DescriptionView(description: String) {
 
 @Composable
 private fun ReminderInfoView(task: Task) {
+    val currentTimeAndDate = CurrentTimeAndDate()
     if (task.reminderType != ReminderType.NONE.name) {
         Row(
             modifier = Modifier
@@ -356,7 +357,7 @@ private fun ReminderInfoView(task: Task) {
             )
 
             Text(
-                text = alarmTimeToText(task.reminderTime),
+                text = currentTimeAndDate.alarmTimeToText(task.reminderTime),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSecondary,
                 fontWeight = FontWeight.Bold
@@ -475,12 +476,4 @@ private fun BackActivityIcon() {
             tint = MaterialTheme.colorScheme.onPrimary
         )
     }
-}
-
-
-private fun alarmTimeToText(alarmTimeMillis: Long?): String {
-    return alarmTimeMillis?.let {
-        val formatter = SimpleDateFormat("yyyy:MM:dd - HH:mm", Locale.getDefault())
-        formatter.format(Date(it))
-    } ?: "NONE"
 }
