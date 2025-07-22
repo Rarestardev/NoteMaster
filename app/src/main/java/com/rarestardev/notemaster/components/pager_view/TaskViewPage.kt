@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rarestardev.notemaster.activities.ShowAllTasksActivity
+import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.view_model.TaskViewModel
 
 @Composable
@@ -40,7 +41,10 @@ fun TaskViewPager(taskViewModel: TaskViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .clickable {
-                context.startActivity(Intent(context, ShowAllTasksActivity::class.java))
+                val intent = Intent(context, ShowAllTasksActivity::class.java).apply {
+                    putExtra(Constants.STATE_TASK_PRIORITY_ACTIVITY, true)
+                }
+                context.startActivity(intent)
             },
         state = rememberLazyListState()
     ) {

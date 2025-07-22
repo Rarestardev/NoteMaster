@@ -40,8 +40,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -303,9 +303,6 @@ private fun TopTaskProgress(
                     MaterialTheme.colorScheme.onSecondaryContainer,
                     MaterialTheme.shapes.small
                 )
-                .clickable {
-                    context.startActivity(Intent(context, UserPerformanceActivity::class.java))
-                }
                 .fillMaxWidth()
                 .constrainAs(inProgressRef) {
                     end.linkTo(parent.end)
@@ -325,7 +322,7 @@ private fun TopTaskProgress(
                 )
                 .clickable {
                     val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
-                        putExtra(Constants.STATE_NOTE_ACTIVITY,false)
+                        putExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY, false)
                     }
                     context.startActivity(intent)
                 }
@@ -514,9 +511,7 @@ private fun AdsView() {
 @Composable
 private fun MyTopAppBar() {
     var searchBottomSheetState by remember { mutableStateOf(false) }
-    var showDropMenu by remember { mutableStateOf(false) }
-
-    if (showDropMenu) DropMenu { dismiss -> showDropMenu = false }
+    val context = LocalContext.current
 
     if (searchBottomSheetState) SearchModalSheetDialog { dismiss ->
         searchBottomSheetState = dismiss
@@ -548,24 +543,19 @@ private fun MyTopAppBar() {
             }
 
             IconButton(
-                onClick = { showDropMenu = true },
+                onClick = {
+                    context.startActivity(Intent(context, SettingsActivity::class.java))
+                },
                 modifier = Modifier.size(40.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null,
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.settings_bottom_bar),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
     )
-}
-
-@Composable
-private fun DropMenu(onDismissRequestClick: (Boolean) -> Unit) {
-    val context = LocalContext.current
-
-    context.startActivity(Intent(context, SettingsActivity::class.java))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -32,11 +32,6 @@
             android:label="@string/title_activity_show_all_notes"
             android:theme="@style/Theme.NoteMaster" />
         <activity
-            android:name=".activities.UserPerformanceActivity"
-            android:exported="false"
-            android:label="@string/title_activity_user_performance"
-            android:theme="@style/Theme.NoteMaster" />
-        <activity
             android:name=".activities.ShowAllTasksActivity"
             android:exported="false"
             android:label="@string/title_activity_show_all_tasks"

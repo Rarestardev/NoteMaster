@@ -113,7 +113,7 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                     modifier = Modifier
                         .clickable {
                             val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
-                                putExtra(Constants.STATE_NOTE_ACTIVITY,false)
+                                putExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY,false)
                             }
                             context.startActivity(intent)
                         }

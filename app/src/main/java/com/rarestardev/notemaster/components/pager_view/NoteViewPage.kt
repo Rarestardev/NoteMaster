@@ -43,7 +43,7 @@ fun NoteViewPager(noteEditorViewModel: NoteEditorViewModel) {
             .fillMaxSize()
             .clickable {
                 val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
-                    putExtra(Constants.STATE_NOTE_ACTIVITY, true)
+                    putExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY, true)
                 }
                 context.startActivity(intent)
             },

@@ -9,9 +9,11 @@ class Constants {
 
         const val STATE_TASK_ACTIVITY = "IS_PREVIEW"
         const val STATE_TASK_ID_ACTIVITY = "TASK_ID"
+        const val STATE_TASK_IS_COMPLETE_ACTIVITY = "IS_COMPLETE"
 
 
         const val STATE_NOTE_PRIORITY_ACTIVITY = "NOTE_PRIORITY"
+        const val STATE_TASK_PRIORITY_ACTIVITY = "TASK_PRIORITY"
 
 
         const val ALARM_TIME = "alarmTime"

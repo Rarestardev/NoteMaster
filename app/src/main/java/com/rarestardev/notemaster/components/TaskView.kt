@@ -49,7 +49,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -96,7 +95,7 @@ fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TitleList(stringResource(R.string.task_bottom_bar), taskElement)
+        TitleList(stringResource(R.string.task_bottom_bar), taskElement, false)
 
         if (taskElement.isNotEmpty()) {
             LazyRow(
@@ -139,7 +138,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TitleList(stringResource(R.string.task_completed), taskElement)
+        TitleList(stringResource(R.string.task_completed), taskElement, true)
 
         if (taskElement.isNotEmpty()) {
             LazyRow(
@@ -171,7 +170,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
 }
 
 @Composable
-private fun TitleList(title: String, taskElement: List<Task>) {
+private fun TitleList(title: String, taskElement: List<Task>, isComplete: Boolean) {
     val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -192,7 +191,11 @@ private fun TitleList(title: String, taskElement: List<Task>) {
                 color = colorResource(R.color.text_field_label_color),
                 modifier = Modifier
                     .clickable {
-                        context.startActivity(Intent(context, ShowAllTasksActivity::class.java))
+                        val intent = Intent(context, ShowAllTasksActivity::class.java).apply {
+                            putExtra(Constants.STATE_TASK_PRIORITY_ACTIVITY, false)
+                            putExtra(Constants.STATE_TASK_IS_COMPLETE_ACTIVITY, isComplete)
+                        }
+                        context.startActivity(intent)
                     }
                     .padding(end = 12.dp)
             )

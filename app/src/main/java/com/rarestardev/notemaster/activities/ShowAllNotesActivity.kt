@@ -78,7 +78,7 @@ class ShowAllNotesActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val state = intent.getBooleanExtra(Constants.STATE_NOTE_ACTIVITY, false)
+        val state = intent.getBooleanExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY, false)
 
         setContent {
             NoteMasterTheme {
