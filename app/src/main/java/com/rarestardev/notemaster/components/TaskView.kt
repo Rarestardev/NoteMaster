@@ -66,6 +66,8 @@ import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.activities.CreateTaskActivity
 import com.rarestardev.notemaster.activities.ShowAllTasksActivity
 import com.rarestardev.notemaster.enums.ReminderType
+import com.rarestardev.notemaster.model.Flags
+import com.rarestardev.notemaster.model.ImageResource
 import com.rarestardev.notemaster.model.Task
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
@@ -382,11 +384,6 @@ private fun LazyItems(
     }
 }
 
-private data class Flags(
-    val name: String,
-    val color: Int
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CustomDropdownMenu(
@@ -527,11 +524,6 @@ private fun CustomDropdownMenu(
             }
         }
     }
-}
-
-private sealed class ImageResource {
-    data class Vector(val vector: ImageVector) : ImageResource()
-    data class Painter(val drawable: Int) : ImageResource()
 }
 
 @Composable

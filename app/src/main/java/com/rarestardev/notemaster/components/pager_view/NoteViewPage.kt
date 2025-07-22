@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rarestardev.notemaster.activities.ShowAllNotesActivity
+import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.view_model.NoteEditorViewModel
 
 @Composable
@@ -41,7 +42,10 @@ fun NoteViewPager(noteEditorViewModel: NoteEditorViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .clickable {
-                context.startActivity(Intent(context, ShowAllNotesActivity::class.java))
+                val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
+                    putExtra(Constants.STATE_NOTE_ACTIVITY, true)
+                }
+                context.startActivity(intent)
             },
         state = rememberLazyListState()
     ) {

@@ -17,14 +17,14 @@
         android:theme="@style/Theme.NoteMaster"
         tools:targetApi="31">
         <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/Theme.NoteMaster" />
+        <activity
             android:name=".activities.CalenderActivity"
             android:exported="false"
             android:label="@string/title_activity_calender"
-            android:theme="@style/Theme.NoteMaster" />
-        <activity
-            android:name=".activities.ShowAllCategoryActivity"
-            android:exported="false"
-            android:label="@string/title_activity_show_all_category"
             android:theme="@style/Theme.NoteMaster" />
         <activity
             android:name=".activities.ShowAllNotesActivity"

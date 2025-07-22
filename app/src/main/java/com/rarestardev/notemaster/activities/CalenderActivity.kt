@@ -2,6 +2,7 @@ package com.rarestardev.notemaster.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -32,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -46,13 +45,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.enums.CalenderType
@@ -60,6 +63,7 @@ import com.rarestardev.notemaster.enums.ReminderType
 import com.rarestardev.notemaster.factory.CalendarViewModelFactory
 import com.rarestardev.notemaster.factory.TaskViewModelFactory
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
+import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.view_model.CalenderViewModel
 import com.rarestardev.notemaster.view_model.TaskViewModel
 import org.threeten.bp.LocalDate
@@ -85,7 +89,7 @@ class CalenderActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NoteMasterTheme {
-                CalenderScreen(calenderViewModel,taskViewModel)
+                CalenderScreen(calenderViewModel, taskViewModel)
             }
         }
     }
@@ -97,7 +101,6 @@ class CalenderActivity : ComponentActivity() {
 private fun CalenderScreen(viewModel: CalenderViewModel, taskViewModel: TaskViewModel) {
     val calenderType by viewModel.calenderType.collectAsState()
     val activity = LocalContext.current as? Activity
-    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -138,20 +141,6 @@ private fun CalenderScreen(viewModel: CalenderViewModel, taskViewModel: TaskView
                     bottom = paddingValues.calculateBottomPadding() + 12.dp
                 )
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Calender Type :", Modifier.padding(end = 8.dp))
-
-                Switch(
-                    checked = calenderType == CalenderType.PERSIAN,
-                    onCheckedChange = { viewModel.toggleType(context) }
-                )
-
-                Spacer(Modifier.width(8.dp))
-                Text(text = if (calenderType == CalenderType.PERSIAN) "Persian" else "Gregorian")
-            }
-
-            Spacer(Modifier.height(16.dp))
-
             when (calenderType) {
                 CalenderType.GREGORIAN -> GregorianCalendarScreen(taskViewModel)
                 CalenderType.PERSIAN -> PersianCalendarScreen(taskViewModel)
@@ -233,17 +222,22 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                             currentDate.month == today.month &&
                             dayNumber == today.dayOfMonth
 
+                val isSelected = selectedDay == dayNumber
+
                 Box(
                     modifier = Modifier
                         .size(40.dp)
                         .padding(2.dp)
-                        .clickable{
+                        .clickable {
                             selectedDay = dayNumber
-                            val clickedDate = LocalDate.of(currentDate.year, currentDate.monthValue, dayNumber)
-                            millis = clickedDate.atStartOfDay(org.threeten.bp.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                            val clickedDate =
+                                LocalDate.of(currentDate.year, currentDate.monthValue, dayNumber)
+                            millis =
+                                clickedDate.atStartOfDay(org.threeten.bp.ZoneId.systemDefault())
+                                    .toInstant().toEpochMilli()
                         }
                         .then(
-                            if (isToday)
+                            if (isToday){
                                 Modifier
                                     .border(
                                         0.4.dp,
@@ -251,7 +245,15 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                                         CircleShape
                                     )
                                     .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
-                            else Modifier
+                            }else if (isSelected){
+                                Modifier
+                                    .border(
+                                        0.4.dp,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                        CircleShape
+                                    )
+                                    .background(Color.Transparent, CircleShape)
+                            }else Modifier
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -262,10 +264,15 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                         color = MaterialTheme.colorScheme.onPrimary
                     )
 
-                    if (isToday) {
-                        selectedDay = dayNumber
-                        val clickedDate = LocalDate.of(currentDate.year, currentDate.monthValue, dayNumber)
-                        millis = clickedDate.atStartOfDay(org.threeten.bp.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    if (selectedDay == -1) {
+                        if (isToday) {
+                            selectedDay = dayNumber
+                            val clickedDate =
+                                LocalDate.of(currentDate.year, currentDate.monthValue, dayNumber)
+                            millis =
+                                clickedDate.atStartOfDay(org.threeten.bp.ZoneId.systemDefault())
+                                    .toInstant().toEpochMilli()
+                        }
                     }
                 }
             }
@@ -277,7 +284,7 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
 
         Spacer(Modifier.height(12.dp))
 
-        TaskItemInCalender(taskViewModel,millis)
+        TaskItemInCalender(taskViewModel, millis)
     }
 }
 
@@ -292,8 +299,6 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
     val monthName = PersianDateFormat("F", PersianDateNumberCharacter.FARSI).format(date)
     val firstDay = date.setShDay(1).dayOfWeek()
     val monthLength = date.monthLength
-    val cal = Calendar.getInstance()
-    val pDate = PersianDate()
 
     Column(
         Modifier.background(MaterialTheme.colorScheme.background)
@@ -363,16 +368,26 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                 val dayNumber = day + 1
                 val isToday = isCurrentMonth && todayDay == dayNumber
 
+                val isSelected = selectedDay == dayNumber
+
                 Box(
                     modifier = Modifier
                         .size(40.dp)
                         .padding(2.dp)
-                        .clickable{
+                        .clickable {
                             selectedDay = dayNumber
-                            val gYear = pDate.grgYear
-                            val gMonth = pDate.grgMonth
-                            val gDay = pDate.grgDay
+                            val selectedPersianDate = PersianDate()
+                                .setShYear(selectedYear)
+                                .setShMonth(selectedMonth)
+                                .setShDay(dayNumber)
+
+                            val gYear = selectedPersianDate.grgYear
+                            val gMonth = selectedPersianDate.grgMonth
+                            val gDay = selectedPersianDate.grgDay
+
+                            val cal = Calendar.getInstance()
                             cal.set(gYear, gMonth - 1, gDay, 0, 0, 0)
+
                             millis = cal.timeInMillis
                         }
                         .then(
@@ -384,7 +399,15 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                                         CircleShape
                                     )
                                     .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
-                            else Modifier
+                            else if (isSelected){
+                                Modifier
+                                    .border(
+                                        0.4.dp,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                        CircleShape
+                                    )
+                                    .background(Color.Transparent, CircleShape)
+                            }else Modifier
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -394,13 +417,23 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                         else MaterialTheme.typography.bodyMedium
                     )
 
-                    if (isToday) {
-                        selectedDay = dayNumber
-                        val gYear = pDate.grgYear
-                        val gMonth = pDate.grgMonth
-                        val gDay = pDate.grgDay
-                        cal.set(gYear, gMonth - 1, gDay, 0, 0, 0)
-                        millis = cal.timeInMillis
+                    if (selectedDay == -1){
+                        if (isToday) {
+                            selectedDay = dayNumber
+                            val selectedPersianDate = PersianDate()
+                                .setShYear(selectedYear)
+                                .setShMonth(selectedMonth)
+                                .setShDay(dayNumber)
+
+                            val gYear = selectedPersianDate.grgYear
+                            val gMonth = selectedPersianDate.grgMonth
+                            val gDay = selectedPersianDate.grgDay
+
+                            val cal = Calendar.getInstance()
+                            cal.set(gYear, gMonth - 1, gDay, 0, 0, 0)
+
+                            millis = cal.timeInMillis
+                        }
                     }
                 }
             }
@@ -412,7 +445,7 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
 
         Spacer(Modifier.height(12.dp))
 
-        TaskItemInCalender(taskViewModel,millis)
+        TaskItemInCalender(taskViewModel, millis)
     }
 }
 
@@ -428,36 +461,110 @@ private fun MyDivider() {
 @Composable
 private fun TaskItemInCalender(taskViewModel: TaskViewModel, today: Long) {
     val allTask by taskViewModel.taskElement.collectAsState(emptyList())
-    val di = extractGregorianDateFromMillis(today)
+    val context = LocalContext.current
+    val castTodayToString = extractGregorianDateFromMillis(today)
     val filterTask = allTask
         .filter { it.reminderType != ReminderType.NONE.name }
-        .filter { extractGregorianDateFromMillis(it.reminderTime) == di }
+        .filter { extractGregorianDateFromMillis(it.reminderTime) == castTodayToString }
         .sortedByDescending { it.id }
 
     if (allTask.isNotEmpty()) {
         filterTask.forEach {
-            Text(text = it.title)
+            if (extractGregorianDateFromMillis(it.reminderTime) == castTodayToString) {
+                val priorityColor = when (it.priorityFlag) {
+                    0 -> colorResource(R.color.priority_low)
+                    1 -> colorResource(R.color.priority_medium)
+                    2 -> colorResource(R.color.priority_high)
+                    else -> {
+                        colorResource(R.color.priority_low)
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(6.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onSecondaryContainer,
+                            MaterialTheme.shapes.small
+                        )
+                        .border(0.3.dp, priorityColor, MaterialTheme.shapes.small)
+                        .clickable {
+                            val intent = Intent(context, CreateTaskActivity::class.java).apply {
+                                putExtra(Constants.STATE_TASK_ID_ACTIVITY, it.id)
+                            }
+
+                            context.startActivity(intent)
+                        },
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = it.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 12.dp,
+                                end = 12.dp,
+                                top = 4.dp,
+                                bottom = 4.dp
+                            ),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+
+                    Text(
+                        text = it.description,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 12.dp,
+                                end = 12.dp,
+                                top = 4.dp,
+                                bottom = 4.dp
+                            ),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp
+                    )
+                }
+
+                Spacer(Modifier.height(2.dp))
+
+            } else {
+                NothingTaskText()
+            }
         }
     } else {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "There is nothing today",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSecondary
-            )
-        }
+        NothingTaskText()
     }
 }
 
-fun extractGregorianDateFromMillis(millis: Long?): String {
+@Composable
+private fun NothingTaskText() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(160.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.there_is_nothing_today),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSecondary
+        )
+    }
+}
+
+private fun extractGregorianDateFromMillis(millis: Long?): String {
     val instant = org.threeten.bp.Instant.ofEpochMilli(millis!!)
-    val localDate = org.threeten.bp.LocalDateTime.ofInstant(instant, org.threeten.bp.ZoneId.systemDefault())
+    val localDate =
+        org.threeten.bp.LocalDateTime.ofInstant(instant, org.threeten.bp.ZoneId.systemDefault())
     val formatter = org.threeten.bp.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return formatter.format(localDate)
 }

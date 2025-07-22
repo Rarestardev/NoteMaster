@@ -324,7 +324,10 @@ private fun TopTaskProgress(
                     MaterialTheme.shapes.small
                 )
                 .clickable {
-                    context.startActivity(Intent(context, ShowAllNotesActivity::class.java))
+                    val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
+                        putExtra(Constants.STATE_NOTE_ACTIVITY,false)
+                    }
+                    context.startActivity(intent)
                 }
                 .fillMaxWidth()
                 .constrainAs(allNoteRef) {
@@ -560,7 +563,9 @@ private fun MyTopAppBar() {
 
 @Composable
 private fun DropMenu(onDismissRequestClick: (Boolean) -> Unit) {
+    val context = LocalContext.current
 
+    context.startActivity(Intent(context, SettingsActivity::class.java))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

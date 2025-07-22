@@ -153,7 +153,22 @@ open class NoteEditorViewModel(private val noteDao: NoteDao) : ViewModel() {
             )
 
             noteDao.updateNoteValue(notes)
-            Log.i(Constants.APP_LOG, "Note is exists on database , update note")
+            Log.d(Constants.APP_LOG, "Note is exists on database , update note")
+        }
+    }
+
+    fun updatePriorityFlagInDatabase(flag: Int, id: Int) {
+        viewModelScope.launch {
+            noteDao.updatePriority(flag,id)
+            Log.d(Constants.APP_LOG, "Note is exists on database , update Priority")
+        }
+    }
+
+    fun deleteNote(note: Note){
+        viewModelScope.launch {
+            noteDao.deleteNote(note)
+
+            Log.d(Constants.APP_LOG, "delete note on database")
         }
     }
 }

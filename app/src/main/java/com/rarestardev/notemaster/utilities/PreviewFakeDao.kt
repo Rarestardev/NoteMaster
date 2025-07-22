@@ -19,6 +19,10 @@ fun previewFakeViewModel() : NoteEditorViewModel{
             TODO("Not yet implemented")
         }
 
+        override suspend fun deleteNote(note: Note) {
+            TODO("Not yet implemented")
+        }
+
         override fun getAllNotes(): Flow<List<Note>> = flowOf(
             listOf(
                 Note(
@@ -49,6 +53,10 @@ fun previewFakeViewModel() : NoteEditorViewModel{
         override suspend fun isNoteExists(noteId: Int): Boolean {
             TODO("Not yet implemented")
         }
+
+        override suspend fun updatePriority(priority: Int, id: Int) {
+            TODO("Not yet implemented")
+        }
     }
     val fakeViewModel = NoteEditorViewModel(fakeDao)
     return fakeViewModel
@@ -77,6 +85,10 @@ fun previewFakeTaskViewModel() : TaskViewModel{
         }
 
         override suspend fun checkIsId(taskId: Int): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateFlag(flag: Int, id: Int) {
             TODO("Not yet implemented")
         }
     }

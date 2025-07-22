@@ -75,4 +75,6 @@
     <string name="title_activity_show_all_category">ShowAllCategoryActivity</string>
     <string name="title_activity_calender">CalenderActivity</string>
     <string name="calender">Calender</string>
+    <string name="there_is_nothing_today">There is nothing today</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>
