@@ -144,7 +144,7 @@ fun TaskPreviewScreen(
                 navigationIcon = { BackActivityIcon() },
                 title = { TitleActivityText(titleActivity) },
                 colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    containerColor = MaterialTheme.colorScheme.background,
                 ),
 
                 actions = {
@@ -259,11 +259,11 @@ private fun SubTaskLazy(
                         textDecoration = TextDecoration.None
                         textColor = MaterialTheme.colorScheme.onPrimary
                     }
-                    Checkbox(
+                    CircleCheckBox(
                         checked = it,
-                        onCheckedChange = { c ->
+                        onCheckedChange = { b ->
                             subTaskViewModel.updateSubTaskIsComplete(
-                                c,
+                                b,
                                 subTask.subTaskId
                             )
                         },

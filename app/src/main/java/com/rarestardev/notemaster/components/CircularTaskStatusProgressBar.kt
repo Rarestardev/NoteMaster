@@ -69,7 +69,7 @@ fun CircularTaskStatusBar(
 
         Text(
             text = "${progressPercent.toInt()}%",
-            color = progressColor,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp
         )

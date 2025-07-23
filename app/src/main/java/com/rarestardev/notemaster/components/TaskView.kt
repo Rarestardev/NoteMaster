@@ -3,6 +3,7 @@ package com.rarestardev.notemaster.components
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -35,9 +37,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -48,7 +53,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -65,11 +72,13 @@ import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.activities.CreateTaskActivity
 import com.rarestardev.notemaster.activities.ShowAllTasksActivity
 import com.rarestardev.notemaster.enums.ReminderType
+import com.rarestardev.notemaster.feature.GlideImage
 import com.rarestardev.notemaster.model.Flags
 import com.rarestardev.notemaster.model.ImageResource
 import com.rarestardev.notemaster.model.Task
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
+import com.rarestardev.notemaster.utilities.CurrentTimeAndDate
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
 import com.rarestardev.notemaster.utilities.previewSubTaskViewModel
 import com.rarestardev.notemaster.view_model.SubTaskViewModel
@@ -119,7 +128,7 @@ fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
                     .height(140.dp)
                     .padding(top = 50.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
             )
         }
@@ -162,7 +171,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
                     .height(140.dp)
                     .padding(top = 50.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
             )
         }
@@ -179,7 +188,7 @@ private fun TitleList(title: String, taskElement: List<Task>, isComplete: Boolea
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(start = 12.dp)
         )
@@ -216,8 +225,14 @@ private fun LazyItems(
     val context = LocalContext.current
     var expandedIndex by remember { mutableIntStateOf(-1) }
     val subtaskList by subTaskViewModel.subTaskList.collectAsState(emptyList())
-    val subtaskFilterList =
-        subtaskList.filter { it.taskId == task.id }.sortedByDescending { it.taskId }.size
+    val subtaskFilterList = subtaskList.filter { it.taskId == task.id }
+    val subtaskFilterListIsComplete = subtaskFilterList.filter { it.subChecked == true }.size
+
+    val progress =
+        if (subtaskFilterList.isNotEmpty()) subtaskFilterListIsComplete.toFloat() / subtaskFilterList.size else 0.00f
+    val percentage = (progress * 100).toInt()
+
+    val currentTimeAndDate = CurrentTimeAndDate()
 
     Box(
         modifier = Modifier
@@ -251,127 +266,174 @@ private fun LazyItems(
             )
     ) {
         ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
+            modifier = Modifier.fillMaxSize()
         ) {
-            val (titleRef, dividerRef, flagRef, dateRef, timeRef, subTaskSizeRef, reminderTypeRef) = createRefs()
+            val (dateLayoutRef, verticalDividerRef, allDesignRef) = createRefs()
 
-            FlagView(
-                color = task.priorityFlag,
+            Column(
                 modifier = Modifier
-                    .constrainAs(flagRef) {
+                    .fillMaxHeight()
+                    .width(60.dp)
+                    .padding(6.dp)
+                    .constrainAs(dateLayoutRef) {
                         start.linkTo(parent.start)
                         top.linkTo(parent.top)
-                    }
-            )
-
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = "Forward",
-                modifier = Modifier
-                    .size(20.dp)
-                    .constrainAs(createRef()) {
-                        end.linkTo(parent.end)
-                        top.linkTo(flagRef.top)
-                        bottom.linkTo(flagRef.bottom)
-                    }
-            )
-
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp)
-                    .constrainAs(dividerRef) {
-                        top.linkTo(flagRef.bottom, 6.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.fillToConstraints
                     },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "Create on",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp),
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    color = colorResource(R.color.drawer_text_icon_color),
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = currentTimeAndDate.getTodayDayAsString(),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = colorResource(R.color.drawer_text_icon_color)
+                )
+
+                Text(
+                    text = currentTimeAndDate.getCurrentMonthName(),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = colorResource(R.color.drawer_text_icon_color)
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                task.imagePath?.let {
+                    if (it.isNotEmpty()) {
+                        GlideImage(
+                            imageUrl = it,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .clip(MaterialTheme.shapes.small)
+                        )
+                    }
+                }
+            }
+
+            VerticalDivider(
+                modifier = Modifier.constrainAs(verticalDividerRef) {
+                    start.linkTo(dateLayoutRef.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    height = Dimension.fillToConstraints
+                },
                 thickness = 0.3.dp,
                 color = MaterialTheme.colorScheme.onSecondary
             )
 
-            Text(
-                text = task.title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
+            Column(
                 modifier = Modifier
-                    .constrainAs(titleRef) {
-                        start.linkTo(parent.start, 6.dp)
-                        top.linkTo(dividerRef.bottom)
-                        end.linkTo(parent.end, 6.dp)
-                        bottom.linkTo(subTaskSizeRef.top)
+                    .constrainAs(allDesignRef) {
+                        start.linkTo(verticalDividerRef.end)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
                         width = Dimension.fillToConstraints
-                    },
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Start
-            )
-
-            Text(
-                text = "SubTasks : ( $subtaskFilterList )",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier
-                    .constrainAs(subTaskSizeRef) {
-                        start.linkTo(parent.start, 6.dp)
-                        bottom.linkTo(timeRef.top, 6.dp)
+                        height = Dimension.fillToConstraints
                     }
-            )
-
-            Text(
-                text = "Time : ${task.time}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier
-                    .constrainAs(timeRef) {
-                        start.linkTo(parent.start, 6.dp)
-                        bottom.linkTo(dateRef.top, 6.dp)
-                    }
-            )
-
-            Text(
-                text = "Date : ${task.date}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier
-                    .constrainAs(dateRef) {
-                        bottom.linkTo(parent.bottom, 6.dp)
-                        start.linkTo(parent.start, 6.dp)
-                    }
-            )
-
-            Row(
-                Modifier
-                    .constrainAs(reminderTypeRef) {
-                        end.linkTo(parent.end, 6.dp)
-                        bottom.linkTo(parent.bottom, 6.dp)
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
-                    if (task.reminderType == ReminderType.NOTIFICATION.name) {
-                        NotificationView()
-                    } else {
-                        AlarmView()
+                Text(
+                    text = task.title,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = task.description,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    maxLines = 3,
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 12.sp
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
+                        if (task.reminderType == ReminderType.NOTIFICATION.name) {
+                            NotificationView()
+                        } else {
+                            AlarmView()
+                        }
+
+                        Log.d(
+                            Constants.APP_LOG,
+                            "TaskView Reminder type = ${task.reminderType}"
+                        )
                     }
 
-                    Log.d(
-                        Constants.APP_LOG,
-                        "TaskView Reminder type = ${task.reminderType}"
+                    FlagView(
+                        color = task.priorityFlag
                     )
                 }
 
-                task.imagePath?.let {
-                    if (it.isNotEmpty()) {
-                        Icon(
-                            painter = painterResource(R.drawable.icons_image),
-                            contentDescription = task.title,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onSecondary
-                        )
-                    }
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 0.3.dp,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+
+                ConstraintLayout(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val (progressBarRef,percentageRef) = createRefs()
+
+                    LinearProgressIndicator(
+                        progress = { progress.coerceIn(0f..1f) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .constrainAs(progressBarRef) {
+                                start.linkTo(parent.start)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                                end.linkTo(percentageRef.start,6.dp)
+                                width = Dimension.fillToConstraints
+                            },
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        trackColor = MaterialTheme.colorScheme.background,
+                        gapSize = 0.dp
+                    )
+
+                    Text(
+                        text = "$percentage %",
+                        modifier = Modifier.constrainAs(percentageRef) {
+                            end.linkTo(parent.end)
+                            top.linkTo(progressBarRef.top)
+                            bottom.linkTo(progressBarRef.bottom)
+                        },
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 10.sp
+                    )
                 }
             }
         }
@@ -606,7 +668,7 @@ private fun NotificationView(modifier: Modifier = Modifier) {
         imageVector = Icons.Default.Notifications,
         contentDescription = stringResource(R.string.notification_desc),
         modifier = modifier.size(20.dp),
-        tint = MaterialTheme.colorScheme.onSecondary
+        tint = MaterialTheme.colorScheme.onPrimary
     )
 }
 
@@ -658,6 +720,6 @@ private fun AlarmView(modifier: Modifier = Modifier) {
         painter = painterResource(R.drawable.icon_alarm),
         contentDescription = stringResource(R.string.alarm_desc),
         modifier = modifier.size(20.dp),
-        tint = MaterialTheme.colorScheme.onSecondary
+        tint = MaterialTheme.colorScheme.onPrimary
     )
 }

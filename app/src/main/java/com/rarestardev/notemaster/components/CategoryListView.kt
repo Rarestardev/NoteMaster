@@ -65,7 +65,7 @@ fun CategoryListView() {
     ) {
         Text(
             text = stringResource(R.string.category),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(start = 12.dp)
         )
@@ -163,7 +163,7 @@ fun CategoryListView() {
             ) {
                 Text(
                     text = category,
-                    color = MaterialTheme.colorScheme.onSecondary,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(12.dp),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold

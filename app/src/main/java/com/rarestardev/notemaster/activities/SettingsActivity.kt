@@ -78,7 +78,7 @@ private fun SettingsScreen(calenderViewModel: CalenderViewModel) {
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
                 navigationIcon = {
                     IconButton(

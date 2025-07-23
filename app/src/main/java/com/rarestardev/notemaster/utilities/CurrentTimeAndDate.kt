@@ -1,12 +1,10 @@
 package com.rarestardev.notemaster.utilities
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import java.text.SimpleDateFormat
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
@@ -22,6 +20,10 @@ class CurrentTimeAndDate {
         return dateFormat.format(Date())
     }
 
+    fun getCurrentTimeDate() : String{
+        val dateFormat = SimpleDateFormat("yyy/MM/dd - HH:mm", Locale.getDefault())
+        return dateFormat.format(Date())
+    }
 
     @Composable
      fun getTodayDayAsString(): String {

@@ -17,6 +17,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -303,6 +304,10 @@ private fun TopTaskProgress(
                     MaterialTheme.colorScheme.onSecondaryContainer,
                     MaterialTheme.shapes.small
                 )
+                .border(
+                    0.3.dp, MaterialTheme.colorScheme.onSecondary,
+                    MaterialTheme.shapes.small
+                )
                 .fillMaxWidth()
                 .constrainAs(inProgressRef) {
                     end.linkTo(parent.end)
@@ -318,6 +323,10 @@ private fun TopTaskProgress(
             modifier = Modifier
                 .background(
                     MaterialTheme.colorScheme.onSecondaryContainer,
+                    MaterialTheme.shapes.small
+                )
+                .border(
+                    0.3.dp, MaterialTheme.colorScheme.onSecondary,
                     MaterialTheme.shapes.small
                 )
                 .clickable {
@@ -341,13 +350,13 @@ private fun TopTaskProgress(
             Icon(
                 painter = painterResource(R.drawable.icon_note),
                 contentDescription = stringResource(R.string.note),
-                tint = MaterialTheme.colorScheme.onSecondary
+                tint = MaterialTheme.colorScheme.onPrimary
             )
 
             Text(
                 text = "All notes : ( ${notes.size} )",
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Serif
@@ -438,7 +447,7 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Normal,
                 maxLines = 1,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
             )
         }
@@ -487,7 +496,7 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Normal,
                 maxLines = 1,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
             )
         }
@@ -528,7 +537,7 @@ private fun MyTopAppBar() {
             )
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            containerColor = MaterialTheme.colorScheme.background,
         ),
         actions = {
             IconButton(

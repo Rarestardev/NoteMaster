@@ -45,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -178,28 +179,28 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_back_ios_24),
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
             Text(
                 "$monthText ${currentDate.year}",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onPrimary
             )
             IconButton(onClick = { currentDate = currentDate.plusMonths(1) }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_forward_ios_24),
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         MyDivider()
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
             listOf("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa").forEach {
@@ -237,7 +238,7 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                                     .toInstant().toEpochMilli()
                         }
                         .then(
-                            if (isToday){
+                            if (isToday) {
                                 Modifier
                                     .border(
                                         0.4.dp,
@@ -245,7 +246,7 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                                         CircleShape
                                     )
                                     .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
-                            }else if (isSelected){
+                            } else if (isSelected) {
                                 Modifier
                                     .border(
                                         0.4.dp,
@@ -253,7 +254,7 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                                         CircleShape
                                     )
                                     .background(Color.Transparent, CircleShape)
-                            }else Modifier
+                            } else Modifier
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -261,7 +262,7 @@ private fun GregorianCalendarScreen(taskViewModel: TaskViewModel) {
                         text = "$dayNumber",
                         style = if (isToday) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                         else MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = if (isToday) Color.White else MaterialTheme.colorScheme.onPrimary
                     )
 
                     if (selectedDay == -1) {
@@ -316,14 +317,14 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_back_ios_24),
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
             Text(
                 "$monthName - $selectedYear",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onPrimary
             )
 
             IconButton(onClick = {
@@ -334,16 +335,16 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.outline_arrow_forward_ios_24),
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         MyDivider()
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
             listOf("ش", "ی", "د", "س", "چ", "پ", "ج").forEach {
@@ -399,7 +400,7 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                                         CircleShape
                                     )
                                     .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
-                            else if (isSelected){
+                            else if (isSelected) {
                                 Modifier
                                     .border(
                                         0.4.dp,
@@ -407,17 +408,17 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                                         CircleShape
                                     )
                                     .background(Color.Transparent, CircleShape)
-                            }else Modifier
+                            } else Modifier
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "$dayNumber",
-                        style = if (isToday) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        style = if (isToday) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
                         else MaterialTheme.typography.bodyMedium
                     )
 
-                    if (selectedDay == -1){
+                    if (selectedDay == -1) {
                         if (isToday) {
                             selectedDay = dayNumber
                             val selectedPersianDate = PersianDate()
@@ -468,7 +469,25 @@ private fun TaskItemInCalender(taskViewModel: TaskViewModel, today: Long) {
         .filter { extractGregorianDateFromMillis(it.reminderTime) == castTodayToString }
         .sortedByDescending { it.id }
 
-    if (allTask.isNotEmpty()) {
+    Text(
+        text = stringResource(R.string.task_bottom_bar),
+        modifier = Modifier.fillMaxWidth(),
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        color = MaterialTheme.colorScheme.onPrimary
+    )
+
+    Text(
+        text = "${filterTask.size} tasks for today.",
+        modifier = Modifier.fillMaxWidth(),
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        color = colorResource(R.color.text_field_label_color)
+    )
+
+    Spacer(Modifier.height(10.dp))
+
+    if (filterTask.isNotEmpty()) {
         filterTask.forEach {
             if (extractGregorianDateFromMillis(it.reminderTime) == castTodayToString) {
                 val priorityColor = when (it.priorityFlag) {
@@ -479,58 +498,106 @@ private fun TaskItemInCalender(taskViewModel: TaskViewModel, today: Long) {
                         colorResource(R.color.priority_low)
                     }
                 }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(6.dp)
-                        .background(
-                            MaterialTheme.colorScheme.onSecondaryContainer,
-                            MaterialTheme.shapes.small
-                        )
-                        .border(0.3.dp, priorityColor, MaterialTheme.shapes.small)
-                        .clickable {
-                            val intent = Intent(context, CreateTaskActivity::class.java).apply {
-                                putExtra(Constants.STATE_TASK_ID_ACTIVITY, it.id)
-                            }
 
-                            context.startActivity(intent)
-                        },
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = it.title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                start = 12.dp,
-                                end = 12.dp,
-                                top = 4.dp,
-                                bottom = 4.dp
-                            ),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
 
                     Text(
-                        text = it.description,
+                        text = it.time + "\n Time ",
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.drawer_text_icon_color),
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .background(priorityColor, CircleShape)
+                    )
+
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(
-                                start = 12.dp,
-                                end = 12.dp,
-                                top = 4.dp,
-                                bottom = 4.dp
-                            ),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 12.sp
-                    )
+                            .padding(8.dp)
+                            .background(
+                                MaterialTheme.colorScheme.onSecondaryContainer,
+                                MaterialTheme.shapes.medium
+                            )
+                            .border(0.5.dp, priorityColor, MaterialTheme.shapes.medium)
+                            .clickable {
+                                val intent = Intent(context, CreateTaskActivity::class.java).apply {
+                                    putExtra(Constants.STATE_TASK_ID_ACTIVITY, it.id)
+                                }
+
+                                context.startActivity(intent)
+                            },
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = it.title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = 10.dp,
+                                    end = 10.dp,
+                                    top = 8.dp
+                                ),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp),
+                            thickness = 0.2.dp,
+                            color = MaterialTheme.colorScheme.onSecondary
+                        )
+
+                        Text(
+                            text = it.description,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    start = 10.dp,
+                                    end = 10.dp
+                                ),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            minLines = 2,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 10.sp
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp),
+                            thickness = 0.2.dp,
+                            color = MaterialTheme.colorScheme.onSecondary
+                        )
+
+                        Text(
+                            text = it.time + " - " + it.date,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Start)
+                                .padding(
+                                    start = 10.dp,
+                                    bottom = 8.dp
+                                ),
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            textAlign = TextAlign.Start,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
 
                 Spacer(Modifier.height(2.dp))
@@ -556,7 +623,7 @@ private fun NothingTaskText() {
         Text(
             text = stringResource(R.string.there_is_nothing_today),
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSecondary
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

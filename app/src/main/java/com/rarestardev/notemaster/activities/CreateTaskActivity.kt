@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,12 +27,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,6 +75,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.components.CircleCheckBox
 import com.rarestardev.notemaster.components.TaskPreviewScreen
 import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.factory.SubTaskViewModelFactory
@@ -178,6 +181,8 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
                 }
             }
 
+
+
             items(subTaskViews.size) { index ->
                 subTaskViews[index]()
             }
@@ -192,6 +197,7 @@ private fun getSubTaskItems(subTaskViewModel: SubTaskViewModel): List<@Composabl
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 12.dp)
                     .background(
                         MaterialTheme.colorScheme.onSecondaryContainer,
                         MaterialTheme.shapes.medium
@@ -199,14 +205,15 @@ private fun getSubTaskItems(subTaskViewModel: SubTaskViewModel): List<@Composabl
             ) {
                 val (checkBoxRef, textFieldRef, deleteRef) = createRefs()
                 subTask.subChecked?.let {
-                    Checkbox(
+                    CircleCheckBox(
                         checked = it,
                         onCheckedChange = {},
-                        modifier = Modifier.constrainAs(checkBoxRef) {
-                            start.linkTo(parent.start)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }
+                        modifier = Modifier
+                            .constrainAs(checkBoxRef) {
+                                start.linkTo(parent.start)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            }
                     )
                 }
 
@@ -477,7 +484,7 @@ private fun AddSubTaskBottomSheet(
         onDismissRequest = { onDismiss(false) },
         sheetState = sheetState,
         scrimColor = Color.Transparent,
-        containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
@@ -581,10 +588,10 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
             }
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            containerColor = MaterialTheme.colorScheme.background,
         ),
         actions = {
-            Button(
+            TextButton(
                 onClick = {
                     viewModel.insertTask(context)
                     subTaskViewModel.insertSubTask()
@@ -596,7 +603,7 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
             ) {
                 Text(
                     text = stringResource(R.string.save),
-                    color = MaterialTheme.colorScheme.onSecondary,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
                 )

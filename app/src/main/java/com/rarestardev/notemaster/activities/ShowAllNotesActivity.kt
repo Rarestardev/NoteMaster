@@ -63,6 +63,7 @@ import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.components.MenuBottomSheet
 import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.factory.NoteViewModelFactory
+import com.rarestardev.notemaster.model.Note
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.previewFakeViewModel
@@ -114,7 +115,7 @@ private fun ActivityScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
                 navigationIcon = {
                     IconButton(
@@ -152,6 +153,7 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
     val context = LocalContext.current
     val lazyGridState = rememberLazyGridState()
     var isShowMenuBottomSheet by remember { mutableStateOf(false) }
+    var noteModel by remember { mutableStateOf(Note(0,"","",0,"","",0,0f)) }
 
     val filterNote = if (state) {
         notes.filter { it.priority == 2 }.sortedByDescending { it.priority }
@@ -202,7 +204,10 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
 
                                     context.startActivity(previewNoteIntent)
                                 },
-                                onLongClick = { isShowMenuBottomSheet = true }
+                                onLongClick = {
+                                    isShowMenuBottomSheet = true
+                                    noteModel = note
+                                }
                             )
                     ) {
                         val (noteBoxRef, titleRef) = createRefs()
@@ -306,16 +311,6 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                                 tint = colorResource(flagColor)
                             )
 
-                            if (isShowMenuBottomSheet){
-                                MenuBottomSheet(
-                                    noteEditorViewModel = viewModel,
-                                    id = note.id,
-                                    note = note
-                                ) {
-                                    isShowMenuBottomSheet = it
-                                }
-                            }
-
                         } else {
                             Text(
                                 text = stringResource(R.string.no_note),
@@ -346,6 +341,15 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                 color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Center
             )
+        }
+
+        if (isShowMenuBottomSheet){
+            MenuBottomSheet(
+                noteEditorViewModel = viewModel,
+                note = noteModel
+            ) {
+                isShowMenuBottomSheet = it
+            }
         }
     }
 }

@@ -23,11 +23,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -42,6 +43,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -71,13 +73,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.database.NoteDatabase
+import com.rarestardev.notemaster.factory.NoteViewModelFactory
 import com.rarestardev.notemaster.model.Note
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.CurrentTimeAndDate
 import com.rarestardev.notemaster.utilities.previewFakeViewModel
 import com.rarestardev.notemaster.view_model.NoteEditorViewModel
-import com.rarestardev.notemaster.factory.NoteViewModelFactory
 
 class CreateNoteActivity : ComponentActivity() {
 
@@ -156,7 +158,7 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
                 navigationIcon = {
                     IconButton(
@@ -172,7 +174,7 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                     }
                 },
                 actions = {
-                    Button(
+                    TextButton(
                         onClick = {
                             viewModel.updateIsEditing(false)
                             viewModel.updateAllValue(
@@ -193,7 +195,7 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                     ) {
                         Text(
                             text = stringResource(R.string.edit_note),
-                            color = MaterialTheme.colorScheme.onSecondary,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
                             modifier = Modifier.padding(6.dp)
@@ -225,7 +227,7 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                     end = 12.dp
                 )
                 .background(
-                    MaterialTheme.colorScheme.onSecondaryContainer,
+                    MaterialTheme.colorScheme.background,
                     RoundedCornerShape(8.dp)
                 )
                 .fillMaxSize()
@@ -244,8 +246,8 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
             Text(
                 text = note.noteText + "\n\n" + "( " + note.timeStamp + "\t_\t " + note.date + " )",
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
+                    .padding(12.dp)
+                    .verticalScroll(state = rememberScrollState()),
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight(note.fontWeight),
                 fontSize = note.fontSize.sp,
@@ -538,7 +540,7 @@ private fun CustomTopBar(viewModel: NoteEditorViewModel) {
             }
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = MaterialTheme.colorScheme.background
         ),
         actions = { MoreFeatureMenu(viewModel) }
     )
@@ -673,7 +675,7 @@ private fun FontWeightBottomSheet(viewModel: NoteEditorViewModel) {
                         )
 
                         Text(
-                            text = "( Sample )",
+                            text = stringResource(R.string.sample),
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = 14.sp,
                             fontWeight = weight.second,
