@@ -76,9 +76,23 @@
     <string name="high_priority_tasks">High Priority Tasks</string>
     <string name="high_priority_notes">High Priority Notes</string>
     <string name="all_notes">All notes : </string>
-    <string name="saved_backup_message">" بک‌آپ با موفقیت ذخیره شد"</string>
-    <string name="error_saved_backup_message">" ذخیره‌ی بک‌آپ با خطا مواجه شد"</string>
-    <string name="not_find_backup_file">فایل پیدا نشد</string>
-    <string name="error_restore_file">" بازیابی فایل با خطا مواجه شد"</string>
+    <string name="saved_backup_message">Backup was successful.</string>
+    <string name="error_saved_backup_message">An error occurred while getting backup</string>
+    <string name="not_find_backup_file">File not found</string>
+    <string name="error_restore_file">An error occurred while getting restore</string>
+    <string name="wrong_restore_file">The selected file is invalid!</string>
+    <string name="choose_backup_file">Choose backup</string>
+    <string name="choose_restore_file">Choose restore</string>
+    <string name="task_list_is_empty">Task list is empty …</string>
+    <string name="notes_list_is_empty">Notes list is empty …</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="set_time">Set Time</string>
+    <string name="next_to_set_date">Next to set date</string>
+    <string name="set_date">Set Date</string>
+    <string name="back">Back</string>
+    <string name="next_to_set_type">Next to set type</string>
+    <string name="set_type">Set type</string>
+    <string name="notification">Notification</string>
+    <string name="alarm">Alarm</string>
 
 </resources>

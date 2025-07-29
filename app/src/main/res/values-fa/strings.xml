@@ -80,6 +80,20 @@
     <string name="error_saved_backup_message">" ذخیره‌ی بک‌آپ با خطا مواجه شد"</string>
     <string name="not_find_backup_file">فایل پیدا نشد</string>
     <string name="error_restore_file">" بازیابی فایل با خطا مواجه شد"</string>
+    <string name="wrong_restore_file">فایل انتخاب شده نامعتبر است!</string>
+    <string name="choose_backup_file">انتخاب مسیر ذخیره‌سازی</string>
+    <string name="choose_restore_file">انتخاب فایل بازیابی</string>
+    <string name="task_list_is_empty">وظیفه ای وجود ندارد…</string>
+    <string name="notes_list_is_empty">یادداشتی وجود ندارد…</string>
+    <string name="set_reminder">تنظیم یادآور</string>
+    <string name="set_time">تنظیم ساعت</string>
+    <string name="next_to_set_date">بعدی برای تنظیم تاریخ</string>
+    <string name="set_date">تنظیم تاریخ</string>
+    <string name="back">بازگشت</string>
+    <string name="next_to_set_type">بعدی تنظیم نوع یادآور</string>
+    <string name="set_type">تنظیم نوع یادآور</string>
+    <string name="notification">اعلان</string>
+    <string name="alarm">زنگ</string>
 
 
 </resources>

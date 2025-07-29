@@ -2,7 +2,7 @@ package com.rarestardev.notemaster.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -75,7 +75,6 @@ import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.factory.SubTaskViewModelFactory
 import com.rarestardev.notemaster.factory.TaskViewModelFactory
 import com.rarestardev.notemaster.feature.CategorySelector
-import com.rarestardev.notemaster.feature.ReminderBottomSheet
 import com.rarestardev.notemaster.feature.ResizableImageItem
 import com.rarestardev.notemaster.model.SubTask
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
@@ -391,24 +390,12 @@ private fun TitleTrailingIcon(viewModel: TaskViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
-    var showReminderSheet by remember { mutableStateOf(false) }
     var showSubTaskSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         if (viewModel.taskId == 0) {
             viewModel.updateTaskId(generateUniqueTaskId(viewModel))
-        }
-    }
-
-    if (showReminderSheet) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ReminderBottomSheet(
-                onDismiss = { showReminderSheet = false },
-                onSet = { timeMillis, type ->
-                    viewModel.updateReminderTime(timeMillis)
-                    viewModel.updateReminderType(type)
-                }
-            )
         }
     }
 
@@ -457,7 +444,9 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
                 launcher.launch("image/*")
             }
 
-            BottomBarItem(R.drawable.icons_alarm_clock) { showReminderSheet = true }
+            BottomBarItem(R.drawable.icons_alarm_clock) {
+                context.startActivity(Intent(context, ReminderActivity::class.java))
+            }
         }
     }
 }

@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_light_mode">#FDFDFD</color>
-    <color name="text_light_mode">#1A1A1A</color>
-    <color name="second_light_mode">#E9ECFA</color>
-
+    <color name="background_light_mode">#FAF4F0</color>
+    <color name="text_light_mode">#5E5956</color>
+    <color name="second_light_mode">#FEFEFC</color>
 
 
     <!-- DarkMode -->
-    <color name="background_night_mode">#15171D</color>
+    <color name="background_night_mode">#090E23</color>
     <color name="text_night_mode">#FFFFFF</color>
-    <color name="second_night_mode">#1C1F2F</color>
+    <color name="second_night_mode">#1A1D2E</color>
 
 
     <color name="second_color_any_mode">#F2D5D5</color>
     <color name="drawer_text_icon_color">#424242</color>
-    <color name="second_color_2">#F8815C</color>
+    <color name="second_color_2">#FA716A</color>
 
     <color name="priority_low">#673AB7</color>
     <color name="priority_medium">#DCB02B</color>

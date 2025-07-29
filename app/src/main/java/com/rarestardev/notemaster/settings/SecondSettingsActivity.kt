@@ -57,11 +57,11 @@ class SecondSettingsActivity : BaseActivity() {
             Scaffold(
                 topBar = { SettingsTopAppBar(titleActivity) },
                 containerColor = MaterialTheme.colorScheme.background
-            ) {
+            ) { paddingValues ->
                 Column(
                     Modifier
                         .fillMaxSize()
-                        .padding(it)
+                        .padding(paddingValues)
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     when(titleActivity){

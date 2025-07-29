@@ -13,4 +13,6 @@ data class Note(
     val date: String,
     val fontWeight: Int,
     val fontSize: Float
-)
+){
+    constructor() : this(0,"","",0,"","",0,0f)
+}

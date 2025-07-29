@@ -58,9 +58,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("androidx.navigation:navigation-compose:2.9.2")
-    implementation("androidx.savedstate:savedstate-compose-android:1.3.1")
-
     // PagerView
     implementation("com.google.accompanist:accompanist-pager:0.13.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.13.0")
@@ -88,5 +85,4 @@ dependencies {
     implementation ("com.github.samanzamani:PersianDate:1.7.1")
 
     implementation("com.google.code.gson:gson:2.13.1")
-
 }

@@ -76,7 +76,7 @@ fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
             }
         } else {
             Text(
-                text = "Task list is empty ...",
+                text = stringResource(R.string.task_list_is_empty),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
@@ -119,13 +119,13 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
             }
         } else {
             Text(
-                text = "Task list is empty ...",
+                text = stringResource(R.string.task_list_is_empty),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
                     .padding(top = 50.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Center
             )
         }

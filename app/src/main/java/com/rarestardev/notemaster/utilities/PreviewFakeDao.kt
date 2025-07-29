@@ -114,6 +114,10 @@ fun previewSubTaskViewModel() : SubTaskViewModel{
             TODO("Not yet implemented")
         }
 
+        override suspend fun insertSubtask(subTask: SubTask) {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun deleteSubTask(subTask: SubTask) {
             TODO("Not yet implemented")
         }

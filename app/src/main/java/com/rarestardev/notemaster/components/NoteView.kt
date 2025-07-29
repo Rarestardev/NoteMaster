@@ -59,7 +59,7 @@ import com.rarestardev.notemaster.view_model.NoteEditorViewModel
 @Preview
 @Composable
 private fun NoteScreenPreview() {
-    NoteMasterTheme() {
+    NoteMasterTheme {
         NoteScreen(previewFakeViewModel())
     }
 }
@@ -71,7 +71,7 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
     val notes by viewModel.allNote.collectAsState(initial = emptyList())
     val context = LocalContext.current
     var isShowMenuBottomSheet by remember { mutableStateOf(false) }
-    var noteModel by remember { mutableStateOf(Note(0,"","",0,"","",0,0f)) }
+    var noteModel by remember { mutableStateOf(Note()) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -98,7 +98,7 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                     modifier = Modifier
                         .clickable {
                             val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
-                                putExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY,false)
+                                putExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY, false)
                             }
                             context.startActivity(intent)
                         }
@@ -275,7 +275,7 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
 
         } else {
             Text(
-                text = "Notes list is empty ...",
+                text = stringResource(R.string.notes_list_is_empty),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
