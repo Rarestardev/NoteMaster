@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Note Master</string>
+    <string name="notification_desc">NotificationActivity</string>
+    <string name="search_desc">SearchActivity</string>
+
+    <string name="title_activity_create_note">ایجاد یادداشت</string>
+    <string name="back_activity_desc">Back Activity</string>
+    <string name="save">ذخیره</string>
+    <string name="note_title">موضوع</string>
+    <string name="note_start_type">یادداشت خود را بنویسید…</string>
+    <string name="note">یادداشت ها</string>
+    <string name="more">بیشتر</string>
+    <string name="setflagonnote">SetFlagOnNote</string>
+
+    <string name="priority_low">کم اهمیت</string>
+    <string name="priority_medium">معولی</string>
+    <string name="priority_high">خیلی مهمی</string>
+
+    <string name="font_style_icon_desc">FontStyle</string>
+    <string name="text_size_icon_desc">TextSize</string>
+    <string name="italic">Italic</string>
+    <string name="more_features">More Features</string>
+    <string name="fabcreatenote">FabCreateNote</string>
+    <string name="search">جست و جو</string>
+
+    <string name="settings_bottom_bar">تنظیمات</string>
+    <string name="calender_bottom_bar">تقویم</string>
+    <string name="task_bottom_bar">وظیفه</string>
+    <string name="font_size_bottom_sheet">اندازه متن</string>
+    <string name="no_note">یادداشتی وجود ندارد!</string>
+    <string name="no_task">وظیفه ای وجود ندارد!</string>
+    <string name="edit_note">ویرایش</string>
+    <string name="alarm_desc">زنگ</string>
+    <string name="description">محتوا…</string>
+    <string name="add_subtask">تسک کوچک</string>
+    <string name="delete">حذف</string>
+    <string name="see_more">موارد بیشتر</string>
+
+    <string-array name="task_categories">
+        <item>شخصی</item>
+        <item>کار</item>
+        <item>دانشگاه</item>
+        <item>خرید</item>
+        <item>یادآوری</item>
+    </string-array>
+
+    <string name="completed">انجام شده</string>
+    <string name="in_progress">در حال انجام</string>
+    <string name="priority">اهمیت</string>
+    <string name="category">دسته بندی</string>
+    <string name="reminder">یادآور</string>
+    <string name="done">انجام شد</string>
+    <string name="good_job">کارت خوب بود!</string>
+    <string name="rebuild">بازسازی</string>
+    <string name="task_completed">وظایف انجام شده</string>
+    <string name="share">اشتراک گذاری</string>
+    <string name="change_priority">تغییر میزان اهمیت</string>
+    <string name="calender">تقویم</string>
+    <string name="there_is_nothing_today">امروز کاری ثبت نشده</string>
+    <string name="sample">( نمونه )</string>
+    <string name="title">"موضوع : "</string>
+    <string name="personalization">شخصی سازی</string>
+    <string name="theme">پوسته</string>
+    <string name="language">زبان</string>
+    <string name="persian">فارسی</string>
+    <string name="english">انگلیسی</string>
+    <string name="warning_after_changing_the_language">توجه! بعد از تعویض زبان برنامه راه اندازی مجدد می شود.</string>
+    <string name="default_system">"پیش فرض سیستم"</string>
+    <string name="persian_calendar">تقویم فارسی</string>
+    <string name="version">ورژن</string>
+    <string name="about_app">درباره برنامه</string>
+    <string name="follow_us">ارتباط با ما</string>
+    <string name="other">موارد دیگر</string>
+    <string name="backupRestore">پشتبانی گیری/بازیابی</string>
+    <string name="high_priority_tasks">وظایف مهم</string>
+    <string name="high_priority_notes">یادداشت مهم</string>
+    <string name="all_notes">همه یادداشت ها :</string>
+    <string name="saved_backup_message">" بک‌آپ با موفقیت ذخیره شد"</string>
+    <string name="error_saved_backup_message">" ذخیره‌ی بک‌آپ با خطا مواجه شد"</string>
+    <string name="not_find_backup_file">فایل پیدا نشد</string>
+    <string name="error_restore_file">" بازیابی فایل با خطا مواجه شد"</string>
+
+
+</resources>

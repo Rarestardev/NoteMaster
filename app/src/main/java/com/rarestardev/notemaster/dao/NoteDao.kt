@@ -29,4 +29,7 @@ interface NoteDao {
 
     @Query("UPDATE notes SET priority = :priority WHERE id = :id")
     suspend fun updatePriority(priority: Int, id: Int)
+
+    @Query("SELECT * FROM notes WHERE noteTitle LIKE '%' || :query || '%' ")
+    fun searchNotes(query: String) : Flow<List<Note>>
 }

@@ -17,6 +17,9 @@ interface SubTaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSubTask(subTask: List<SubTask>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSubtask(subTask: SubTask)
+
     @Delete
     suspend fun deleteSubTask(subTask: SubTask)
 

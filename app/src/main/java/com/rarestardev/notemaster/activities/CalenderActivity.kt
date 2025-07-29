@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -45,7 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -63,7 +60,6 @@ import com.rarestardev.notemaster.enums.CalenderType
 import com.rarestardev.notemaster.enums.ReminderType
 import com.rarestardev.notemaster.factory.CalendarViewModelFactory
 import com.rarestardev.notemaster.factory.TaskViewModelFactory
-import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.view_model.CalenderViewModel
 import com.rarestardev.notemaster.view_model.TaskViewModel
@@ -75,7 +71,7 @@ import saman.zamani.persiandate.PersianDateFormat.PersianDateNumberCharacter
 import java.util.Calendar
 import java.util.Locale
 
-class CalenderActivity : ComponentActivity() {
+class CalenderActivity : BaseActivity() {
 
     private val calenderViewModel: CalenderViewModel by viewModels {
         CalendarViewModelFactory(applicationContext)
@@ -88,10 +84,8 @@ class CalenderActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            NoteMasterTheme {
-                CalenderScreen(calenderViewModel, taskViewModel)
-            }
+        setComposeContent {
+            CalenderScreen(calenderViewModel, taskViewModel)
         }
     }
 }
@@ -114,7 +108,7 @@ private fun CalenderScreen(viewModel: CalenderViewModel, taskViewModel: TaskView
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
                 navigationIcon = {
                     IconButton(

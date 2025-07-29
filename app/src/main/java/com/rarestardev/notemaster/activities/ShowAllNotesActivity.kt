@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -69,7 +67,7 @@ import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.previewFakeViewModel
 import com.rarestardev.notemaster.view_model.NoteEditorViewModel
 
-class ShowAllNotesActivity : ComponentActivity() {
+class ShowAllNotesActivity : BaseActivity() {
 
     private val viewModel: NoteEditorViewModel by viewModels {
         NoteViewModelFactory(NoteDatabase.getInstance(this).noteDao())
@@ -81,10 +79,8 @@ class ShowAllNotesActivity : ComponentActivity() {
 
         val state = intent.getBooleanExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY, false)
 
-        setContent {
-            NoteMasterTheme {
-                ActivityScreen(viewModel, state)
-            }
+        setComposeContent {
+            ActivityScreen(viewModel, state)
         }
     }
 }

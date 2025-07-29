@@ -10,6 +10,7 @@ import com.rarestardev.notemaster.dao.TaskItemDao
 import com.rarestardev.notemaster.model.Note
 import com.rarestardev.notemaster.model.SubTask
 import com.rarestardev.notemaster.model.Task
+import com.rarestardev.notemaster.utilities.Constants
 
 @Database(entities = [Note::class, Task::class, SubTask::class], version = 1, exportSchema = false)
 abstract class NoteDatabase : RoomDatabase(){
@@ -27,12 +28,16 @@ abstract class NoteDatabase : RoomDatabase(){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     NoteDatabase::class.java,
-                    "note_database"
+                    Constants.DATABASE_NAME
                 ).build()
 
                 INSTANCE = instance
                 instance
             }
+        }
+
+        fun destroyInstance() {
+            INSTANCE = null
         }
     }
 }

@@ -59,9 +59,7 @@ import com.rarestardev.notemaster.view_model.NoteEditorViewModel
 @Preview
 @Composable
 private fun NoteScreenPreview() {
-    NoteMasterTheme(
-        darkTheme = true
-    ) {
+    NoteMasterTheme() {
         NoteScreen(previewFakeViewModel())
     }
 }

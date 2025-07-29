@@ -1,16 +1,25 @@
 package com.rarestardev.notemaster.ui.theme
 
+import android.app.Activity
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
+import androidx.core.view.WindowCompat
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.enums.ThemeMode
 
 @Composable
 fun NoteMasterTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
     content: @Composable () -> Unit
 ) {
     val lightColorScheme = lightColorScheme(
@@ -29,10 +38,17 @@ fun NoteMasterTheme(
         onSecondaryContainer = colorResource(R.color.second_night_mode)
     )
 
-    val colorScheme = when {
-        darkTheme -> darkColorScheme
-        else -> lightColorScheme
+    val isDarkTheme = when (themeMode) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
     }
+
+    val colorScheme = if (isDarkTheme) darkColorScheme else lightColorScheme
+
+    StatusBarStyler(
+        isDarkTheme = isDarkTheme
+    )
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -40,4 +56,17 @@ fun NoteMasterTheme(
         content = content,
         shapes = shape
     )
+}
+
+@Composable
+private fun StatusBarStyler(
+    isDarkTheme: Boolean
+) {
+    val view = LocalView.current
+    val window = (view.context as? Activity)?.window ?: return
+    val insetsController = WindowCompat.getInsetsController(window,view)
+
+    SideEffect {
+        insetsController.isAppearanceLightStatusBars = !isDarkTheme
+    }
 }

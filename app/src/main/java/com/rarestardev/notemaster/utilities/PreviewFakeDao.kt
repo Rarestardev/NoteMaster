@@ -57,6 +57,10 @@ fun previewFakeViewModel() : NoteEditorViewModel{
         override suspend fun updatePriority(priority: Int, id: Int) {
             TODO("Not yet implemented")
         }
+
+        override fun searchNotes(query: String): Flow<List<Note>> {
+            TODO("Not yet implemented")
+        }
     }
     val fakeViewModel = NoteEditorViewModel(fakeDao)
     return fakeViewModel
@@ -89,6 +93,10 @@ fun previewFakeTaskViewModel() : TaskViewModel{
         }
 
         override suspend fun updateFlag(flag: Int, id: Int) {
+            TODO("Not yet implemented")
+        }
+
+        override fun searchTasks(query: String): Flow<List<Task>> {
             TODO("Not yet implemented")
         }
     }

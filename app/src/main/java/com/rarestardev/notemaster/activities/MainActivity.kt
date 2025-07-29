@@ -3,8 +3,6 @@ package com.rarestardev.notemaster.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
@@ -49,12 +47,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -97,7 +93,7 @@ import com.rarestardev.notemaster.view_model.NoteEditorViewModel
 import com.rarestardev.notemaster.view_model.SubTaskViewModel
 import com.rarestardev.notemaster.view_model.TaskViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
     private val viewModel: NoteEditorViewModel by viewModels {
         NoteViewModelFactory(NoteDatabase.getInstance(this).noteDao())
@@ -114,22 +110,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            NoteMasterTheme {
-                HomeScreen(viewModel, taskViewModel, subTaskViewModel)
-            }
+        setComposeContent {
+            HomeScreen(viewModel, taskViewModel, subTaskViewModel)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 }
 
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    NoteMasterTheme(darkTheme = true) {
+    NoteMasterTheme {
         HomeScreen(
             previewFakeViewModel(),
             previewFakeTaskViewModel(),
@@ -354,7 +344,7 @@ private fun TopTaskProgress(
             )
 
             Text(
-                text = "All notes : ( ${notes.size} )",
+                text = stringResource(R.string.all_notes) + " ( " + notes.size + " )",
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 16.sp,
@@ -519,12 +509,7 @@ private fun AdsView() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MyTopAppBar() {
-    var searchBottomSheetState by remember { mutableStateOf(false) }
     val context = LocalContext.current
-
-    if (searchBottomSheetState) SearchModalSheetDialog { dismiss ->
-        searchBottomSheetState = dismiss
-    }
 
     TopAppBar(
         title = {
@@ -541,7 +526,9 @@ private fun MyTopAppBar() {
         ),
         actions = {
             IconButton(
-                onClick = { searchBottomSheetState = true },
+                onClick = {
+                    context.startActivity(Intent(context, SearchActivity::class.java))
+                },
                 modifier = Modifier.size(40.dp)
             ) {
                 Icon(
@@ -565,24 +552,6 @@ private fun MyTopAppBar() {
             }
         }
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SearchModalSheetDialog(onDismissRequestClick: (Boolean) -> Unit) {
-    ModalBottomSheet(
-        onDismissRequest = { onDismissRequestClick(false) },
-        sheetState = rememberModalBottomSheetState(),
-        scrimColor = Color.Transparent
-    ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .background(Color.Transparent)
-        ) {
-
-        }
-    }
 }
 
 data class MiniFabItems(

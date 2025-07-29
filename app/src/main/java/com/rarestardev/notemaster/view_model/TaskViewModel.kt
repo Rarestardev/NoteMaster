@@ -22,11 +22,20 @@ import com.rarestardev.notemaster.repository.TaskItemRepository
 import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.utilities.CurrentTimeAndDate
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
+open class TaskViewModel(taskItemDao: TaskItemDao) : ViewModel() {
 
     private val repository = TaskItemRepository(taskItemDao)
 
@@ -36,9 +45,24 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
 
     val taskElement: Flow<List<Task>> = repository.getAllTask().flowOn(Dispatchers.IO)
 
+    private val _searchQuery = MutableStateFlow("")
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    val result: StateFlow<List<Task>> = _searchQuery
+        .debounce(300)
+        .flatMapLatest {
+            if (it.isBlank()) flowOf(emptyList()) else
+            repository.searchTasks(it)
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun updateQuery(query: String){
+        _searchQuery.value = query
+    }
+
     fun deleteTask(task: Task) {
         viewModelScope.launch {
-            taskItemDao.delete(task)
+            repository.deleteTask(task)
 
             Log.d(Constants.APP_LOG, "Delete task.")
         }
@@ -123,6 +147,7 @@ open class TaskViewModel(private val taskItemDao: TaskItemDao) : ViewModel() {
             Log.d(Constants.APP_LOG, "Updated flag success.")
         }
     }
+
 
     var taskId by mutableIntStateOf(0)
     fun updateTaskId(id: Int) {

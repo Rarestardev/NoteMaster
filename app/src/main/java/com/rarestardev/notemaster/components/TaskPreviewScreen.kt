@@ -71,7 +71,7 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 private fun TaskActivityPreview() {
-    NoteMasterTheme(darkTheme = true) {
+    NoteMasterTheme() {
         TaskPreviewScreen(
             previewFakeTaskViewModel(),
             previewSubTaskViewModel(),

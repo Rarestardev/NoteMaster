@@ -2,12 +2,12 @@ package com.rarestardev.notemaster.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,15 +16,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -34,17 +38,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.components.BannerAds
 import com.rarestardev.notemaster.enums.CalenderType
+import com.rarestardev.notemaster.enums.ThemeMode
 import com.rarestardev.notemaster.factory.CalendarViewModelFactory
+import com.rarestardev.notemaster.settings.SecondSettingsActivity
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
+import com.rarestardev.notemaster.utilities.Constants
 import com.rarestardev.notemaster.view_model.CalenderViewModel
-import kotlin.getValue
 
-class SettingsActivity : ComponentActivity() {
+class SettingsActivity : BaseActivity() {
 
     private val calenderViewModel: CalenderViewModel by viewModels {
         CalendarViewModelFactory(applicationContext)
@@ -53,19 +64,32 @@ class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            NoteMasterTheme {
-                SettingsScreen(calenderViewModel)
-            }
+        setComposeContent {
+            SettingsScreen(calenderViewModel)
         }
+    }
+}
+
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview
+@Composable
+private fun SettingsPreview() {
+    val context = LocalContext.current
+    NoteMasterTheme(ThemeMode.SYSTEM) {
+        SettingsScreen(CalenderViewModel(context))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-private fun SettingsScreen(calenderViewModel: CalenderViewModel) {
-    val activity = LocalContext.current as? Activity
+private fun SettingsScreen(
+    calenderViewModel: CalenderViewModel
+) {
+    val context = LocalContext.current
+    val activity = context as? Activity
+    val scrollState = rememberScrollState()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -92,20 +116,147 @@ private fun SettingsScreen(calenderViewModel: CalenderViewModel) {
                     }
                 }
             )
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.padding(
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = 8.dp
+                ),
+                containerColor = MaterialTheme.colorScheme.background
+            ) {
+                BannerAds()
+            }
         }
     ) { innerPadding ->
         Column(
             Modifier
+                .verticalScroll(scrollState)
                 .padding(
                     top = innerPadding.calculateTopPadding() + 12.dp,
                     start = 12.dp,
-                    end = 12.dp
+                    end = 12.dp,
+                    bottom = innerPadding.calculateBottomPadding() + 4.dp
                 )
                 .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize()
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            CategoryTitle("Tools")
+
             CalendarSwitch(calenderViewModel)
+
+            CategoryTitle(stringResource(R.string.personalization))
+
+            PersonalizationOption(title = stringResource(R.string.theme))
+
+            PersonalizationOption(title = stringResource(R.string.language))
+
+            Spacer(Modifier.height(16.dp))
+
+            CategoryTitle(stringResource(R.string.backupRestore))
+
+            PersonalizationOption(title = stringResource(R.string.backupRestore))
+
+            Spacer(Modifier.height(16.dp))
+
+            CategoryTitle(stringResource(R.string.other))
+
+            AppVersionShow()
+
+            PersonalizationOption(title = stringResource(R.string.about_app))
+
+            PersonalizationOption(title = stringResource(R.string.follow_us))
         }
+
+    }
+}
+
+@Composable
+private fun AppVersionShow() {
+    val context = LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(45.dp)
+            .background(MaterialTheme.colorScheme.onSecondaryContainer, MaterialTheme.shapes.small),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(R.string.version),
+            modifier = Modifier.padding(start = 8.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 14.sp
+        )
+
+        val version = try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            packageInfo.versionName
+        } catch (e: Exception) {
+            e.toString()
+        }
+
+        Text(
+            text = "( $version )",
+            modifier = Modifier.padding(end = 8.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 14.sp
+        )
+    }
+}
+
+@Composable
+private fun CategoryTitle(title: String) {
+    Text(
+        text = title,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSecondary,
+        fontSize = 14.sp,
+        maxLines = 1
+    )
+}
+
+@Composable
+private fun PersonalizationOption(title: String) {
+    val context = LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(45.dp)
+            .clickable {
+                val intent = Intent(Intent(context, SecondSettingsActivity::class.java)).apply {
+                    putExtra(Constants.STATE_SECOND_SETTINGS_ACTIVITY, title)
+                }
+                context.startActivity(intent)
+            }
+            .background(MaterialTheme.colorScheme.onSecondaryContainer, MaterialTheme.shapes.small),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = title,
+            modifier = Modifier.padding(start = 8.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 14.sp
+        )
+
+        Icon(
+            painter = painterResource(R.drawable.outline_arrow_forward_ios_24),
+            contentDescription = null,
+            modifier = Modifier
+                .size(22.dp)
+                .padding(end = 8.dp),
+            tint = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 
@@ -116,21 +267,27 @@ private fun CalendarSwitch(viewModel: CalenderViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(45.dp)
             .background(MaterialTheme.colorScheme.onSecondaryContainer, MaterialTheme.shapes.small)
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Use persian calendar ",
-            style = MaterialTheme.typography.labelLarge,
+            text = stringResource(R.string.persian_calendar),
+            style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onPrimary,
-            fontSize = 16.sp
+            fontSize = 14.sp
         )
 
         Switch(
             checked = calenderType == CalenderType.PERSIAN,
-            onCheckedChange = { viewModel.toggleType(context) }
+            onCheckedChange = { viewModel.toggleType(context) },
+            colors = SwitchDefaults.colors().copy(
+                checkedThumbColor = colorResource(R.color.priority_low),
+                uncheckedThumbColor = colorResource(R.color.priority_low),
+                checkedTrackColor = MaterialTheme.colorScheme.onSecondary
+            )
         )
     }
 

@@ -5,16 +5,13 @@ import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,13 +24,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -93,7 +87,7 @@ import com.rarestardev.notemaster.view_model.TaskViewModel
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class CreateTaskActivity : ComponentActivity() {
+class CreateTaskActivity : BaseActivity() {
 
     private val viewModel: TaskViewModel by viewModels {
         TaskViewModelFactory(NoteDatabase.getInstance(this).taskItemDao())
@@ -110,14 +104,12 @@ class CreateTaskActivity : ComponentActivity() {
         viewModel.updateIsPreviewTask(intent.getBooleanExtra(Constants.STATE_TASK_ACTIVITY, false))
         val taskId = intent.getIntExtra(Constants.STATE_TASK_ID_ACTIVITY, 0)
 
-        setContent {
-            NoteMasterTheme {
-                if (!viewModel.isPreviewTask) {
-                    TaskEditorScreen(viewModel, subTaskViewModel)
-                } else {
-                    TaskPreviewScreen(viewModel, subTaskViewModel, taskId)
-                    Log.d(Constants.APP_LOG, "TaskPreviewScreen item id : $taskId")
-                }
+        setComposeContent {
+            if (!viewModel.isPreviewTask) {
+                TaskEditorScreen(viewModel, subTaskViewModel)
+            } else {
+                TaskPreviewScreen(viewModel, subTaskViewModel, taskId)
+                Log.d(Constants.APP_LOG, "TaskPreviewScreen item id : $taskId")
             }
         }
     }
@@ -126,7 +118,7 @@ class CreateTaskActivity : ComponentActivity() {
 @Preview
 @Composable
 private fun TaskActivityPreview() {
-    NoteMasterTheme(darkTheme = true) {
+    NoteMasterTheme {
         TaskEditorScreen(
             viewModel = previewFakeTaskViewModel(),
             subTaskViewModel = previewSubTaskViewModel()
@@ -461,7 +453,7 @@ private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTask
         ) {
             BottomBarItem(R.drawable.icons_checked_checkbox) { showSubTaskSheet = true }
 
-            BottomBarItem(R.drawable.icons_image) {
+            BottomBarItem(R.drawable.icon_image) {
                 launcher.launch("image/*")
             }
 

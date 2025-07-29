@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -81,7 +79,7 @@ import com.rarestardev.notemaster.utilities.CurrentTimeAndDate
 import com.rarestardev.notemaster.utilities.previewFakeViewModel
 import com.rarestardev.notemaster.view_model.NoteEditorViewModel
 
-class CreateNoteActivity : ComponentActivity() {
+class CreateNoteActivity : BaseActivity() {
 
     private val viewModel: NoteEditorViewModel by viewModels {
         NoteViewModelFactory(NoteDatabase.getInstance(this).noteDao())
@@ -108,16 +106,14 @@ class CreateNoteActivity : ComponentActivity() {
         }
         Log.d(Constants.APP_LOG, "${viewModel.isEditing}")
 
-        setContent {
-            NoteMasterTheme {
-                if (!viewModel.isEditing) {
-                    CreateNote(viewModel)
-                } else {
-                    NotePreviewScreen(
-                        note,
-                        viewModel
-                    )
-                }
+        setComposeContent {
+            if (!viewModel.isEditing) {
+                CreateNote(viewModel)
+            } else {
+                NotePreviewScreen(
+                    note,
+                    viewModel
+                )
             }
         }
     }
@@ -126,7 +122,7 @@ class CreateNoteActivity : ComponentActivity() {
 @Preview
 @Composable
 private fun CreateNoteActivityPreview() {
-    NoteMasterTheme(darkTheme = false) {
+    NoteMasterTheme() {
         CreateNote(previewFakeViewModel())
         NotePreviewScreen(
             Note(0, "Text", "Note", 1, "2022", "20:22", 400, 14f),

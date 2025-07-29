@@ -17,29 +17,46 @@
         android:theme="@style/Theme.NoteMaster"
         tools:targetApi="31">
         <activity
+            android:name=".activities.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.NoteMaster" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.BaseActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NoteMaster" />
+        <activity
+            android:name=".settings.SecondSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NoteMaster" />
+        <activity
+            android:name=".activities.SearchActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NoteMaster" />
+        <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
-            android:label="@string/title_activity_settings"
             android:theme="@style/Theme.NoteMaster" />
         <activity
             android:name=".activities.CalenderActivity"
             android:exported="false"
-            android:label="@string/title_activity_calender"
             android:theme="@style/Theme.NoteMaster" />
         <activity
             android:name=".activities.ShowAllNotesActivity"
             android:exported="false"
-            android:label="@string/title_activity_show_all_notes"
             android:theme="@style/Theme.NoteMaster" />
         <activity
             android:name=".activities.ShowAllTasksActivity"
             android:exported="false"
-            android:label="@string/title_activity_show_all_tasks"
             android:theme="@style/Theme.NoteMaster" />
         <activity
             android:name=".activities.CreateTaskActivity"
             android:exported="false"
-            android:label="@string/title_activity_create_task"
             android:theme="@style/Theme.NoteMaster" />
         <activity
             android:name=".activities.CreateNoteActivity"
@@ -49,13 +66,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.NoteMaster">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.NoteMaster"/>
 
         <receiver android:name=".receiver.ReminderReceiver" />
     </application>

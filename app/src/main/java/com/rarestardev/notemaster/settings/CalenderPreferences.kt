@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 object CalenderPreferences {
+
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "com.rarestardev.notemaster.Calender")
     private val KEY_CALENDER = stringPreferencesKey("calendar_type")
 

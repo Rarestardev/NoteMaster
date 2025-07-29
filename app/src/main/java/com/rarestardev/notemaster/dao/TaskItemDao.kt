@@ -32,4 +32,7 @@ interface TaskItemDao {
 
     @Query("UPDATE task_items SET priorityFlag = :flag WHERE id = :id")
     suspend fun updateFlag(flag: Int, id: Int)
+
+    @Query("SELECT * FROM task_items WHERE title LIKE '%' || :query || '%' ")
+    fun searchTasks(query: String) : Flow<List<Task>>
 }

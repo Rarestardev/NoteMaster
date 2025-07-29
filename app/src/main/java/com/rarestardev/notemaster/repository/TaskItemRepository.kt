@@ -20,4 +20,6 @@ class TaskItemRepository(
     suspend fun updateAllTaskItem(task: Task) = dao.updateAllTaskItem(task)
 
     suspend fun updateFlagPriority(flag: Int, id: Int) = dao.updateFlag(flag, id)
+
+    fun searchTasks(query: String) = dao.searchTasks(query)
 }

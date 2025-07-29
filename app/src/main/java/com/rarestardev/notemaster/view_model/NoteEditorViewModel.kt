@@ -16,8 +16,17 @@ import com.rarestardev.notemaster.dao.NoteDao
 import com.rarestardev.notemaster.model.Note
 import com.rarestardev.notemaster.utilities.Constants
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
@@ -31,6 +40,21 @@ import kotlinx.coroutines.launch
 open class NoteEditorViewModel(private val noteDao: NoteDao) : ViewModel() {
 
     val allNote: Flow<List<Note>> = noteDao.getAllNotes().flowOn(Dispatchers.IO)
+
+    private val _searchQuery = MutableStateFlow("")
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    val result: StateFlow<List<Note>> = _searchQuery
+        .debounce(300)
+        .flatMapLatest {
+            if (it.isBlank()) flowOf(emptyList()) else
+                noteDao.searchNotes(it)
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun updateQuery(query: String){
+        _searchQuery.value = query
+    }
 
     var showMoreFeatureMenu by mutableStateOf(false)
     fun updateShowMoreFeatureMenu(value: Boolean) {

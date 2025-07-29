@@ -1,21 +1,15 @@
 <resources>
     <string name="app_name">Note Master</string>
-    <string name="drawer_desc">Drawer_Menu</string>
-    <string name="title_activity_search">SearchActivity</string>
-    <string name="title_activity_notification">NotificationActivity</string>
     <string name="notification_desc">NotificationActivity</string>
     <string name="search_desc">SearchActivity</string>
 
     <string name="title_activity_create_note">Create note</string>
-    <string name="title_activity_create_task">CreateTaskActivity</string>
-    <string name="title_activity_create_capital">CreateCapitalActivity</string>
     <string name="back_activity_desc">Back Activity</string>
     <string name="save">Save</string>
     <string name="note_title">Title</string>
     <string name="note_start_type">Type your note…</string>
     <string name="note">Notes</string>
     <string name="more">more</string>
-    <string name="title_activity_show_all_notes">ShowAllNotesActivity</string>
     <string name="setflagonnote">SetFlagOnNote</string>
 
 
@@ -24,15 +18,7 @@
     <string name="priority_high">HIGH PRIORITY</string>
 
     <string name="font_style_icon_desc">FontStyle</string>
-    <string name="dot_bullet_icon_desc">DotBullet</string>
     <string name="text_size_icon_desc">TextSize</string>
-    <string name="select_color_icon_desc">SelectColor</string>
-    <string name="text_align_icon_desc">TextAlign</string>
-    <string name="font_weight_icon_desc">FontWeight</string>
-    <string name="align_left_text_filed_desc">AlignLeft</string>
-    <string name="align_center_text_filed_desc">AlignCenter</string>
-    <string name="align_end_text_filed_desc">AlignEnd</string>
-    <string name="normal">Normal</string>
     <string name="italic">Italic</string>
     <string name="more_features">More Features</string>
     <string name="fabcreatenote">FabCreateNote</string>
@@ -42,10 +28,10 @@
     <string name="calender_bottom_bar">Calender</string>
     <string name="task_bottom_bar">Task</string>
     <string name="font_size_bottom_sheet">Font Size</string>
-    <string name="no_note">There are no notes.</string>
+    <string name="no_note">There are no notes!</string>
+    <string name="no_task">There are no tasks!</string>
     <string name="edit_note">Edit</string>
     <string name="alarm_desc">Alarm</string>
-    <string name="new_category">New…</string>
     <string name="description">Description…</string>
     <string name="add_subtask">Add subtask</string>
     <string name="delete">Delete</string>
@@ -59,8 +45,6 @@
         <item>Reminder</item>
     </string-array>
 
-    <string name="title_activity_show_all_tasks">ShowAllTasksActivity</string>
-    <string name="title_activity_user_performance">UserPerformanceActivity</string>
     <string name="completed">Completed</string>
     <string name="in_progress">In Progress</string>
     <string name="priority">Priority</string>
@@ -69,13 +53,32 @@
     <string name="done">Done</string>
     <string name="good_job">Good job!</string>
     <string name="rebuild">Rebuild</string>
-    <string name="task_completed">Task Compeleted</string>
+    <string name="task_completed">Task Completed</string>
     <string name="share">Share</string>
     <string name="change_priority">Change Priority</string>
-    <string name="title_activity_show_all_category">ShowAllCategoryActivity</string>
-    <string name="title_activity_calender">CalenderActivity</string>
     <string name="calender">Calender</string>
     <string name="there_is_nothing_today">There is nothing today</string>
-    <string name="title_activity_settings">SettingsActivity</string>
     <string name="sample">( Sample )</string>
+    <string name="title">"Title : "</string>
+    <string name="personalization">Personalization</string>
+    <string name="theme">Theme</string>
+    <string name="language">Language</string>
+    <string name="persian">Persian</string>
+    <string name="english">English</string>
+    <string name="warning_after_changing_the_language">Warning! after changing the language,the application will restart.</string>
+    <string name="default_system">DEFAULT</string>
+    <string name="persian_calendar">Persian calendar</string>
+    <string name="version">Version</string>
+    <string name="about_app">About</string>
+    <string name="follow_us">Follow us</string>
+    <string name="other">Other</string>
+    <string name="backupRestore">Backup/Restore</string>
+    <string name="high_priority_tasks">High Priority Tasks</string>
+    <string name="high_priority_notes">High Priority Notes</string>
+    <string name="all_notes">All notes : </string>
+    <string name="saved_backup_message">" بک‌آپ با موفقیت ذخیره شد"</string>
+    <string name="error_saved_backup_message">" ذخیره‌ی بک‌آپ با خطا مواجه شد"</string>
+    <string name="not_find_backup_file">فایل پیدا نشد</string>
+    <string name="error_restore_file">" بازیابی فایل با خطا مواجه شد"</string>
+
 </resources>
