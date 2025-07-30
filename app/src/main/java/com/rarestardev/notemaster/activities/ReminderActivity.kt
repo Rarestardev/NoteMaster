@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -65,6 +66,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.notemaster.R
+import com.rarestardev.notemaster.components.BannerAds
 import com.rarestardev.notemaster.enums.CalenderType
 import com.rarestardev.notemaster.enums.ReminderType
 import com.rarestardev.notemaster.factory.CalendarViewModelFactory
@@ -128,6 +130,11 @@ private fun ReminderScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
+        },
+        bottomBar = {
+            BottomAppBar(containerColor = MaterialTheme.colorScheme.background) {
+                BannerAds()
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
