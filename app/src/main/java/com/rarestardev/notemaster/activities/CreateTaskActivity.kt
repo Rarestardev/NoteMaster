@@ -697,9 +697,11 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
                     viewModel.updateReminderType(type)
 
                     viewModel.insertTask(context)
-                    subTaskViewModel.insertSubTask()
-                    reminderController.clearAll()
-                    activity?.finish()
+                    if (viewModel.titleState.isNotEmpty() && viewModel.descriptionState.isNotEmpty()){
+                        subTaskViewModel.insertSubTask()
+                        reminderController.clearAll()
+                        activity?.finish()
+                    }
                 },
                 colors = ButtonDefaults.buttonColors().copy(
                     containerColor = Color.Transparent
