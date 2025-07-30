@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-class SubTaskViewModel(private val subTaskDao: SubTaskDao) : ViewModel() {
+class SubTaskViewModel(subTaskDao: SubTaskDao) : ViewModel() {
 
     private val repository = SubTaskRepository(subTaskDao)
 
@@ -65,10 +65,5 @@ class SubTaskViewModel(private val subTaskDao: SubTaskDao) : ViewModel() {
     var subTaskPosition by mutableIntStateOf(0)
     fun updateSubTaskPosition(position: Int) {
         subTaskPosition = position
-    }
-
-    var taskId by mutableIntStateOf(0)
-    fun updateTaskId(id: Int) {
-        taskId = id
     }
 }

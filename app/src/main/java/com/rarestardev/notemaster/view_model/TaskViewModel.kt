@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.dao.TaskItemDao
 import com.rarestardev.notemaster.enums.ImageSize
 import com.rarestardev.notemaster.enums.ReminderType
@@ -52,11 +54,11 @@ open class TaskViewModel(taskItemDao: TaskItemDao) : ViewModel() {
         .debounce(300)
         .flatMapLatest {
             if (it.isBlank()) flowOf(emptyList()) else
-            repository.searchTasks(it)
+                repository.searchTasks(it)
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun updateQuery(query: String){
+    fun updateQuery(query: String) {
         _searchQuery.value = query
     }
 
@@ -71,33 +73,41 @@ open class TaskViewModel(taskItemDao: TaskItemDao) : ViewModel() {
     fun insertTask(context: Context) {
         viewModelScope.launch {
             val currentTimeAndDate = CurrentTimeAndDate()
-            val insertTask = Task(
-                id = taskId,
-                isComplete = false,
-                title = titleState,
-                description = descriptionState,
-                priorityFlag = priorityFlag,
-                category = selectedCategory,
-                reminderTime = reminderTime,
-                reminderType = reminderType.name,
-                imageSize = imageSize.toString(),
-                imagePath = imagePath,
-                date = currentTimeAndDate.getTodayDate(),
-                time = currentTimeAndDate.currentTime()
-            )
+            if (titleState.isNotEmpty() && descriptionState.isNotEmpty()) {
+                val insertTask = Task(
+                    id = taskId,
+                    isComplete = false,
+                    title = titleState,
+                    description = descriptionState,
+                    priorityFlag = priorityFlag,
+                    category = selectedCategory,
+                    reminderTime = reminderTime,
+                    reminderType = reminderType.name,
+                    imageSize = imageSize.toString(),
+                    imagePath = imagePath,
+                    date = currentTimeAndDate.getTodayDate(),
+                    time = currentTimeAndDate.currentTime()
+                )
 
-            if (!checkIdInDatabase(taskId)) {
-                repository.insertTask(task = insertTask)
-                Log.d(Constants.APP_LOG, "Success insert task.")
+                if (!checkIdInDatabase(taskId)) {
+                    repository.insertTask(task = insertTask)
+                    Log.d(Constants.APP_LOG, "Success insert task.")
+                } else {
+                    updateAllTask(insertTask)
+                }
+
+                sendReminderReceiver(
+                    context,
+                    reminderTime,
+                    reminderType
+                )
             } else {
-                updateAllTask(insertTask)
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.please_fill_title_and_description_fields),
+                    Toast.LENGTH_LONG
+                ).show()
             }
-
-            sendReminderReceiver(
-                context,
-                reminderTime,
-                reminderType
-            )
         }
     }
 

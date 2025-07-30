@@ -94,5 +94,6 @@
     <string name="set_type">Set type</string>
     <string name="notification">Notification</string>
     <string name="alarm">Alarm</string>
+    <string name="please_fill_title_and_description_fields">Please fill title and description fields!</string>
 
 </resources>

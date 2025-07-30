@@ -57,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,13 +65,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.notemaster.R
-import com.rarestardev.notemaster.database.NoteDatabase
 import com.rarestardev.notemaster.enums.CalenderType
 import com.rarestardev.notemaster.enums.ReminderType
 import com.rarestardev.notemaster.factory.CalendarViewModelFactory
-import com.rarestardev.notemaster.factory.TaskViewModelFactory
+import com.rarestardev.notemaster.utilities.ReminderController
 import com.rarestardev.notemaster.view_model.CalenderViewModel
-import com.rarestardev.notemaster.view_model.TaskViewModel
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
@@ -87,15 +86,11 @@ class ReminderActivity : BaseActivity() {
         CalendarViewModelFactory(applicationContext)
     }
 
-    private val taskViewModel: TaskViewModel by viewModels {
-        TaskViewModelFactory(NoteDatabase.getInstance(this).taskItemDao())
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setComposeContent {
-            ReminderScreen(calenderViewModel, taskViewModel, this@ReminderActivity)
+            ReminderScreen(calenderViewModel, this@ReminderActivity)
         }
     }
 }
@@ -105,7 +100,6 @@ class ReminderActivity : BaseActivity() {
 @Composable
 private fun ReminderScreen(
     calenderViewModel: CalenderViewModel,
-    taskViewModel: TaskViewModel,
     activity: Activity
 ) {
     Scaffold(
@@ -138,7 +132,7 @@ private fun ReminderScreen(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
 
-        ShowReminder(paddingValues, taskViewModel, calenderViewModel,activity)
+        ShowReminder(paddingValues, calenderViewModel, activity)
     }
 }
 
@@ -146,7 +140,6 @@ private fun ReminderScreen(
 @Composable
 private fun ShowReminder(
     paddingValues: PaddingValues,
-    viewModel: TaskViewModel,
     calenderViewModel: CalenderViewModel,
     activity: Activity
 ) {
@@ -173,6 +166,8 @@ private fun ShowReminder(
     )
 
     val transparentColor = Color.Transparent
+
+    val controller = ReminderController(LocalContext.current)
 
     Column(
         modifier = Modifier
@@ -394,8 +389,8 @@ private fun ShowReminder(
                                 val dateTime = LocalDateTime.of(selectedDate, selectedTime)
                                 val millis = dateTime.atZone(ZoneId.systemDefault()).toInstant()
                                     .toEpochMilli()
-                                viewModel.updateReminderTime(millis)
-                                viewModel.updateReminderType(selectedType!!)
+
+                                controller.saveReminderMode(millis, selectedType!!.name)
                                 activity.finish()
                             }
                         },

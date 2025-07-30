@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -47,6 +48,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,10 +58,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,6 +76,7 @@ import com.rarestardev.notemaster.R
 import com.rarestardev.notemaster.components.CircleCheckBox
 import com.rarestardev.notemaster.components.TaskPreviewScreen
 import com.rarestardev.notemaster.database.NoteDatabase
+import com.rarestardev.notemaster.enums.ReminderType
 import com.rarestardev.notemaster.factory.SubTaskViewModelFactory
 import com.rarestardev.notemaster.factory.TaskViewModelFactory
 import com.rarestardev.notemaster.feature.CategorySelector
@@ -79,6 +84,8 @@ import com.rarestardev.notemaster.feature.ResizableImageItem
 import com.rarestardev.notemaster.model.SubTask
 import com.rarestardev.notemaster.ui.theme.NoteMasterTheme
 import com.rarestardev.notemaster.utilities.Constants
+import com.rarestardev.notemaster.utilities.CurrentTimeAndDate
+import com.rarestardev.notemaster.utilities.ReminderController
 import com.rarestardev.notemaster.utilities.previewFakeTaskViewModel
 import com.rarestardev.notemaster.utilities.previewSubTaskViewModel
 import com.rarestardev.notemaster.view_model.SubTaskViewModel
@@ -112,6 +119,12 @@ class CreateTaskActivity : BaseActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val controller = ReminderController(this)
+        controller.unregister()
+    }
 }
 
 @Preview
@@ -130,6 +143,7 @@ private fun TaskActivityPreview() {
 private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     val subTaskViews = getSubTaskItems(subTaskViewModel)
     val activity = LocalContext.current as? Activity
+    val controller = ReminderController(LocalContext.current)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -140,6 +154,7 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
 
         BackHandler {
             viewModel.updateTaskId(0)
+            controller.clearAll()
             activity?.finish()
         }
 
@@ -165,6 +180,8 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
 
                 DescriptionTextField(viewModel = viewModel)
 
+                ReminderLayout(viewModel)
+
                 if (viewModel.imagePath.isNotEmpty()) {
                     ResizableImageItem(viewModel.imagePath.toUri()) {
                         viewModel.updateImagePath("")
@@ -172,10 +189,88 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
                 }
             }
 
-
-
             items(subTaskViews.size) { index ->
                 subTaskViews[index]()
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReminderLayout(taskViewModel: TaskViewModel) {
+    val reminderController = ReminderController(LocalContext.current)
+    val timeController by reminderController.reminderTime.collectAsState()
+    val typeController by reminderController.reminderType.collectAsState()
+    val currentTimeAndDate = CurrentTimeAndDate()
+
+    if (typeController != ReminderType.NONE.name && timeController != 0L) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+                .height(50.dp)
+                .background(
+                    MaterialTheme.colorScheme.onSecondaryContainer,
+                    MaterialTheme.shapes.small
+                )
+        ) {
+            val (alarmTypeRef, alarmTimeRef, deleteButtonRef) = createRefs()
+
+            if (typeController == ReminderType.NOTIFICATION.name) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = stringResource(R.string.notification),
+                    modifier = Modifier.constrainAs(alarmTypeRef) {
+                        start.linkTo(parent.start, 12.dp)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    },
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            } else if (typeController == ReminderType.ALARM.name) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.icon_alarm),
+                    contentDescription = stringResource(R.string.notification),
+                    modifier = Modifier.constrainAs(alarmTypeRef) {
+                        start.linkTo(parent.start, 12.dp)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    },
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+
+            Text(
+                text = currentTimeAndDate.alarmTimeToText(timeController),
+                modifier = Modifier.constrainAs(alarmTimeRef) {
+                    start.linkTo(alarmTypeRef.end, 8.dp)
+                    top.linkTo(alarmTypeRef.top)
+                    bottom.linkTo(alarmTypeRef.bottom)
+                    end.linkTo(deleteButtonRef.start, 8.dp)
+                    width = Dimension.fillToConstraints
+                },
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+
+            TextButton(
+                onClick = {
+                    taskViewModel.updateReminderTime(0L)
+                    taskViewModel.updateReminderType(ReminderType.NONE)
+                    reminderController.clearAll()
+                },
+                modifier = Modifier.constrainAs(deleteButtonRef) {
+                    end.linkTo(parent.end, 12.dp)
+                    top.linkTo(alarmTypeRef.top)
+                    bottom.linkTo(alarmTypeRef.bottom)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+            ) {
+                Text(
+                    text = stringResource(R.string.delete),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
             }
         }
     }
@@ -389,7 +484,10 @@ private fun TitleTrailingIcon(viewModel: TaskViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BottomAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
+private fun BottomAppBarView(
+    viewModel: TaskViewModel,
+    subTaskViewModel: SubTaskViewModel
+) {
     var showSubTaskSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -554,12 +652,18 @@ private fun BottomBarItem(
 private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     val context = LocalContext.current
     val activity = context as? Activity
+    val reminderController = ReminderController(context)
+    val timeController by reminderController.reminderTime.collectAsState()
+    val typeController by reminderController.reminderType.collectAsState()
 
     TopAppBar(
         title = {},
         navigationIcon = {
             IconButton(
-                onClick = { activity?.finish() }
+                onClick = {
+                    reminderController.clearAll()
+                    activity?.finish()
+                }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -574,8 +678,27 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
         actions = {
             TextButton(
                 onClick = {
+
+                    val type = when (typeController) {
+                        ReminderType.NOTIFICATION.name -> {
+                            ReminderType.NOTIFICATION
+                        }
+
+                        ReminderType.ALARM.name -> {
+                            ReminderType.ALARM
+                        }
+
+                        else -> {
+                            ReminderType.NONE
+                        }
+                    }
+
+                    viewModel.updateReminderTime(timeController)
+                    viewModel.updateReminderType(type)
+
                     viewModel.insertTask(context)
                     subTaskViewModel.insertSubTask()
+                    reminderController.clearAll()
                     activity?.finish()
                 },
                 colors = ButtonDefaults.buttonColors().copy(

@@ -21,29 +21,29 @@ class ReminderReceiver : BroadcastReceiver() {
         val message = intent?.getStringExtra("message") ?: "Reminder"
         val type = intent?.getStringExtra("type") ?: ReminderType.NOTIFICATION.name
 
-        if (type == ReminderType.NOTIFICATION.name) {
-            val manager =
-                context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channelId = "reminder_channel"
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channel =
-                    NotificationChannel(channelId, "Reminder", NotificationManager.IMPORTANCE_HIGH)
-                manager.createNotificationChannels(channel as List<NotificationChannel?>)
-            }
-
-            val notification = NotificationCompat.Builder(context, channelId)
-                .setContentTitle("Reminder")
-                .setContentText(message)
-                .setSmallIcon(R.drawable.icon_note)
-                .build()
-
-            manager.notify(Random.nextInt(), notification)
-        } else {
-            val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            val ringtone = RingtoneManager.getRingtone(context, alarmUri)
-            ringtone.play()
-        }
+//        if (type == ReminderType.NOTIFICATION.name) {
+//            val manager =
+//                context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//            val channelId = "reminder_channel"
+//
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                val channel =
+//                    NotificationChannel(channelId, "Reminder", NotificationManager.IMPORTANCE_HIGH)
+//                manager.createNotificationChannels(channel as List<NotificationChannel?>)
+//            }
+//
+//            val notification = NotificationCompat.Builder(context, channelId)
+//                .setContentTitle("Reminder")
+//                .setContentText(message)
+//                .setSmallIcon(R.drawable.icon_note)
+//                .build()
+//
+//            manager.notify(Random.nextInt(), notification)
+//        } else {
+//            val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+//            val ringtone = RingtoneManager.getRingtone(context, alarmUri)
+//            ringtone.play()
+//        }
 
         Log.d(Constants.APP_LOG, "Reminder Receiver : $type")
     }

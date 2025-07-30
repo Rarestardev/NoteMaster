@@ -94,6 +94,7 @@
     <string name="set_type">تنظیم نوع یادآور</string>
     <string name="notification">اعلان</string>
     <string name="alarm">زنگ</string>
+    <string name="please_fill_title_and_description_fields">لطفا کادر موضوع و محتوا را پر کنید!</string>
 
 
 </resources>
