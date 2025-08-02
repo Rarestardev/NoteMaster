@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Note Master</string>
+    <string name="app_name">Taskora</string>
     <string name="notification_desc">NotificationActivity</string>
     <string name="search_desc">SearchActivity</string>
 
@@ -95,6 +95,9 @@
     <string name="notification">اعلان</string>
     <string name="alarm">زنگ</string>
     <string name="please_fill_title_and_description_fields">لطفا کادر موضوع و محتوا را پر کنید!</string>
+    <string name="stop">نوقف</string>
+    <string name="please_select_alarm_type">لطفا نوع یادآوری را مشخص کنید!</string>
+    <string name="no_item">آیتمی وجود ندارد!</string>
 
 
 </resources>

@@ -21,5 +21,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Note Master"
+rootProject.name = "Taskora"
 include(":app")
