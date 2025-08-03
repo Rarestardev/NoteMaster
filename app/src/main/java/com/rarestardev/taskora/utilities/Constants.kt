@@ -3,7 +3,7 @@ package com.rarestardev.taskora.utilities
 class Constants {
 
     companion object{
-        const val APP_LOG : String =  "NoteMasterLogs"
+        const val APP_LOG : String =  "TaskoraLogs"
 
         const val DATABASE_NAME = "note_database"
 
@@ -25,5 +25,9 @@ class Constants {
 
 
         const val ADS_VIEW : Boolean = true
+        const val ADS_LOG = "AdTaskoraLogs"
+        const val AD_APPLICATION_ID = "57c3c633-8c84-4e50-8266-7a96687f3c03"
+        const val AD_BANNER_ID = "c18a0d73-e54e-42ae-b15c-9ca683703bf8"
+        const val AD_NATIVE_ID = "bedada6b-61a8-4d5b-a3a4-d9616d92e189"
     }
 }

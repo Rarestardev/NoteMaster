@@ -75,6 +75,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.components.CircleCheckBox
 import com.rarestardev.taskora.components.TaskPreviewScreen
 import com.rarestardev.taskora.database.NoteDatabase
@@ -171,39 +172,47 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
             activity.finish()
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
+        Column (
+            modifier = Modifier.fillMaxWidth()
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     start = 12.dp,
                     end = 12.dp,
                     bottom = paddingValues.calculateBottomPadding()
                 ),
-            state = rememberLazyListState()
-        ) {
-            item {
-                subTaskViewModel.updateSubTaskPosition(0)
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            BannerAds()
 
-                TitleLabelTextField(viewModel = viewModel)
+            Spacer(Modifier.height(12.dp))
 
-                CategorySelector(viewModel = viewModel)
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                state = rememberLazyListState()
+            ) {
+                item {
+                    subTaskViewModel.updateSubTaskPosition(0)
 
-                Spacer(Modifier.height(12.dp))
+                    TitleLabelTextField(viewModel = viewModel)
 
-                DescriptionTextField(viewModel = viewModel)
+                    CategorySelector(viewModel = viewModel)
 
-                ReminderLayout(viewModel)
+                    Spacer(Modifier.height(12.dp))
 
-                if (viewModel.imagePath.isNotEmpty()) {
-                    ResizableImageItem(viewModel.imagePath.toUri()) {
-                        viewModel.updateImagePath("")
+                    DescriptionTextField(viewModel = viewModel)
+
+                    ReminderLayout(viewModel)
+
+                    if (viewModel.imagePath.isNotEmpty()) {
+                        ResizableImageItem(viewModel.imagePath.toUri()) {
+                            viewModel.updateImagePath("")
+                        }
                     }
                 }
-            }
 
-            items(subTaskViews.size) { index ->
-                subTaskViews[index]()
+                items(subTaskViews.size) { index ->
+                    subTaskViews[index]()
+                }
             }
         }
     }

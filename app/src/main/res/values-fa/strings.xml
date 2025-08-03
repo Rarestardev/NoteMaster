@@ -98,6 +98,8 @@
     <string name="stop">نوقف</string>
     <string name="please_select_alarm_type">لطفا نوع یادآوری را مشخص کنید!</string>
     <string name="no_item">آیتمی وجود ندارد!</string>
+    <string name="ad">#تبلبغات</string>
+    <string name="magnetic_player">Magnetic Player</string>
 
 
 </resources>

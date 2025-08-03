@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.components.MenuBottomSheet
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
@@ -136,6 +137,10 @@ private fun ActivityScreen(viewModel: NoteEditorViewModel, state: Boolean) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            BannerAds()
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             NoteScreen(viewModel, state)
         }
     }

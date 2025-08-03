@@ -85,4 +85,6 @@ dependencies {
     implementation ("com.github.samanzamani:PersianDate:1.7.1")
 
     implementation("com.google.code.gson:gson:2.13.1")
+
+    implementation("com.adivery:sdk:4.8.3")
 }

@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.factory.SubTaskViewModelFactory
@@ -188,243 +189,254 @@ private fun ShowAllTasksActivityScreen(
         }
     ) { paddingValues ->
 
-        if (filteredTask.isNotEmpty()) {
-            LazyColumn(
-                state = lazyState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding() + 12.dp,
-                        start = 12.dp,
-                        end = 12.dp,
-                        bottom = paddingValues.calculateBottomPadding()
-                    )
-            ) {
-                items(filteredTask) { tasks ->
-                    val subtaskList by subTaskViewModel.subTaskList.collectAsState(emptyList())
-                    val subtaskFilterList = subtaskList.filter { filter -> filter.taskId == tasks.id }
-                    val subtaskFilterListIsComplete =
-                        subtaskFilterList.filter { it.subChecked == true }.size
 
-                    val progress =
-                        if (subtaskFilterList.isNotEmpty()) subtaskFilterListIsComplete.toFloat() / subtaskFilterList.size else 0.00f
-                    val percentage = (progress * 100).toInt()
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp)
-                            .padding(bottom = 8.dp)
-                            .combinedClickable(
-                                onClick = {
-                                    val intent =
-                                        Intent(
-                                            context,
-                                            CreateTaskActivity::class.java
-                                        ).apply {
-                                            putExtra(Constants.STATE_TASK_ACTIVITY, true)
-                                            putExtra(Constants.STATE_TASK_ID_ACTIVITY, tasks.id)
-                                        }
-                                    context.startActivity(intent)
-                                },
-                                onLongClick = {
-                                    isShowBottomSheetMenu = true
-                                    currentTaskItem = tasks
-                                }
-                            )
-                            .background(
-                                MaterialTheme.colorScheme.onSecondaryContainer,
-                                MaterialTheme.shapes.small
-                            )
-                            .border(
-                                0.3.dp,
-                                MaterialTheme.colorScheme.onSecondary,
-                                MaterialTheme.shapes.small
-                            )
-                    ) {
-                        ConstraintLayout(
-                            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(
+                top = paddingValues.calculateTopPadding() + 12.dp,
+                start = 12.dp,
+                end = 12.dp,
+                bottom = paddingValues.calculateBottomPadding()
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            BannerAds()
+
+            Spacer(Modifier.height(12.dp))
+
+            if (filteredTask.isNotEmpty()) {
+                LazyColumn(
+                    state = lazyState,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(filteredTask) { tasks ->
+                        val subtaskList by subTaskViewModel.subTaskList.collectAsState(emptyList())
+                        val subtaskFilterList =
+                            subtaskList.filter { filter -> filter.taskId == tasks.id }
+                        val subtaskFilterListIsComplete =
+                            subtaskFilterList.filter { it.subChecked == true }.size
+
+                        val progress =
+                            if (subtaskFilterList.isNotEmpty()) subtaskFilterListIsComplete.toFloat() / subtaskFilterList.size else 0.00f
+                        val percentage = (progress * 100).toInt()
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp)
+                                .padding(bottom = 8.dp)
+                                .combinedClickable(
+                                    onClick = {
+                                        val intent =
+                                            Intent(
+                                                context,
+                                                CreateTaskActivity::class.java
+                                            ).apply {
+                                                putExtra(Constants.STATE_TASK_ACTIVITY, true)
+                                                putExtra(Constants.STATE_TASK_ID_ACTIVITY, tasks.id)
+                                            }
+                                        context.startActivity(intent)
+                                    },
+                                    onLongClick = {
+                                        isShowBottomSheetMenu = true
+                                        currentTaskItem = tasks
+                                    }
+                                )
+                                .background(
+                                    MaterialTheme.colorScheme.onSecondaryContainer,
+                                    MaterialTheme.shapes.small
+                                )
+                                .border(
+                                    0.3.dp,
+                                    MaterialTheme.colorScheme.onSecondary,
+                                    MaterialTheme.shapes.small
+                                )
                         ) {
-                            val (dateLayoutRef, verticalDividerRef, allDesignRef) = createRefs()
+                            ConstraintLayout(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                val (dateLayoutRef, verticalDividerRef, allDesignRef) = createRefs()
 
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .width(60.dp)
-                                    .padding(6.dp)
-                                    .constrainAs(dateLayoutRef) {
-                                        start.linkTo(parent.start)
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(60.dp)
+                                        .padding(6.dp)
+                                        .constrainAs(dateLayoutRef) {
+                                            start.linkTo(parent.start)
+                                            top.linkTo(parent.top)
+                                            bottom.linkTo(parent.bottom)
+                                            height = Dimension.fillToConstraints
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Text(
+                                        text = "Create on",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 12.dp),
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 12.sp,
+                                        color = colorResource(R.color.drawer_text_icon_color),
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Text(
+                                        text = tasks.time,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 20.sp,
+                                        color = colorResource(R.color.drawer_text_icon_color)
+                                    )
+
+                                    Text(
+                                        text = tasks.date,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 10.sp,
+                                        color = colorResource(R.color.drawer_text_icon_color)
+                                    )
+
+                                    Spacer(Modifier.height(10.dp))
+
+                                    tasks.imagePath?.let {
+                                        if (it.isNotEmpty()) {
+                                            GlideImage(
+                                                imageUrl = it,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(40.dp)
+                                                    .clip(MaterialTheme.shapes.small)
+                                            )
+                                        }
+                                    }
+                                }
+
+                                VerticalDivider(
+                                    modifier = Modifier.constrainAs(verticalDividerRef) {
+                                        start.linkTo(dateLayoutRef.end)
                                         top.linkTo(parent.top)
                                         bottom.linkTo(parent.bottom)
                                         height = Dimension.fillToConstraints
                                     },
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    text = "Create on",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 12.dp),
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 12.sp,
-                                    color = colorResource(R.color.drawer_text_icon_color),
-                                    textAlign = TextAlign.Center
-                                )
-
-                                Text(
-                                    text = tasks.time,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 20.sp,
-                                    color = colorResource(R.color.drawer_text_icon_color)
-                                )
-
-                                Text(
-                                    text = tasks.date,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 10.sp,
-                                    color = colorResource(R.color.drawer_text_icon_color)
-                                )
-
-                                Spacer(Modifier.height(10.dp))
-
-                                tasks.imagePath?.let {
-                                    if (it.isNotEmpty()) {
-                                        GlideImage(
-                                            imageUrl = it,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(40.dp)
-                                                .clip(MaterialTheme.shapes.small)
-                                        )
-                                    }
-                                }
-                            }
-
-                            VerticalDivider(
-                                modifier = Modifier.constrainAs(verticalDividerRef) {
-                                    start.linkTo(dateLayoutRef.end)
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(parent.bottom)
-                                    height = Dimension.fillToConstraints
-                                },
-                                thickness = 0.3.dp,
-                                color = MaterialTheme.colorScheme.onSecondary
-                            )
-
-                            Column(
-                                modifier = Modifier
-                                    .constrainAs(allDesignRef) {
-                                        start.linkTo(verticalDividerRef.end)
-                                        top.linkTo(parent.top)
-                                        end.linkTo(parent.end)
-                                        bottom.linkTo(parent.bottom)
-                                        width = Dimension.fillToConstraints
-                                        height = Dimension.fillToConstraints
-                                    }
-                                    .padding(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text(
-                                    text = tasks.title,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    textAlign = TextAlign.Start,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                Text(
-                                    text = tasks.description,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    minLines = 3,
-                                    maxLines = 3,
-                                    textAlign = TextAlign.Start,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontSize = 12.sp
-                                )
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    if (tasks.reminderType != ReminderType.NONE.name && tasks.reminderTime != 0L) {
-                                        if (tasks.reminderType == ReminderType.NOTIFICATION.name) {
-                                            NotificationView()
-                                        } else {
-                                            AlarmView()
-                                        }
-
-                                        Log.d(
-                                            Constants.APP_LOG,
-                                            "TaskView Reminder type = ${tasks.reminderType}"
-                                        )
-                                    }
-
-                                    FlagView(
-                                        color = tasks.priorityFlag
-                                    )
-                                }
-
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
                                     thickness = 0.3.dp,
                                     color = MaterialTheme.colorScheme.onSecondary
                                 )
 
-                                ConstraintLayout(
-                                    modifier = Modifier.fillMaxWidth()
+                                Column(
+                                    modifier = Modifier
+                                        .constrainAs(allDesignRef) {
+                                            start.linkTo(verticalDividerRef.end)
+                                            top.linkTo(parent.top)
+                                            end.linkTo(parent.end)
+                                            bottom.linkTo(parent.bottom)
+                                            width = Dimension.fillToConstraints
+                                            height = Dimension.fillToConstraints
+                                        }
+                                        .padding(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    val (progressBarRef, percentageRef) = createRefs()
-
-                                    LinearProgressIndicator(
-                                        progress = { progress.coerceIn(0f..1f) },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(8.dp)
-                                            .clip(RoundedCornerShape(4.dp))
-                                            .constrainAs(progressBarRef) {
-                                                start.linkTo(parent.start)
-                                                top.linkTo(parent.top)
-                                                bottom.linkTo(parent.bottom)
-                                                end.linkTo(percentageRef.start, 6.dp)
-                                                width = Dimension.fillToConstraints
-                                            },
-                                        color = MaterialTheme.colorScheme.onSecondary,
-                                        trackColor = MaterialTheme.colorScheme.background,
-                                        gapSize = 0.dp
+                                    Text(
+                                        text = tasks.title,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        textAlign = TextAlign.Start,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold
                                     )
 
                                     Text(
-                                        text = "$percentage %",
-                                        modifier = Modifier.constrainAs(percentageRef) {
-                                            end.linkTo(parent.end)
-                                            top.linkTo(progressBarRef.top)
-                                            bottom.linkTo(progressBarRef.bottom)
-                                        },
+                                        text = tasks.description,
                                         color = MaterialTheme.colorScheme.onPrimary,
-                                        fontSize = 10.sp
+                                        modifier = Modifier.fillMaxWidth(),
+                                        minLines = 3,
+                                        maxLines = 3,
+                                        textAlign = TextAlign.Start,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontSize = 12.sp
                                     )
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        if (tasks.reminderType != ReminderType.NONE.name && tasks.reminderTime != 0L) {
+                                            if (tasks.reminderType == ReminderType.NOTIFICATION.name) {
+                                                NotificationView()
+                                            } else {
+                                                AlarmView()
+                                            }
+
+                                            Log.d(
+                                                Constants.APP_LOG,
+                                                "TaskView Reminder type = ${tasks.reminderType}"
+                                            )
+                                        }
+
+                                        FlagView(
+                                            color = tasks.priorityFlag
+                                        )
+                                    }
+
+                                    HorizontalDivider(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        thickness = 0.3.dp,
+                                        color = MaterialTheme.colorScheme.onSecondary
+                                    )
+
+                                    ConstraintLayout(
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        val (progressBarRef, percentageRef) = createRefs()
+
+                                        LinearProgressIndicator(
+                                            progress = { progress.coerceIn(0f..1f) },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(8.dp)
+                                                .clip(RoundedCornerShape(4.dp))
+                                                .constrainAs(progressBarRef) {
+                                                    start.linkTo(parent.start)
+                                                    top.linkTo(parent.top)
+                                                    bottom.linkTo(parent.bottom)
+                                                    end.linkTo(percentageRef.start, 6.dp)
+                                                    width = Dimension.fillToConstraints
+                                                },
+                                            color = MaterialTheme.colorScheme.onSecondary,
+                                            trackColor = MaterialTheme.colorScheme.background,
+                                            gapSize = 0.dp
+                                        )
+
+                                        Text(
+                                            text = "$percentage %",
+                                            modifier = Modifier.constrainAs(percentageRef) {
+                                                end.linkTo(parent.end)
+                                                top.linkTo(progressBarRef.top)
+                                                bottom.linkTo(progressBarRef.bottom)
+                                            },
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            fontSize = 10.sp
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            if (isShowBottomSheetMenu) {
-                CustomDropdownMenu(
-                    subTaskViewModel = subTaskViewModel,
-                    task = currentTaskItem,
-                    taskViewModel = taskViewModel,
-                    onDismiss = { isShowBottomSheetMenu = it }
-                )
+                if (isShowBottomSheetMenu) {
+                    CustomDropdownMenu(
+                        subTaskViewModel = subTaskViewModel,
+                        task = currentTaskItem,
+                        taskViewModel = taskViewModel,
+                        onDismiss = { isShowBottomSheetMenu = it }
+                    )
+                }
             }
         }
     }

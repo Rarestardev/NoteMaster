@@ -98,5 +98,7 @@
     <string name="stop">Stop</string>
     <string name="please_select_alarm_type">Please select alarm type!</string>
     <string name="no_item">No item!</string>
+    <string name="ad">#Ad</string>
+    <string name="magnetic_player">Magnetic Player</string>
 
 </resources>

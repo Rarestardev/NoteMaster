@@ -18,12 +18,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,6 +49,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -73,6 +72,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.components.AdiveryNativeAdLayout
+import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.components.CategoryListView
 import com.rarestardev.taskora.components.CircularTaskStatusBar
 import com.rarestardev.taskora.components.CompleteTaskView
@@ -214,7 +215,7 @@ private fun HomeScreen(
 }
 
 @Composable
-fun ScaffoldContent(
+private fun ScaffoldContent(
     paddingValues: PaddingValues,
     viewModel: NoteEditorViewModel,
     taskViewModel: TaskViewModel,
@@ -232,23 +233,36 @@ fun ScaffoldContent(
     ) {
         TopTaskProgress(viewModel, taskViewModel)
 
-        AdsView()
+        BannerAds()
 
         TaskView(taskViewModel, subTaskViewModel)
 
-        AdsView()
+        BannerAds()
 
         NoteScreen(viewModel)
 
-        AdsView()
+        BannerAds()
 
         CompleteTaskView(taskViewModel, subTaskViewModel)
 
-        AdsView()
+        BannerAds()
 
         CategoryListView()
 
-        AdsView()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.ad),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(start = 12.dp)
+            )
+        }
+
+        AdiveryNativeAdLayout()
 
         Spacer(modifier = Modifier.height(65.dp))
     }
@@ -268,106 +282,110 @@ private fun TopTaskProgress(
             .height(240.dp)
             .padding(
                 start = 12.dp,
-                end = 12.dp,
-                top = 12.dp
+                end = 12.dp
             )
     ) {
-        val (highPriorityLayoutRef, inProgressRef, allNoteRef, dailyTaskRef) = createRefs()
+        val (highPriorityLayoutRef, inProgressRef,dividerRef) = createRefs()
 
         HorizontalPagerView(
             modifier = Modifier
-                .fillMaxHeight()
-                .width(180.dp)
                 .background(MaterialTheme.colorScheme.onSecondary, MaterialTheme.shapes.small)
                 .constrainAs(highPriorityLayoutRef) {
+                    start.linkTo(parent.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
+                    end.linkTo(dividerRef.start,6.dp)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
                 },
             taskViewModel,
             noteViewModel
         )
 
-        UserStateProgress(
+        VerticalDivider(
+            modifier = Modifier.constrainAs(dividerRef){
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            },
+            color = Color.Transparent
+        )
+
+        Column (
             modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.onSecondaryContainer,
-                    MaterialTheme.shapes.small
-                )
-                .border(
-                    0.3.dp, MaterialTheme.colorScheme.onSecondary,
-                    MaterialTheme.shapes.small
-                )
-                .fillMaxWidth()
                 .constrainAs(inProgressRef) {
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
-                    start.linkTo(highPriorityLayoutRef.end, 12.dp)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                },
-            taskViewModel
-        )
-
-        Row(
-            modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.onSecondaryContainer,
-                    MaterialTheme.shapes.small
-                )
-                .border(
-                    0.3.dp, MaterialTheme.colorScheme.onSecondary,
-                    MaterialTheme.shapes.small
-                )
-                .clickable {
-                    val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
-                        putExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY, false)
-                    }
-                    context.startActivity(intent)
-                }
-                .fillMaxWidth()
-                .constrainAs(allNoteRef) {
-                    end.linkTo(parent.end)
-                    top.linkTo(inProgressRef.bottom, 12.dp)
-                    start.linkTo(highPriorityLayoutRef.end, 12.dp)
-                    bottom.linkTo(dailyTaskRef.top, 12.dp)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(dividerRef.end,6.dp)
                     width = Dimension.fillToConstraints
                     height = Dimension.fillToConstraints
                 },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Absolute.SpaceEvenly
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.icon_note),
-                contentDescription = stringResource(R.string.note),
-                tint = MaterialTheme.colorScheme.onPrimary
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            UserStateProgress(
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                        MaterialTheme.shapes.small
+                    )
+                    .border(
+                        0.3.dp, MaterialTheme.colorScheme.onSecondary,
+                        MaterialTheme.shapes.small
+                    )
+                    .fillMaxWidth(),
+                taskViewModel
             )
 
-            Text(
-                text = stringResource(R.string.all_notes) + " ( " + notes.size + " )",
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif
+            Row(
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                        MaterialTheme.shapes.small
+                    )
+                    .border(
+                        0.3.dp, MaterialTheme.colorScheme.onSecondary,
+                        MaterialTheme.shapes.small
+                    )
+                    .clickable {
+                        val intent = Intent(context, ShowAllNotesActivity::class.java).apply {
+                            putExtra(Constants.STATE_NOTE_PRIORITY_ACTIVITY, false)
+                        }
+                        context.startActivity(intent)
+                    }
+                    .height(50.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.icon_note),
+                    contentDescription = stringResource(R.string.note),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+
+                Text(
+                    text = stringResource(R.string.all_notes) + " ( " + notes.size + " )",
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif
+                )
+            }
+
+            DailyTaskProgress(
+                modifier = Modifier
+                    .clickable {
+                        context.startActivity(Intent(context, CalenderActivity::class.java))
+                    }
+                    .height(50.dp)
+                    .fillMaxWidth(),
+                taskViewModel = taskViewModel
             )
         }
-
-        DailyTaskProgress(
-            modifier = Modifier
-                .clickable {
-                    context.startActivity(Intent(context, CalenderActivity::class.java))
-                }
-                .height(50.dp)
-                .fillMaxWidth()
-                .constrainAs(dailyTaskRef) {
-                    end.linkTo(parent.end)
-                    start.linkTo(highPriorityLayoutRef.end, 12.dp)
-                    bottom.linkTo(parent.bottom)
-                    width = Dimension.fillToConstraints
-                },
-            taskViewModel = taskViewModel
-        )
     }
 }
 
@@ -490,19 +508,6 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                 textAlign = TextAlign.Center
             )
         }
-    }
-}
-
-@Composable
-private fun AdsView() {
-    if (Constants.ADS_VIEW) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-                .padding(start = 12.dp, end = 12.dp)
-                .background(MaterialTheme.colorScheme.onSecondary, MaterialTheme.shapes.small)
-        )
     }
 }
 

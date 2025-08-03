@@ -2,6 +2,7 @@ package com.rarestardev.taskora.activities
 
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import com.adivery.sdk.Adivery
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.enums.ThemeMode
 import com.rarestardev.taskora.factory.TaskViewModelFactory
@@ -29,6 +31,11 @@ abstract class BaseActivity : ComponentActivity() {
 
     private val taskViewModel: TaskViewModel by viewModels {
         TaskViewModelFactory(NoteDatabase.getInstance(this).taskItemDao())
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
     }
 
     override fun attachBaseContext(newBase: Context) {

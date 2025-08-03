@@ -55,6 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.enums.CalenderType
 import com.rarestardev.taskora.enums.ReminderType
@@ -134,8 +135,14 @@ private fun CalenderScreen(viewModel: CalenderViewModel, taskViewModel: TaskView
                     start = 12.dp,
                     end = 12.dp,
                     bottom = paddingValues.calculateBottomPadding() + 12.dp
-                )
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            BannerAds()
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             when (calenderType) {
                 CalenderType.GREGORIAN -> GregorianCalendarScreen(taskViewModel)
                 CalenderType.PERSIAN -> PersianCalendarScreen(taskViewModel)

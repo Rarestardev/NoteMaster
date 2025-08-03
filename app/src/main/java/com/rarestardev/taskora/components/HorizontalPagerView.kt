@@ -84,7 +84,7 @@ fun HorizontalPagerView(
                 currentPage = pagerState.currentPage
             ),
             modifier = Modifier.constrainAs(indicatorRef) {
-                bottom.linkTo(parent.bottom, 6.dp)
+                bottom.linkTo(parent.bottom, 4.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             },

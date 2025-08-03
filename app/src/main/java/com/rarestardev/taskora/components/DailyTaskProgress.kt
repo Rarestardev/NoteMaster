@@ -93,7 +93,6 @@ fun DailyTaskProgress(modifier: Modifier = Modifier, taskViewModel: TaskViewMode
             }
 
             val (reminderTypeRef, taskTitleRef) = createRefs()
-
             closestItem?.let {
                 taskViewModel.scheduleNextReminderFromDb(context)
                 if (it.reminderType == ReminderType.NONE.name || it.isComplete == true){

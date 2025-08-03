@@ -100,11 +100,7 @@ fun previewFakeTaskViewModel() : TaskViewModel{
             TODO("Not yet implemented")
         }
 
-        override suspend fun updateReminder(
-            reminderTime: Long,
-            reminderType: String,
-            id: Int
-        ) {
+        override suspend fun updateReminder(reminderType: String, id: Int) {
             TODO("Not yet implemented")
         }
     }

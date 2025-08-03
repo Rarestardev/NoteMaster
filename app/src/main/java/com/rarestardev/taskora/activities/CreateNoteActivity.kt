@@ -27,6 +27,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -70,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
 import com.rarestardev.taskora.model.Note
@@ -212,8 +214,24 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                     )
                 }
             )
+        },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = MaterialTheme.colorScheme.background
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    BannerAds()
+                }
+            }
         }
     ) { paddingValues ->
+        BannerAds()
+
+        Spacer(Modifier.height(16.dp))
+
         Box(
             modifier = Modifier
                 .padding(
@@ -261,65 +279,72 @@ private fun CreateNote(viewModel: NoteEditorViewModel) {
         modifier = Modifier.fillMaxSize(),
         topBar = { CustomTopBar(viewModel) }
     ) { paddingValues ->
-        ConstraintLayout(
-            Modifier
+        Column(
+            modifier = Modifier.fillMaxWidth()
                 .padding(
                     top = paddingValues.calculateTopPadding() + 12.dp,
                     start = 8.dp,
                     end = 8.dp
-                )
-                .fillMaxHeight()
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val (titleRef, noteRef, stateLayoutRef) = createRefs()
+            BannerAds()
 
-            TitleTextField(
-                viewModel = viewModel,
-                Modifier
-                    .fillMaxWidth()
-                    .constrainAs(titleRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                    }
-            )
+            Spacer(Modifier.height(16.dp))
+            ConstraintLayout(
+                Modifier.fillMaxHeight()
+            ) {
+                val (titleRef, noteRef, stateLayoutRef) = createRefs()
 
-            NoteTextField(
-                viewModel,
-                Modifier
-                    .fillMaxSize()
-                    .constrainAs(noteRef) {
-                        top.linkTo(titleRef.bottom, 12.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(stateLayoutRef.top, 12.dp)
-                        height = Dimension.fillToConstraints
-                    }
-            )
-
-            StateLayout(
-                viewModel,
-                Modifier
-                    .fillMaxWidth()
-                    .imePadding()
-                    .background(
-                        MaterialTheme.colorScheme.onSecondaryContainer,
-                        RoundedCornerShape(12.dp)
-                    )
-                    .height(40.dp)
-                    .constrainAs(stateLayoutRef) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom, 12.dp)
-                    }
-            )
-
-            BackHandler {
-                val timeAndDate = CurrentTimeAndDate()
-                viewModel.saveNoteInDatabase(
-                    context = context,
-                    timeStamp = timeAndDate.currentTime(),
-                    date = timeAndDate.getTodayDate()
+                TitleTextField(
+                    viewModel = viewModel,
+                    Modifier
+                        .fillMaxWidth()
+                        .constrainAs(titleRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                        }
                 )
+
+                NoteTextField(
+                    viewModel,
+                    Modifier
+                        .fillMaxSize()
+                        .constrainAs(noteRef) {
+                            top.linkTo(titleRef.bottom, 12.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(stateLayoutRef.top, 12.dp)
+                            height = Dimension.fillToConstraints
+                        }
+                )
+
+                StateLayout(
+                    viewModel,
+                    Modifier
+                        .fillMaxWidth()
+                        .imePadding()
+                        .background(
+                            MaterialTheme.colorScheme.onSecondaryContainer,
+                            RoundedCornerShape(12.dp)
+                        )
+                        .height(40.dp)
+                        .constrainAs(stateLayoutRef) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom, 12.dp)
+                        }
+                )
+
+                BackHandler {
+                    val timeAndDate = CurrentTimeAndDate()
+                    viewModel.saveNoteInDatabase(
+                        context = context,
+                        timeStamp = timeAndDate.currentTime(),
+                        date = timeAndDate.getTodayDate()
+                    )
+                }
             }
         }
     }

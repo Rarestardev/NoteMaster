@@ -210,6 +210,7 @@ fun TaskPreviewScreen(
                     start = 12.dp,
                     end = 12.dp
                 ),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             filterTaskWithId.forEach { task ->
                 task.isComplete?.let { isDoneTask = it }
@@ -219,6 +220,10 @@ fun TaskPreviewScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    BannerAds()
+
+                    Spacer(Modifier.height(16.dp))
+
                     PriorityLayout(task)
 
                     CategoryView(task)

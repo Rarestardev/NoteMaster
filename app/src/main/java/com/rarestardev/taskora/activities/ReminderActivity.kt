@@ -2,13 +2,11 @@ package com.rarestardev.taskora.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -97,7 +95,6 @@ class ReminderActivity : BaseActivity() {
         CalendarViewModelFactory(applicationContext)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -107,7 +104,6 @@ class ReminderActivity : BaseActivity() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -150,7 +146,10 @@ private fun ReminderScreen(
         },
         bottomBar = {
             BottomAppBar(containerColor = MaterialTheme.colorScheme.background) {
-                BannerAds()
+                Column (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){ BannerAds() }
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -160,7 +159,6 @@ private fun ReminderScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShowReminder(

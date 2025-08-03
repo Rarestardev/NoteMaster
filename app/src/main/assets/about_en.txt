@@ -1,0 +1,42 @@
+Taskora – Smart Task & Note Manager
+
+Taskora is your intelligent daily companion for organizing tasks, planning efficiently, and capturing thoughts—all in one beautifully designed app. Whether you're managing a busy schedule or jotting down creative ideas, Tadkora helps you stay productive and focused.
+
+🔹 Current Features:
+- Prioritize tasks and notes with custom importance levels  
+- Add reminders via alarms or notifications  
+- Categorize your tasks with advanced sorting  
+- Attach images to tasks for visual context  
+- Add subtasks to break work into manageable pieces  
+- Highlight important notes and tasks on the home screen  
+- Share tasks and notes seamlessly  
+- Full support for both Persian and English languages  
+- Dark and Light theme options for better readability  
+- Backup and restore your data easily  
+- Built-in Persian calendar support  
+- Calendar view for scheduling and filtering tasks by date  
+- Advanced search with filters for both notes and tasks  
+- Sleek and modern Material Design  
+
+🌟 Upcoming Features:
+- AI-powered smart writing for tasks and notes  
+- Birthday reminders  
+- Share tasks via Gmail with friends or colleagues  
+- Custom background colors for tasks and notes  
+- App locking via PIN or fingerprint for privacy  
+- Intelligent financial management tools  
+- Export tasks and notes as PDF or Note files  
+- Activity insights with progress charts and AI suggestions  
+- Voice note and task recording  
+- Voice-based note-taking 🗣️  
+- In-app text translation  
+- Home screen widgets  
+- Handwriting support with stylus  
+- Motivational book library integration  
+- Hashtag support for topic grouping  
+- Add clickable links and location data  
+- More themes and skins to choose from  
+- Custom fonts and text color options for full personalization  
+
+✨ Why Taskora?  
+Because your time deserves structure, your ideas deserve attention, and your day deserves purpose. Download Taskora now and turn productivity into a lifestyle.
