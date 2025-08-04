@@ -80,7 +80,6 @@ fun HorizontalPagerView(
 
         HorizontalPagerIndicator(
             pagerState = PagerState(
-                pageCount = 3,
                 currentPage = pagerState.currentPage
             ),
             modifier = Modifier.constrainAs(indicatorRef) {

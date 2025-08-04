@@ -59,32 +59,38 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // PagerView
-    implementation("com.google.accompanist:accompanist-pager:0.13.0")
-    implementation("com.google.accompanist:accompanist-pager-indicators:0.13.0")
+    implementation(libs.accompanist.pager)
+    implementation(libs.accompanist.pager.indicators)
 
     // Data store
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.appcompat)
 
 
     // Constraint layout
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
+    implementation(libs.androidx.constraintlayout.compose)
 
     // Room
-    implementation("androidx.room:room-runtime:2.7.1")
-    implementation("androidx.room:room-ktx:2.7.1")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     // Room Compiler
-    kapt("androidx.room:room-compiler:2.7.1")
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.androidx.room.compiler)
 
     // Glide
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    implementation (libs.glide)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.compiler)
 
-    implementation("com.jakewharton.threetenabp:threetenabp:1.4.0")
+    // calender on android 8 above
+    implementation(libs.threetenabp)
 
-    implementation ("com.github.samanzamani:PersianDate:1.7.1")
+    // PersianDate
+    implementation (libs.persiandate)
 
-    implementation("com.google.code.gson:gson:2.13.1")
+    // Gson
+    implementation(libs.gson)
 
-    implementation("com.adivery:sdk:4.8.3")
+    //adivery
+    implementation(libs.sdk)
 }

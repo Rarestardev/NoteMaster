@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -113,16 +115,17 @@ class SecondSettingsActivity : BaseActivity() {
                                 text = content,
                                 modifier = Modifier
                                     .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
                                     .padding(8.dp),
                                 color = MaterialTheme.colorScheme.onPrimary,
-                                fontSize = 14.sp,
+                                fontSize = 18.sp,
                                 fontWeight = FontWeight.Normal,
                                 fontFamily = FontFamily.SansSerif
                             )
                         }
 
                         stringResource(R.string.follow_us) -> {
-
+                            FollowUsScreen()
                         }
 
                         stringResource(R.string.backupRestore) -> {

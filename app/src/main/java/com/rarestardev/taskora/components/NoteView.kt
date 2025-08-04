@@ -281,7 +281,7 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                     .height(140.dp)
                     .padding(top = 50.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
             )
         }
