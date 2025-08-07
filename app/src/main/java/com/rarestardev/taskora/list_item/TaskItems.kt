@@ -63,13 +63,16 @@ import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.CreateTaskActivity
 import com.rarestardev.taskora.enums.ReminderType
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.feature.GlideImage
 import com.rarestardev.taskora.model.Flags
 import com.rarestardev.taskora.model.ImageResource
 import com.rarestardev.taskora.model.Task
 import com.rarestardev.taskora.utilities.Constants
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -140,7 +143,7 @@ fun TaskLazyItems(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "Create on",
+                    text = stringResource(R.string.create_on),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
@@ -150,7 +153,7 @@ fun TaskLazyItems(
                     textAlign = TextAlign.Center
                 )
 
-                Text(
+                CustomText(
                     text = task.time,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
@@ -158,7 +161,7 @@ fun TaskLazyItems(
                     color = colorResource(R.color.drawer_text_icon_color)
                 )
 
-                Text(
+                CustomText(
                     text = task.date,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
@@ -279,7 +282,7 @@ fun TaskLazyItems(
                         gapSize = 0.dp
                     )
 
-                    Text(
+                    CustomText(
                         text = "$percentage %",
                         modifier = Modifier.constrainAs(percentageRef) {
                             end.linkTo(parent.end)
@@ -539,6 +542,9 @@ private fun NotificationView(modifier: Modifier = Modifier) {
 
 @Composable
 private fun FlagView(modifier: Modifier = Modifier, color: Int) {
+    val lang = Locale.getDefault().language
+    var priority by remember { mutableStateOf("") }
+
     val tint = when (color) {
         0 -> colorResource(R.color.priority_low)
         1 -> colorResource(R.color.priority_medium)
@@ -548,12 +554,23 @@ private fun FlagView(modifier: Modifier = Modifier, color: Int) {
         }
     }
 
-    val priority = when (color) {
-        0 -> "LOW"
-        1 -> "MEDIUM"
-        2 -> "HIGH"
-        else -> {
-            "LOW"
+    if (lang == "en") {
+        priority = when (color) {
+            0 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.low)
+            1 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.medium)
+            2 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.high)
+            else -> {
+                LanguageHelper.getEnLanguageListPriorityFlag(R.string.low)
+            }
+        }
+    } else if (lang == "fa") {
+        priority = when (color) {
+            0 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.low)
+            1 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.medium)
+            2 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.high)
+            else -> {
+                LanguageHelper.getFaLanguageListPriorityFlag(R.string.low)
+            }
         }
     }
 

@@ -13,7 +13,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +28,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,6 +62,7 @@ import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.components.MenuBottomSheet
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.model.Note
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.Constants
@@ -126,21 +127,31 @@ private fun ActivityScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                     }
                 }
             )
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp),
+                containerColor = MaterialTheme.colorScheme.background
+            ) {
+                Column (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ){
+                    BannerAds()
+                }
+            }
         }
     ) {
         Column(
             modifier = Modifier.padding(
-                top = it.calculateTopPadding() + 12.dp,
+                top = it.calculateTopPadding() + 8.dp,
                 start = 12.dp,
                 end = 12.dp
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BannerAds()
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             NoteScreen(viewModel, state)
         }
     }
@@ -164,7 +175,6 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (notes.isNotEmpty()) {
@@ -172,8 +182,7 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                 columns = GridCells.Fixed(3),
                 state = lazyGridState,
                 modifier = Modifier
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(4.dp)
+                    .fillMaxWidth()
             ) {
                 items(filterNote) { note ->
                     var flagColor by remember { mutableIntStateOf(R.color.priority_low) }
@@ -187,7 +196,6 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                     ConstraintLayout(
                         modifier = Modifier
                             .wrapContentSize()
-                            .padding(top = 8.dp)
                             .combinedClickable(
                                 onClick = {
                                     val previewNoteIntent =
@@ -285,7 +293,7 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                                         bottom.linkTo(noteBoxRef.bottom, 1.dp)
                                     }
                             ) {
-                                Text(
+                                CustomText(
                                     text = note.date + " - " + note.timeStamp,
                                     modifier = Modifier
                                         .padding(
@@ -333,7 +341,7 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
             }
         } else {
             Text(
-                text = "Notes list is empty ...",
+                text = stringResource(R.string.notes_list_is_empty),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)

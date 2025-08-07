@@ -9,8 +9,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -74,6 +76,7 @@ import com.rarestardev.taskora.R
 import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.model.Note
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.Constants
@@ -217,26 +220,47 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
         },
         bottomBar = {
             BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.background
+                modifier = Modifier.wrapContentHeight(),
+                containerColor = Color.Transparent
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .padding(6.dp)
+                        .imePadding()
+                        .background(
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .padding(start = 8.dp, end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    BannerAds()
+                    CustomText(
+                        text = note.timeStamp,
+                        modifier = Modifier.padding(4.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                    )
+
+                    CustomText(
+                        text = note.date,
+                        modifier = Modifier.padding(4.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                    )
                 }
             }
         }
     ) { paddingValues ->
-        BannerAds()
-
-        Spacer(Modifier.height(16.dp))
-
-        Box(
+        Column(
             modifier = Modifier
                 .padding(
                     top = paddingValues.calculateTopPadding() + 8.dp,
-                    bottom = paddingValues.calculateBottomPadding(),
+                    bottom = paddingValues.calculateBottomPadding() + 12.dp,
                     start = 12.dp,
                     end = 12.dp
                 )
@@ -255,16 +279,23 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                         fontWeight = note.fontWeight,
                         fontSize = note.fontSize
                     )
-                }
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+
+            BannerAds()
+
             Text(
-                text = note.noteText + "\n\n" + "( " + note.timeStamp + "\t_\t " + note.date + " )",
+                text = note.noteText,
                 modifier = Modifier
                     .padding(12.dp)
+                    .fillMaxWidth()
                     .verticalScroll(state = rememberScrollState()),
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight(note.fontWeight),
                 fontSize = note.fontSize.sp,
+                textAlign = TextAlign.Start
             )
         }
     }
@@ -280,7 +311,8 @@ private fun CreateNote(viewModel: NoteEditorViewModel) {
         topBar = { CustomTopBar(viewModel) }
     ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(
                     top = paddingValues.calculateTopPadding() + 12.dp,
                     start = 8.dp,
@@ -357,7 +389,7 @@ private fun StateLayout(viewModel: NoteEditorViewModel, modifier: Modifier) {
     ConstraintLayout(
         modifier = modifier
     ) {
-        Text(
+        CustomText(
             text = currentTimeAndDate.getTodayDate(),
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.Bold,
@@ -371,7 +403,7 @@ private fun StateLayout(viewModel: NoteEditorViewModel, modifier: Modifier) {
                 }
         )
 
-        Text(
+        CustomText(
             text = "( ${currentTimeAndDate.currentTime()} )",
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.Bold,
@@ -386,8 +418,8 @@ private fun StateLayout(viewModel: NoteEditorViewModel, modifier: Modifier) {
                 }
         )
 
-        Text(
-            text = "${viewModel.noteTextFieldState.length} Character",
+        CustomText(
+            text = stringResource(R.string.character) + " " + viewModel.noteTextFieldState.length,
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
@@ -435,7 +467,7 @@ private fun TitleTextField(viewModel: NoteEditorViewModel, modifier: Modifier) {
     TextField( // title
         value = viewModel.titleTextFieldState,
         onValueChange = { viewModel.updateTitleTextFieldState(it) },
-        label = { LabelTextField("Title") },
+        label = { LabelTextField(stringResource(R.string.title)) },
         trailingIcon = { LeadingTextFieldIcon(viewModel) },
         colors = TextFieldDefaults.colors().copy(
             unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -458,9 +490,9 @@ private fun LeadingTextFieldIcon(viewModel: NoteEditorViewModel) {
     var flagColor by remember { mutableIntStateOf(R.color.priority_low) }
     var showDropDownMenu by remember { mutableStateOf(false) }
     val flagListColor = listOf(
-        "Priority Low" to R.color.priority_low,
-        "Priority Medium" to R.color.priority_medium,
-        "Priority High" to R.color.priority_high
+        stringResource(R.string.low) to R.color.priority_low,
+        stringResource(R.string.medium) to R.color.priority_medium,
+        stringResource(R.string.high) to R.color.priority_high
     )
 
     ExposedDropdownMenuBox(
@@ -596,7 +628,7 @@ private fun MoreFeatureMenu(viewModel: NoteEditorViewModel) {
             DropdownMenuItem(
                 text = {
                     Text(
-                        text = "Font Weight",
+                        text = stringResource(R.string.font_weight),
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onPrimary
@@ -611,7 +643,7 @@ private fun MoreFeatureMenu(viewModel: NoteEditorViewModel) {
             DropdownMenuItem(
                 text = {
                     Text(
-                        text = "Font Size",
+                        text = stringResource(R.string.font_size),
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onPrimary

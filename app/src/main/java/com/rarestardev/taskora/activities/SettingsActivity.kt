@@ -51,6 +51,7 @@ import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.enums.CalenderType
 import com.rarestardev.taskora.enums.ThemeMode
 import com.rarestardev.taskora.factory.CalendarViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.settings.SecondSettingsActivity
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.Constants
@@ -206,7 +207,7 @@ private fun AppVersionShow() {
             e.toString()
         }
 
-        Text(
+        CustomText(
             text = "( $version )",
             modifier = Modifier.padding(end = 8.dp),
             style = MaterialTheme.typography.labelMedium,

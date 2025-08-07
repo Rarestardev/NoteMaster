@@ -23,11 +23,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -131,7 +133,7 @@ class CreateTaskActivity : BaseActivity() {
             ReminderController.clearDataStore(this@CreateTaskActivity)
         }
 
-        Log.d(Constants.APP_LOG,"onStop")
+        Log.d(Constants.APP_LOG, "onStop")
         super.onStop()
     }
 
@@ -139,7 +141,7 @@ class CreateTaskActivity : BaseActivity() {
         lifecycleScope.launch {
             ReminderController.clearDataStore(this@CreateTaskActivity)
         }
-        Log.d(Constants.APP_LOG,"onDestroy")
+        Log.d(Constants.APP_LOG, "onDestroy")
         super.onDestroy()
     }
 }
@@ -155,12 +157,14 @@ private fun TaskActivityPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     val subTaskViews = getSubTaskItems(subTaskViewModel)
     val activity = LocalContext.current as Activity
     val scope = rememberCoroutineScope()
+    var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -172,11 +176,24 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
         BackHandler {
             viewModel.updateTaskId(0)
             scope.launch { ReminderController.clearDataStore(activity.applicationContext) }
-            activity.finish()
+
+            if (viewModel.titleState.isNotEmpty() && viewModel.descriptionState.isNotEmpty()) {
+                showDialog = true
+            } else {
+                activity.finish()
+            }
         }
 
-        Column (
-            modifier = Modifier.fillMaxWidth()
+        if (showDialog) {
+            BackHandlerDialog {
+                showDialog = it
+            }
+        }
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(
                     top = paddingValues.calculateTopPadding(),
                     start = 12.dp,
@@ -184,7 +201,7 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
                     bottom = paddingValues.calculateBottomPadding()
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             BannerAds()
 
             Spacer(Modifier.height(12.dp))
@@ -207,7 +224,7 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
                     ReminderLayout(viewModel)
 
                     if (viewModel.imagePath.isNotEmpty()) {
-                        ResizableImageItem(viewModel.imagePath.toUri()) {
+                        ResizableImageItem(viewModel.imagePath.toUri(), showDelete = true) {
                             viewModel.updateImagePath("")
                         }
                     }
@@ -322,7 +339,7 @@ private fun getSubTaskItems(subTaskViewModel: SubTaskViewModel): List<@Composabl
                         onCheckedChange = {},
                         modifier = Modifier
                             .constrainAs(checkBoxRef) {
-                                start.linkTo(parent.start,8.dp)
+                                start.linkTo(parent.start, 8.dp)
                                 top.linkTo(parent.top)
                                 bottom.linkTo(parent.bottom)
                             }
@@ -444,9 +461,9 @@ private fun TitleTrailingIcon(viewModel: TaskViewModel) {
     var flagColor by remember { mutableIntStateOf(R.color.priority_low) }
     var showDropDownMenu by remember { mutableStateOf(false) }
     val flagListColor = listOf(
-        "Priority Low" to R.color.priority_low,
-        "Priority Medium" to R.color.priority_medium,
-        "Priority High" to R.color.priority_high
+        stringResource(R.string.priority_low) to R.color.priority_low,
+        stringResource(R.string.priority_medium)to R.color.priority_medium,
+        stringResource(R.string.priority_high) to R.color.priority_high
     )
 
     ExposedDropdownMenuBox(
@@ -657,6 +674,89 @@ private suspend fun generateUniqueTaskId(taskViewModel: TaskViewModel): Int {
     return newId
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BackHandlerDialog(showDialog: (Boolean) -> Unit) {
+    val activity = LocalContext.current as Activity
+
+    BasicAlertDialog(
+        onDismissRequest = { showDialog(false) },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = MaterialTheme.shapes.medium
+                ),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.warning),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 12.dp,
+                        start = 12.dp
+                    )
+            )
+
+            Text(
+                text = stringResource(R.string.warning_text),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = {
+                        showDialog(false)
+                        activity.finish()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.discard),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                    )
+                }
+
+                Spacer(Modifier.width(8.dp))
+
+                TextButton(
+                    onClick = {
+                        showDialog(false)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.continue_edit),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun BottomBarItem(
     icon: Int,
@@ -676,10 +776,11 @@ private fun BottomBarItem(
 @Composable
 private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
     val context = LocalContext.current
-    val activity = context as? Activity
+    val activity = context as Activity
     val scope = rememberCoroutineScope()
     val time by ReminderController.getTime(context).collectAsState(0)
     val type by ReminderController.getType(context).collectAsState("")
+    var showDialog by remember { mutableStateOf(false) }
 
     val config = Configuration(context.resources.configuration)
     config.setLocale(Locale("en"))
@@ -688,13 +789,21 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
 
     val categories = stringArrayResource(R.array.task_categories)
 
+    if (showDialog) {
+        BackHandlerDialog { showDialog = it }
+    }
+
     TopAppBar(
         title = {},
         navigationIcon = {
             IconButton(
                 onClick = {
-                    scope.launch { ReminderController.clearDataStore(context) }
-                    activity?.finish()
+                    if (viewModel.titleState.isNotEmpty() && viewModel.descriptionState.isNotEmpty()) {
+                        showDialog = true
+                    } else {
+                        scope.launch { ReminderController.clearDataStore(context) }
+                        activity.finish()
+                    }
                 }
             ) {
                 Icon(
@@ -729,19 +838,19 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
 
                     val selectedCategory = viewModel.selectedCategory
                     categories.forEachIndexed { index, string ->
-                        if (string == selectedCategory){
+                        if (string == selectedCategory) {
                             val enCategory = categoriesEn[index]
                             viewModel.updateCategoryList(enCategory)
                         }
                     }
 
                     viewModel.insertTask(context)
-                    if (viewModel.titleState.isNotEmpty() && viewModel.descriptionState.isNotEmpty()){
+                    if (viewModel.titleState.isNotEmpty() && viewModel.descriptionState.isNotEmpty()) {
                         subTaskViewModel.insertSubTask()
                     }
 
                     scope.launch { ReminderController.clearDataStore(context) }
-                    activity?.finish()
+                    activity.finish()
                 },
                 colors = ButtonDefaults.buttonColors().copy(
                     containerColor = Color.Transparent

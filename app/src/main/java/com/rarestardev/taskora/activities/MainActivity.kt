@@ -86,6 +86,7 @@ import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
 import com.rarestardev.taskora.factory.SubTaskViewModelFactory
 import com.rarestardev.taskora.factory.TaskViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.service.ReminderService
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.Constants
@@ -370,7 +371,7 @@ private fun TopTaskProgress(
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
 
-                Text(
+                CustomText(
                     text = stringResource(R.string.all_notes) + " ( " + notes.size + " )",
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -446,8 +447,8 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                 textAlign = TextAlign.Center
             )
 
-            Text(
-                text = "$completeTask / $totalTaskListSize tasks",
+            CustomText(
+                text = "$completeTask / $totalTaskListSize" + " " + stringResource(R.string.task_bottom_bar),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
@@ -458,7 +459,6 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                     ),
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Normal,
-                maxLines = 1,
                 color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center
             )
@@ -495,8 +495,8 @@ private fun UserStateProgress(modifier: Modifier = Modifier, taskViewModel: Task
                 textAlign = TextAlign.Center
             )
 
-            Text(
-                text = "$inProgress progress",
+            CustomText(
+                text = "$inProgress" + " " + stringResource(R.string.progress) ,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(

@@ -2,11 +2,9 @@ package com.rarestardev.taskora.components
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,18 +54,17 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
-import androidx.lifecycle.viewModelScope
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.feature.ResizableImageItem
 import com.rarestardev.taskora.model.Task
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.CurrentTimeAndDate
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
 import com.rarestardev.taskora.utilities.previewSubTaskViewModel
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 
@@ -236,7 +233,10 @@ fun TaskPreviewScreen(
 
                     task.imagePath?.let { uri ->
                         if (uri.isNotEmpty()) {
-                            ResizableImageItem(uri.toUri()) {}
+                            ResizableImageItem(
+                                uri.toUri(),
+                                showDelete = false
+                            ) {}
                         }
                     }
 
@@ -263,7 +263,7 @@ private fun SubTaskLazy(
 
     if (filterSubTaskWithTitle.isNotEmpty()) {
         Text(
-            text = "SubTasks",
+            text = stringResource(R.string.subTask),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.Bold
@@ -284,7 +284,7 @@ private fun SubTaskLazy(
                     )
                     .padding(6.dp)
             ) {
-                val (deleteRef, checkBoxRef, descRef) = createRefs()
+                val (checkBoxRef, descRef) = createRefs()
                 subTask.subChecked?.let {
                     if (it) {
                         textDecoration = TextDecoration.LineThrough
@@ -310,23 +310,6 @@ private fun SubTaskLazy(
                 }
 
                 Text(
-                    text = stringResource(R.string.delete),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    modifier = Modifier
-                        .clickable {
-                            subTaskViewModel.viewModelScope.launch {
-                                subTaskViewModel.subTaskItems.remove(subTask)
-                            }
-                        }
-                        .constrainAs(deleteRef) {
-                            end.linkTo(parent.end, 12.dp)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }
-                )
-
-                Text(
                     text = subTask.subTaskDescription,
                     style = MaterialTheme.typography.labelMedium,
                     color = textColor,
@@ -335,7 +318,7 @@ private fun SubTaskLazy(
                         .fillMaxWidth()
                         .constrainAs(descRef) {
                             start.linkTo(checkBoxRef.end, 6.dp)
-                            end.linkTo(deleteRef.start, 6.dp)
+                            end.linkTo(parent.end, 6.dp)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.fillToConstraints
@@ -406,9 +389,9 @@ private fun CategoryView(task: Task) {
 
     val lang = Locale.getDefault().language
     if (lang == "fa") {
-        getEnLanguageListCategory().forEachIndexed { index, string ->
+        LanguageHelper.getEnLanguageListCategory().forEachIndexed { index, string ->
             if (task.category == string) {
-                category = getFaLanguageListCategory()[index]
+                category = LanguageHelper.getFaLanguageListCategory()[index]
             }
         }
     }else{
@@ -441,27 +424,10 @@ private fun CategoryView(task: Task) {
 }
 
 @Composable
-private fun getEnLanguageListCategory() : Array<String> {
-    val context = LocalContext.current
-
-    val config = Configuration(context.resources.configuration)
-    config.setLocale(Locale("en"))
-    val localizedContext = context.createConfigurationContext(config)
-    return localizedContext.resources.getStringArray(R.array.task_categories)
-}
-
-@Composable
-private fun getFaLanguageListCategory() : Array<String> {
-    val context = LocalContext.current
-
-    val config = Configuration(context.resources.configuration)
-    config.setLocale(Locale("fa"))
-    val localizedContext = context.createConfigurationContext(config)
-    return localizedContext.resources.getStringArray(R.array.task_categories)
-}
-
-@Composable
 private fun PriorityLayout(task: Task) {
+    var priority by remember { mutableStateOf("") }
+    val lang = Locale.getDefault().language
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -472,12 +438,23 @@ private fun PriorityLayout(task: Task) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val priority = when (task.priorityFlag) {
-            0 -> "LOW"
-            1 -> "MEDIUM"
-            2 -> "HIGH"
-            else -> {
-                "LOW"
+        if (lang == "en") {
+            priority = when (task.priorityFlag) {
+                0 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.low)
+                1 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.medium)
+                2 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.high)
+                else -> {
+                    LanguageHelper.getEnLanguageListPriorityFlag(R.string.low)
+                }
+            }
+        } else if (lang == "fa") {
+            priority = when (task.priorityFlag) {
+                0 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.low)
+                1 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.medium)
+                2 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.high)
+                else -> {
+                    LanguageHelper.getFaLanguageListPriorityFlag(R.string.low)
+                }
             }
         }
 

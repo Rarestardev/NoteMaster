@@ -76,13 +76,16 @@ import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.factory.SubTaskViewModelFactory
 import com.rarestardev.taskora.factory.TaskViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.feature.GlideImage
 import com.rarestardev.taskora.model.Flags
 import com.rarestardev.taskora.model.ImageResource
 import com.rarestardev.taskora.model.Task
 import com.rarestardev.taskora.utilities.Constants
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
+import java.util.Locale
 
 class ShowAllTasksActivity : BaseActivity() {
 
@@ -134,7 +137,7 @@ private fun ShowAllTasksActivityScreen(
 
     val filteredTask = if (!isCompleteTask) {
         if (priority) {
-            allTask.filter { it.priorityFlag == 2 }.sortedByDescending { it.priorityFlag }
+            allTask.filter { it.isComplete == true }.filter { it.priorityFlag == 2 }.sortedByDescending { it.priorityFlag }
         } else {
             if (category.isEmpty()) {
                 allTask
@@ -155,7 +158,7 @@ private fun ShowAllTasksActivityScreen(
             }
         }
     } else {
-        "Completed tasks"
+        stringResource(R.string.task_completed)
     }
 
     var isShowBottomSheetMenu by remember { mutableStateOf(false) }
@@ -190,14 +193,15 @@ private fun ShowAllTasksActivityScreen(
     ) { paddingValues ->
 
 
-
         Column(
-            modifier = Modifier.fillMaxWidth().padding(
-                top = paddingValues.calculateTopPadding() + 12.dp,
-                start = 12.dp,
-                end = 12.dp,
-                bottom = paddingValues.calculateBottomPadding()
-            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = paddingValues.calculateTopPadding() + 12.dp,
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = paddingValues.calculateBottomPadding()
+                ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -273,7 +277,7 @@ private fun ShowAllTasksActivityScreen(
                                     verticalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
                                     Text(
-                                        text = "Create on",
+                                        text = stringResource(R.string.create_on),
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(top = 12.dp),
@@ -283,7 +287,7 @@ private fun ShowAllTasksActivityScreen(
                                         textAlign = TextAlign.Center
                                     )
 
-                                    Text(
+                                    CustomText(
                                         text = tasks.time,
                                         textAlign = TextAlign.Center,
                                         fontWeight = FontWeight.Bold,
@@ -291,7 +295,7 @@ private fun ShowAllTasksActivityScreen(
                                         color = colorResource(R.color.drawer_text_icon_color)
                                     )
 
-                                    Text(
+                                    CustomText(
                                         text = tasks.date,
                                         textAlign = TextAlign.Center,
                                         fontWeight = FontWeight.Bold,
@@ -412,7 +416,7 @@ private fun ShowAllTasksActivityScreen(
                                             gapSize = 0.dp
                                         )
 
-                                        Text(
+                                        CustomText(
                                             text = "$percentage %",
                                             modifier = Modifier.constrainAs(percentageRef) {
                                                 end.linkTo(parent.end)
@@ -444,6 +448,9 @@ private fun ShowAllTasksActivityScreen(
 
 @Composable
 private fun FlagView(modifier: Modifier = Modifier, color: Int) {
+    val lang = Locale.getDefault().language
+    var priority by remember { mutableStateOf("") }
+
     val tint = when (color) {
         0 -> colorResource(R.color.priority_low)
         1 -> colorResource(R.color.priority_medium)
@@ -453,12 +460,23 @@ private fun FlagView(modifier: Modifier = Modifier, color: Int) {
         }
     }
 
-    val priority = when (color) {
-        0 -> "LOW"
-        1 -> "MEDIUM"
-        2 -> "HIGH"
-        else -> {
-            "LOW"
+    if (lang == "en") {
+        priority = when (color) {
+            0 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.low)
+            1 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.medium)
+            2 -> LanguageHelper.getEnLanguageListPriorityFlag(R.string.high)
+            else -> {
+                LanguageHelper.getEnLanguageListPriorityFlag(R.string.low)
+            }
+        }
+    } else if (lang == "fa") {
+        priority = when (color) {
+            0 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.low)
+            1 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.medium)
+            2 -> LanguageHelper.getFaLanguageListPriorityFlag(R.string.high)
+            else -> {
+                LanguageHelper.getFaLanguageListPriorityFlag(R.string.low)
+            }
         }
     }
 

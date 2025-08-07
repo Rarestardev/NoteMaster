@@ -17,9 +17,12 @@
     <string name="priority_medium">MEDIUM PRIORITY</string>
     <string name="priority_high">HIGH PRIORITY</string>
 
+    <string name="low">LOW</string>
+    <string name="medium">MEDIUM</string>
+    <string name="high">HIGH</string>
+
     <string name="font_style_icon_desc">FontStyle</string>
     <string name="text_size_icon_desc">TextSize</string>
-    <string name="italic">Italic</string>
     <string name="more_features">More Features</string>
     <string name="fabcreatenote">FabCreateNote</string>
     <string name="search">Search</string>
@@ -91,9 +94,21 @@
     <string name="please_select_alarm_type">Please select alarm type!</string>
     <string name="no_item">No item!</string>
     <string name="ad">#Ad</string>
-    <string name="magnetic_player">Magnetic Player</string>
     <string name="cancel">Cancel</string>
     <string name="loading">Loading…</string>
+    <string name="subTask">SubTasks</string>
+    <string name="warning">Warning…</string>
+    <string name="discard">Discard</string>
+    <string name="continue_edit">Continue</string>
+    <string name="warning_text">There is a topic and description. if you close the page,it will be deleted. Are you sure?</string>
+    <string name="font_weight">Font Weight</string>
+    <string name="font_size">Font Size</string>
+    <string name="character">Character</string>
+    <string name="progress">Progress</string>
+    <string name="filter">Filter</string>
+    <string name="result">Result</string>
+    <string name="task_for_today">Task for today</string>
+    <string name="create_on">Create on</string>
 
 
     <string-array name="task_categories">

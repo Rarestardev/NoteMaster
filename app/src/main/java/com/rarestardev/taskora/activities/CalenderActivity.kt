@@ -61,6 +61,7 @@ import com.rarestardev.taskora.enums.CalenderType
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.factory.CalendarViewModelFactory
 import com.rarestardev.taskora.factory.TaskViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.view_model.CalenderViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
@@ -322,7 +323,7 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                 )
             }
 
-            Text(
+            CustomText(
                 "$monthName - $selectedYear",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary
@@ -413,7 +414,7 @@ private fun PersianCalendarScreen(taskViewModel: TaskViewModel) {
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
+                    CustomText(
                         text = "$dayNumber",
                         style = if (isToday) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
                         else MaterialTheme.typography.bodyMedium
@@ -478,8 +479,8 @@ private fun TaskItemInCalender(taskViewModel: TaskViewModel, today: Long) {
         color = MaterialTheme.colorScheme.onPrimary
     )
 
-    Text(
-        text = "${filterTask.size} tasks for today.",
+    CustomText(
+        text = stringResource(R.string.task_for_today)  + " : " + filterTask.size,
         modifier = Modifier.fillMaxWidth(),
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
@@ -505,7 +506,7 @@ private fun TaskItemInCalender(taskViewModel: TaskViewModel, today: Long) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    Text(
+                    CustomText(
                         text = it.time + "\n Time ",
                         fontWeight = FontWeight.Bold,
                         color = colorResource(R.color.drawer_text_icon_color),
@@ -584,7 +585,7 @@ private fun TaskItemInCalender(taskViewModel: TaskViewModel, today: Long) {
                             color = MaterialTheme.colorScheme.onSecondary
                         )
 
-                        Text(
+                        CustomText(
                             text = it.time + " - " + it.date,
                             modifier = Modifier
                                 .fillMaxWidth()

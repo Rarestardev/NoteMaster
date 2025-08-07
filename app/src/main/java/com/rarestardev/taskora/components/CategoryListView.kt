@@ -106,6 +106,7 @@ fun CategoryListView() {
                                 .height(45.dp)
                                 .padding(start = 8.dp, end = 8.dp)
                                 .clickable {
+                                    isShowBottomSheetCategory = false
                                     val intent = Intent(context, ShowAllTasksActivity::class.java).apply {
                                         putExtra("Category", category)
                                     }

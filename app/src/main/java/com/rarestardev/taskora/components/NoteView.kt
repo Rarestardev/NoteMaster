@@ -50,6 +50,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.CreateNoteActivity
 import com.rarestardev.taskora.activities.ShowAllNotesActivity
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.model.Note
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.Constants
@@ -227,7 +228,7 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                                         bottom.linkTo(noteBoxRef.bottom, 1.dp)
                                     }
                             ) {
-                                Text(
+                                CustomText(
                                     text = note.date + " - " + note.timeStamp,
                                     modifier = Modifier
                                         .padding(

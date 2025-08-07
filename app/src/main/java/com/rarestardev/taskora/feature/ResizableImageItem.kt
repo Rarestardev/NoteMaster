@@ -30,6 +30,7 @@ import com.rarestardev.taskora.R
 @Composable
 fun ResizableImageItem(
     uri: Uri,
+    showDelete: Boolean,
     onDelete: () -> Unit
 ) {
 
@@ -53,21 +54,23 @@ fun ResizableImageItem(
                 }
         )
 
-        IconButton(
-            onClick = onDelete,
-            colors = IconButtonDefaults.iconButtonColors(containerColor = Color.Transparent),
-            modifier = Modifier
-                .constrainAs(deleteRef) {
-                    end.linkTo(parent.end, 8.dp)
-                    top.linkTo(parent.top, 8.dp)
-                }
-                .background(MaterialTheme.colorScheme.onSecondaryContainer, CircleShape)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(R.string.delete),
-                tint = MaterialTheme.colorScheme.onSecondary
-            )
+        if (showDelete){
+            IconButton(
+                onClick = onDelete,
+                colors = IconButtonDefaults.iconButtonColors(containerColor = Color.Transparent),
+                modifier = Modifier
+                    .constrainAs(deleteRef) {
+                        end.linkTo(parent.end, 8.dp)
+                        top.linkTo(parent.top, 8.dp)
+                    }
+                    .background(MaterialTheme.colorScheme.onSecondaryContainer, CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.delete),
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.enums.ReminderType
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.CurrentTimeAndDate
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
@@ -180,7 +181,7 @@ private fun TodayView(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        CustomText(
             text = currentTimeAndDate.getTodayDayAsString(),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,

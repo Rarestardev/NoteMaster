@@ -62,6 +62,7 @@ import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.enums.SearchFilter
 import com.rarestardev.taskora.factory.NoteViewModelFactory
 import com.rarestardev.taskora.factory.TaskViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
@@ -167,8 +168,8 @@ private fun TaskItems(taskViewModel: TaskViewModel) {
             state = lazyState
         ) {
             item {
-                Text(
-                    text = "Result : " + result.size,
+                CustomText(
+                    text = stringResource(R.string.result) + " : " + result.size,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -207,7 +208,7 @@ private fun TaskItems(taskViewModel: TaskViewModel) {
                         textAlign = TextAlign.Start
                     )
 
-                    Text(
+                    CustomText(
                         text = it.date + " - " + it.time,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -234,18 +235,18 @@ private fun TaskItems(taskViewModel: TaskViewModel) {
 
 @Composable
 private fun NoteItems(viewModel: NoteEditorViewModel) {
-    val result by viewModel.result.collectAsState()
+    val resultSearch by viewModel.result.collectAsState()
     val lazyState = rememberLazyListState()
     val context = LocalContext.current
 
-    if (result.isNotEmpty()) {
+    if (resultSearch.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             state = lazyState
         ) {
             item {
-                Text(
-                    text = "Result : " + result.size,
+                CustomText(
+                    text = stringResource(R.string.result) + " : " + resultSearch.size,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -253,7 +254,7 @@ private fun NoteItems(viewModel: NoteEditorViewModel) {
                 Spacer(Modifier.height(12.dp))
             }
 
-            items(result) {
+            items(resultSearch) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -293,7 +294,7 @@ private fun NoteItems(viewModel: NoteEditorViewModel) {
                         textAlign = TextAlign.Start
                     )
 
-                    Text(
+                    CustomText(
                         text = it.date + " - " + it.timeStamp,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -322,7 +323,7 @@ private fun NoteItems(viewModel: NoteEditorViewModel) {
 @Composable
 private fun buttonFilters(): SearchFilter {
     var showDropDownMenu by remember { mutableStateOf(false) }
-    val listFilter = listOf("Task", "Note")
+    val listFilter = listOf(stringResource(R.string.task_bottom_bar), stringResource(R.string.note))
 
     var filters by remember { mutableStateOf(listFilter[0]) }
     var filterState by remember { mutableStateOf(SearchFilter.TASK) }
@@ -342,7 +343,7 @@ private fun buttonFilters(): SearchFilter {
             shape = MaterialTheme.shapes.small
         ) {
             Text(
-                text = "Filter : $filters",
+                text = stringResource(R.string.filter) + " : " + filters,
                 color = Color.White,
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold

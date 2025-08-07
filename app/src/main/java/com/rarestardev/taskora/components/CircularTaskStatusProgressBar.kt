@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 
 @Preview
@@ -47,7 +47,7 @@ fun CircularTaskStatusBar(
         Canvas(
             modifier = modifier.fillMaxSize()
         ) {
-            var startAngle = -90f
+            val startAngle = -90f
 
             drawArc( // gray
                 color = progressBackground,
@@ -67,7 +67,7 @@ fun CircularTaskStatusBar(
 
         }
 
-        Text(
+        CustomText(
             text = "${progressPercent.toInt()}%",
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,

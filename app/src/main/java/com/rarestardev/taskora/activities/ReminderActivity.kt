@@ -73,6 +73,7 @@ import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.enums.CalenderType
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.factory.CalendarViewModelFactory
+import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.ReminderController
 import com.rarestardev.taskora.view_model.CalenderViewModel
@@ -484,7 +485,7 @@ private fun PersianCalendarScreen(
                 )
             }
 
-            Text(
+            CustomText(
                 "$monthName - $selectedYear",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary
@@ -579,7 +580,7 @@ private fun PersianCalendarScreen(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
+                    CustomText(
                         text = "$dayNumber",
                         style = if (isToday) MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
