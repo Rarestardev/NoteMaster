@@ -43,7 +43,7 @@ fun NoteViewPager(noteEditorViewModel: NoteEditorViewModel) {
     val filterNoteList = noteList
         .filter { it.priority == 2 }
         .sortedByDescending { it.priority }
-        .take(6)
+        .take(5)
 
     val context = LocalContext.current
 

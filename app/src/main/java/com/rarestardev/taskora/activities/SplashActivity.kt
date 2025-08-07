@@ -17,12 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -35,14 +30,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.rarestardev.taskora.R
@@ -99,7 +95,7 @@ fun SplashScreen() {
             pm.isIgnoringBatteryOptimizations(context.packageName)
         } else true
 
-        Log.d(Constants.APP_LOG,"isIgnoringBatteryOptimizations = $batteryOk")
+        Log.d(Constants.APP_LOG, "isIgnoringBatteryOptimizations = $batteryOk")
 
         allPermissionsGranted = notifyOk && phoneOk && batteryOk
 
@@ -133,35 +129,49 @@ fun SplashScreen() {
         }
     }
 
-    Box(
+    ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
 
-            Image(
-                painter = painterResource(R.drawable.taskora_icon),
-                contentDescription = null,
-                modifier = Modifier.size(100.dp)
-                    .clip(CircleShape)
-                    .border(0.4.dp, MaterialTheme.colorScheme.onSecondary, MaterialTheme.shapes.medium)
-            )
+        val (imageRef, appNameRef, progressRef) = createRefs()
 
-            Spacer(modifier = Modifier.height(12.dp))
+        Image(
+            painter = painterResource(R.drawable.taskora_icon),
+            contentDescription = null,
+            modifier = Modifier
+                .size(100.dp)
+                .clip(CircleShape)
+                .border(0.4.dp, MaterialTheme.colorScheme.onSecondary, MaterialTheme.shapes.medium)
+                .constrainAs(imageRef) {
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                }
+        )
 
-            CircularProgressIndicator()
-            Text(
-                text = "Loading...",
-                Modifier.padding(top = 16.dp),
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-        }
+        CircularProgressIndicator(
+            modifier = Modifier.constrainAs(progressRef) {
+                bottom.linkTo(parent.bottom, 40.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        )
+
+        Text(
+            text = stringResource(R.string.loading),
+            Modifier
+                .padding(top = 16.dp)
+                .constrainAs(appNameRef) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(imageRef.bottom, 18.dp)
+                },
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
     }
 }

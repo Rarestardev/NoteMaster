@@ -43,7 +43,7 @@ fun TaskViewPager(taskViewModel: TaskViewModel) {
         .filter { it.isComplete == false }
         .filter { it.priorityFlag == 2 }.sortedByDescending {
             it.priorityFlag
-        }.take(6)
+        }.take(5)
 
     val context = LocalContext.current
 

@@ -93,6 +93,7 @@
     <string name="ad">#Ad</string>
     <string name="magnetic_player">Magnetic Player</string>
     <string name="cancel">Cancel</string>
+    <string name="loading">Loading…</string>
 
 
     <string-array name="task_categories">

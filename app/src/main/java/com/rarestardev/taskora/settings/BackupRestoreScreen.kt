@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -119,7 +120,9 @@ fun BackupScreen(viewModel: UnifiedViewModel) {
         LinearProgressIndicator(
             progress = { animatedProgress },
             trackColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            color = MaterialTheme.colorScheme.onSecondary
+            color = MaterialTheme.colorScheme.onSecondary,
+            gapSize = 10.dp,
+            strokeCap = StrokeCap.Round
         )
 
         Text(
