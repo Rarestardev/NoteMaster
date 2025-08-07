@@ -26,18 +26,20 @@ import com.rarestardev.taskora.view_model.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategorySelector(viewModel: TaskViewModel){
-    val categories = stringArrayResource(id = R.array.task_categories)
+fun CategorySelector(viewModel: TaskViewModel) {
+    val categories = stringArrayResource(R.array.task_categories)
     var expanded by remember { mutableStateOf(false) }
     val transparentColor = Color.Transparent
-    if (viewModel.selectedCategory.isEmpty()){ viewModel.updateCategoryList(stringArrayResource(R.array.task_categories)[0]) }
+    if (viewModel.selectedCategory.isEmpty()) {
+        viewModel.updateCategoryList(stringArrayResource(R.array.task_categories)[0])
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
         TextField(
-            value = stringResource(R.string.category) + " ( " + viewModel.selectedCategory + " )",
+            value = stringResource(R.string.category) + " ( " + viewModel.selectedCategory+ " )",
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()

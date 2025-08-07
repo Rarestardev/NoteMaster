@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.ShowAllTasksActivity
+import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.list_item.TaskLazyItems
 import com.rarestardev.taskora.model.Task
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
@@ -71,6 +72,12 @@ fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
                 if (taskElement.isNotEmpty()) {
                     itemsIndexed(taskElement.take(10)) { index, task ->
                         TaskLazyItems(index, task, subTaskViewModel, viewModel)
+
+                        task.reminderTime?.let {
+                            if (it != 0L && it < System.currentTimeMillis()){
+                                viewModel.updateReminder(ReminderType.NONE.name,task.id)
+                            }
+                        }
                     }
                 }
             }

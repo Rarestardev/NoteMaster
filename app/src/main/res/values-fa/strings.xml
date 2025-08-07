@@ -37,14 +37,6 @@
     <string name="delete">حذف</string>
     <string name="see_more">موارد بیشتر</string>
 
-    <string-array name="task_categories">
-        <item>شخصی</item>
-        <item>کار</item>
-        <item>دانشگاه</item>
-        <item>خرید</item>
-        <item>یادآوری</item>
-    </string-array>
-
     <string name="completed">انجام شده</string>
     <string name="in_progress">در حال انجام</string>
     <string name="priority">اهمیت</string>
@@ -100,6 +92,45 @@
     <string name="no_item">آیتمی وجود ندارد!</string>
     <string name="ad">#تبلبغات</string>
     <string name="magnetic_player">Magnetic Player</string>
+    <string name="cancel">توقف</string>
+
+
+    <string-array name="task_categories">
+        <item>شخصی</item>
+        <item>کار</item>
+        <item>دانشگاه</item>
+        <item>خرید</item>
+        <item>یادآوری</item>
+        <item>تحصیلی</item>
+        <item>مالی</item>
+        <item>سلامت</item>
+        <item>خانوادگی</item>
+        <item>اجتماعی</item>
+        <item>تفریحی</item>
+        <item>فوری</item>
+        <item>روزانه</item>
+        <item>هفتگی</item>
+        <item>ماهانه</item>
+        <item>تکرار شونده</item>
+        <item>بدون زمان</item>
+        <item>روتین</item>
+        <item>پروژه</item>
+        <item>گروهی</item>
+        <item>طراحی</item>
+        <item>برنامه‌نویسی</item>
+        <item>مارکتینگ</item>
+        <item>تولید محتوا</item>
+        <item>کسب‌وکار</item>
+        <item>نظافت</item>
+        <item>خرید</item>
+        <item>آشپزی</item>
+        <item>گیاهان</item>
+        <item>حیوانات خانگی</item>
+        <item>خواب</item>
+        <item>ورزش</item>
+        <item>مطالعه</item>
+        <item>تمرکز ذهن</item>
+    </string-array>
 
 
 </resources>

@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,7 +55,7 @@ private fun CategoryPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryListView() {
-    val categories = stringArrayResource(id = R.array.task_categories)
+    val categories = stringArrayResource(id = R.array.task_categories).sortedBy { it }
     val lazyState = rememberLazyListState()
     val context = LocalContext.current
     var isShowBottomSheetCategory by remember { mutableStateOf(false) }
@@ -91,6 +94,7 @@ fun CategoryListView() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
                         .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -99,6 +103,7 @@ fun CategoryListView() {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .height(45.dp)
                                 .padding(start = 8.dp, end = 8.dp)
                                 .clickable {
                                     val intent = Intent(context, ShowAllTasksActivity::class.java).apply {

@@ -3,6 +3,7 @@ package com.rarestardev.taskora.activities
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -63,6 +64,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -94,6 +96,7 @@ import com.rarestardev.taskora.utilities.previewSubTaskViewModel
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.random.Random
 
 class CreateTaskActivity : BaseActivity() {
@@ -543,8 +546,7 @@ private fun BottomAppBarView(
             .clip(MaterialTheme.shapes.medium)
             .padding(
                 start = 10.dp,
-                end = 10.dp,
-                bottom = 12.dp
+                end = 10.dp
             ),
         containerColor = Color.Transparent
     ) {
@@ -586,7 +588,7 @@ private fun AddSubTaskBottomSheet(
         onDismissRequest = { onDismiss(false) },
         sheetState = sheetState,
         scrimColor = Color.Transparent,
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.onSecondaryContainer
     ) {
         Column(
             modifier = Modifier
@@ -608,10 +610,10 @@ private fun AddSubTaskBottomSheet(
                 },
                 minLines = 1,
                 colors = TextFieldDefaults.colors().copy(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.background,
                     unfocusedIndicatorColor = transparentColor,
                     focusedIndicatorColor = transparentColor,
-                    focusedContainerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    focusedContainerColor = MaterialTheme.colorScheme.background,
                     cursorColor = MaterialTheme.colorScheme.onSecondary,
                     focusedLeadingIconColor = transparentColor,
                     unfocusedLeadingIconColor = transparentColor
@@ -679,6 +681,13 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
     val time by ReminderController.getTime(context).collectAsState(0)
     val type by ReminderController.getType(context).collectAsState("")
 
+    val config = Configuration(context.resources.configuration)
+    config.setLocale(Locale("en"))
+    val localizedContext = context.createConfigurationContext(config)
+    val categoriesEn = localizedContext.resources.getStringArray(R.array.task_categories)
+
+    val categories = stringArrayResource(R.array.task_categories)
+
     TopAppBar(
         title = {},
         navigationIcon = {
@@ -701,7 +710,6 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
         actions = {
             TextButton(
                 onClick = {
-
                     val type = when (type) {
                         ReminderType.NOTIFICATION.name -> {
                             ReminderType.NOTIFICATION
@@ -718,6 +726,14 @@ private fun TopAppBarView(viewModel: TaskViewModel, subTaskViewModel: SubTaskVie
 
                     viewModel.updateReminderTime(time)
                     viewModel.updateReminderType(type)
+
+                    val selectedCategory = viewModel.selectedCategory
+                    categories.forEachIndexed { index, string ->
+                        if (string == selectedCategory){
+                            val enCategory = categoriesEn[index]
+                            viewModel.updateCategoryList(enCategory)
+                        }
+                    }
 
                     viewModel.insertTask(context)
                     if (viewModel.titleState.isNotEmpty() && viewModel.descriptionState.isNotEmpty()){

@@ -22,6 +22,7 @@ class Constants {
         const val ALARM_MESSAGE = "alarmMessage"
         const val ALARM_TITLE = "alarmTitle"
         const val ALARM_ID = "alarmId"
+        const val CANCEL_ALARM = "com.rarestardev.taskora.CANCEL_ALARM"
 
 
         const val ADS_VIEW : Boolean = true

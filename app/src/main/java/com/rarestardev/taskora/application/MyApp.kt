@@ -11,6 +11,5 @@ class MyApp : Application() {
         super.onCreate()
         AndroidThreeTen.init(this)
         Adivery.configure(this, Constants.AD_APPLICATION_ID)
-        Adivery.setLoggingEnabled(true)
     }
 }

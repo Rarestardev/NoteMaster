@@ -50,6 +50,7 @@ fun TaskViewPager(taskViewModel: TaskViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .padding(4.dp)
             .clickable {
                 val intent = Intent(context, ShowAllTasksActivity::class.java).apply {
                     putExtra(Constants.STATE_TASK_PRIORITY_ACTIVITY, true)
@@ -87,6 +88,10 @@ fun TaskViewPager(taskViewModel: TaskViewModel) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(
+                            top = 4.dp,
+                            bottom = 4.dp
+                        )
                         .border(
                             0.3.dp,
                             Color.White,

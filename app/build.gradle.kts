@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.rarestardev.taskora"
-        minSdk = 26
+        minSdk = 27
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.1"
@@ -60,7 +60,6 @@ dependencies {
 
     // PagerView
     implementation(libs.accompanist.pager)
-    implementation(libs.accompanist.pager.indicators)
 
     // Data store
     implementation(libs.androidx.datastore.preferences)

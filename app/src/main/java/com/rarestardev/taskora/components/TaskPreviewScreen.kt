@@ -2,6 +2,7 @@ package com.rarestardev.taskora.components
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -67,6 +68,7 @@ import com.rarestardev.taskora.utilities.previewSubTaskViewModel
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 @Preview
@@ -368,36 +370,51 @@ private fun DescriptionView(description: String) {
 @Composable
 private fun ReminderInfoView(task: Task) {
     val currentTimeAndDate = CurrentTimeAndDate()
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                MaterialTheme.colorScheme.onSecondaryContainer,
-                MaterialTheme.shapes.small
+    if (task.reminderType != ReminderType.NONE.name) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    MaterialTheme.colorScheme.onSecondaryContainer,
+                    MaterialTheme.shapes.small
+                )
+                .padding(
+                    12.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(R.string.reminder) + " : " + task.reminderType,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimary
             )
-            .padding(
-                12.dp
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(R.string.reminder) + " : " + task.reminderType,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
 
-        Text(
-            text = currentTimeAndDate.alarmTimeToText(task.reminderTime),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSecondary,
-            fontWeight = FontWeight.Bold
-        )
+            Text(
+                text = currentTimeAndDate.alarmTimeToText(task.reminderTime),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSecondary,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 
 @Composable
 private fun CategoryView(task: Task) {
+    var category by remember { mutableStateOf("") }
+
+    val lang = Locale.getDefault().language
+    if (lang == "fa") {
+        getEnLanguageListCategory().forEachIndexed { index, string ->
+            if (task.category == string) {
+                category = getFaLanguageListCategory()[index]
+            }
+        }
+    }else{
+        category = task.category!!
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -415,12 +432,32 @@ private fun CategoryView(task: Task) {
         )
 
         Text(
-            text = task.category.toString(),
+            text = category,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.Bold
         )
     }
+}
+
+@Composable
+private fun getEnLanguageListCategory() : Array<String> {
+    val context = LocalContext.current
+
+    val config = Configuration(context.resources.configuration)
+    config.setLocale(Locale("en"))
+    val localizedContext = context.createConfigurationContext(config)
+    return localizedContext.resources.getStringArray(R.array.task_categories)
+}
+
+@Composable
+private fun getFaLanguageListCategory() : Array<String> {
+    val context = LocalContext.current
+
+    val config = Configuration(context.resources.configuration)
+    config.setLocale(Locale("fa"))
+    val localizedContext = context.createConfigurationContext(config)
+    return localizedContext.resources.getStringArray(R.array.task_categories)
 }
 
 @Composable

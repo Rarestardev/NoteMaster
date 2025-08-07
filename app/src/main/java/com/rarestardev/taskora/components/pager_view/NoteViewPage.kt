@@ -88,6 +88,10 @@ fun NoteViewPager(noteEditorViewModel: NoteEditorViewModel) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(
+                            top = 4.dp,
+                            bottom = 4.dp
+                        )
                         .border(
                             0.3.dp,
                             Color.White,

@@ -37,14 +37,6 @@
     <string name="delete">Delete</string>
     <string name="see_more">See More</string>
 
-    <string-array name="task_categories">
-        <item>Personal</item>
-        <item>Work</item>
-        <item>University</item>
-        <item>Shopping</item>
-        <item>Reminder</item>
-    </string-array>
-
     <string name="completed">Completed</string>
     <string name="in_progress">In Progress</string>
     <string name="priority">Priority</string>
@@ -100,5 +92,44 @@
     <string name="no_item">No item!</string>
     <string name="ad">#Ad</string>
     <string name="magnetic_player">Magnetic Player</string>
+    <string name="cancel">Cancel</string>
+
+
+    <string-array name="task_categories">
+        <item>Personal</item>
+        <item>Work</item>
+        <item>University</item>
+        <item>Shopping</item>
+        <item>Reminder</item>
+        <item>Education</item>
+        <item>Finance</item>
+        <item>Health</item>
+        <item>Family</item>
+        <item>Social</item>
+        <item>Fun</item>
+        <item>Urgent</item>
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Recurring</item>
+        <item>NoTime</item>
+        <item>Routine</item>
+        <item>Project</item>
+        <item>Collaborative</item>
+        <item>Design</item>
+        <item>Development</item>
+        <item>Marketing</item>
+        <item>Content</item>
+        <item>Business</item>
+        <item>Cleaning</item>
+        <item>Shopping</item>
+        <item>Cooking</item>
+        <item>Plants</item>
+        <item>Pets</item>
+        <item>Sleep</item>
+        <item>Exercise</item>
+        <item>Study</item>
+        <item>Meditation</item>
+    </string-array>
 
 </resources>

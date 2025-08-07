@@ -2,6 +2,7 @@ package com.rarestardev.taskora.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.media.RingtoneManager
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -72,7 +73,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.taskora.R
-import com.rarestardev.taskora.components.AdiveryNativeAdLayout
+import com.rarestardev.taskora.components.AdiveryNativeAdLayoutWithTitle
 import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.components.CategoryListView
 import com.rarestardev.taskora.components.CircularTaskStatusBar
@@ -85,6 +86,7 @@ import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
 import com.rarestardev.taskora.factory.SubTaskViewModelFactory
 import com.rarestardev.taskora.factory.TaskViewModelFactory
+import com.rarestardev.taskora.service.ReminderService
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
@@ -113,6 +115,21 @@ class MainActivity : BaseActivity() {
         enableEdgeToEdge()
         setComposeContent {
             HomeScreen(viewModel, taskViewModel, subTaskViewModel)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        val ringtone = RingtoneManager.getRingtone(applicationContext, ringtoneUri)
+        ringtone?.let {
+            if (it.isPlaying){
+                val br = Intent(this@MainActivity, ReminderService::class.java)
+                    .setAction(Constants.CANCEL_ALARM)
+
+                sendBroadcast(br)
+            }
         }
     }
 }
@@ -249,20 +266,7 @@ private fun ScaffoldContent(
 
         CategoryListView()
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = stringResource(R.string.ad),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(start = 12.dp)
-            )
-        }
-
-        AdiveryNativeAdLayout()
+        AdiveryNativeAdLayoutWithTitle()
 
         Spacer(modifier = Modifier.height(65.dp))
     }

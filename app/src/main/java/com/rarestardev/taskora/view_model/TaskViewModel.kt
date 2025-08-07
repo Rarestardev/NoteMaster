@@ -165,14 +165,14 @@ open class TaskViewModel(taskItemDao: TaskItemDao) : ViewModel() {
             }
         }
 
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+
         val intent = Intent(context, ReminderReceiver::class.java).apply {
             putExtra(Constants.ALARM_TYPE, type.name)
             putExtra(Constants.ALARM_MESSAGE, message)
             putExtra(Constants.ALARM_TITLE, title)
             putExtra(Constants.ALARM_ID, id)
         }
-
-        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,

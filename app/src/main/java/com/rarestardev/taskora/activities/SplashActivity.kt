@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -98,6 +99,8 @@ fun SplashScreen() {
             pm.isIgnoringBatteryOptimizations(context.packageName)
         } else true
 
+        Log.d(Constants.APP_LOG,"isIgnoringBatteryOptimizations = $batteryOk")
+
         allPermissionsGranted = notifyOk && phoneOk && batteryOk
 
         if (!notifyOk && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -142,10 +145,10 @@ fun SplashScreen() {
         ) {
 
             Image(
-                painter = painterResource(R.drawable.ic_launcher_background),
+                painter = painterResource(R.drawable.taskora_icon),
                 contentDescription = null,
                 modifier = Modifier.size(100.dp)
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(CircleShape)
                     .border(0.4.dp, MaterialTheme.colorScheme.onSecondary, MaterialTheme.shapes.medium)
             )
 
