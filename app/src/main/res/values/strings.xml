@@ -109,6 +109,9 @@
     <string name="result">Result</string>
     <string name="task_for_today">Task for today</string>
     <string name="create_on">Create on</string>
+    <string name="attention">Attention</string>
+    <string name="battery_optimizations_desc">To make sure you never miss a reminder, the app\nneeds to be excluded from battery optimization.\nThis ensures alarms are triggered in time-even\nwhen your device is in power-saving mode.</string>
+    <string name="allow">Allow</string>
 
 
     <string-array name="task_categories">

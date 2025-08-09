@@ -2,7 +2,6 @@ package com.rarestardev.taskora.settings
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -48,9 +47,9 @@ import com.rarestardev.taskora.enums.ThemeMode
 import com.rarestardev.taskora.factory.UnifiedVMFactory
 import com.rarestardev.taskora.ui.theme.NoteMasterTheme
 import com.rarestardev.taskora.utilities.Constants
+import com.rarestardev.taskora.utilities.TxtFileReader
 import com.rarestardev.taskora.view_model.UnifiedViewModel
 import kotlinx.coroutines.launch
-import java.io.IOException
 import java.util.Locale
 
 class SecondSettingsActivity : BaseActivity() {
@@ -105,10 +104,10 @@ class SecondSettingsActivity : BaseActivity() {
 
                             if (systemLang == "en") {
                                 content =
-                                    readTxtFromAssets(this@SecondSettingsActivity, "about_en.txt")
+                                    TxtFileReader.readTxtFromAssets(this@SecondSettingsActivity, "about_en.txt")
                             } else if (systemLang == "fa") {
                                 content =
-                                    readTxtFromAssets(this@SecondSettingsActivity, "about_fa.txt")
+                                    TxtFileReader.readTxtFromAssets(this@SecondSettingsActivity, "about_fa.txt")
                             }
 
                             Text(
@@ -135,14 +134,6 @@ class SecondSettingsActivity : BaseActivity() {
                 }
             }
         }
-    }
-}
-
-private fun readTxtFromAssets(context: Context, fileName: String): String {
-    return try {
-        context.assets.open(fileName).bufferedReader().use { it.readText() }
-    } catch (e: IOException) {
-        e.message.toString()
     }
 }
 

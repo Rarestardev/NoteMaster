@@ -1,0 +1,14 @@
+📦 Backup & Restore Functionality
+
+This section allows you to securely save your notes, tasks, and subtasks in an encrypted backup file, and restore them whenever needed.
+
+✅ When backing up:
+A backup file containing all your current app data will be saved to your selected location.
+
+✅ When restoring:
+The data from the backup file will completely replace your current app data.
+
+⚠️ Important Warning:
+Do not delete or modify the backup file. It is the only way to recover your data. If the file is lost or damaged, your information cannot be restored.
+
+We recommend storing the backup file in a safe place, such as cloud storage or a private folder.

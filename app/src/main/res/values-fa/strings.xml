@@ -109,6 +109,9 @@
     <string name="result">نتیجه</string>
     <string name="task_for_today">کار های امروز</string>
     <string name="create_on">ایجاد شده در</string>
+    <string name="attention">توجه</string>
+    <string name="battery_optimizations_desc">برای اینکه هیج یادآوری را از دست ندهید؛ برنامه نیاز دارد از بهینه ساز باتری خارج شود. این کار تضمین میکند که زنگ ها همیشه به موقع اجرا شوند. حتی در حالت صرفه جویی باتری.</string>
+    <string name="allow">اجازه میدم</string>
 
 
     <string-array name="task_categories">

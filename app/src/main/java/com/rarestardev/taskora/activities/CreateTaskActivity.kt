@@ -2,9 +2,12 @@ package com.rarestardev.taskora.activities
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -70,6 +73,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -462,7 +466,7 @@ private fun TitleTrailingIcon(viewModel: TaskViewModel) {
     var showDropDownMenu by remember { mutableStateOf(false) }
     val flagListColor = listOf(
         stringResource(R.string.priority_low) to R.color.priority_low,
-        stringResource(R.string.priority_medium)to R.color.priority_medium,
+        stringResource(R.string.priority_medium) to R.color.priority_medium,
         stringResource(R.string.priority_high) to R.color.priority_high
     )
 
@@ -525,6 +529,7 @@ private fun TitleTrailingIcon(viewModel: TaskViewModel) {
     }
 }
 
+@SuppressLint("BatteryLife")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomAppBarView(
@@ -533,6 +538,7 @@ private fun BottomAppBarView(
 ) {
     var showSubTaskSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (viewModel.taskId == 0) {
@@ -552,6 +558,89 @@ private fun BottomAppBarView(
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             viewModel.updateImagePath(uri.toString())
+        }
+    }
+
+    if (showDialog) {
+        BasicAlertDialog(
+            onDismissRequest = { showDialog = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    MaterialTheme.colorScheme.onSecondaryContainer,
+                    MaterialTheme.shapes.large
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+                    .background(
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                        MaterialTheme.shapes.large
+                    ),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.attention),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.labelLarge,
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = stringResource(R.string.battery_optimizations_desc),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.labelMedium,
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 14.sp,
+                    minLines = 1
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = { showDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            color = MaterialTheme.colorScheme.onSecondary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = "package:${context.packageName}".toUri()
+                            }
+                            context.startActivity(intent)
+                            showDialog = false
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.allow),
+                            color = MaterialTheme.colorScheme.onSecondary,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -585,10 +674,19 @@ private fun BottomAppBarView(
             }
 
             BottomBarItem(R.drawable.icons_alarm_clock) {
-                context.startActivity(Intent(context, ReminderActivity::class.java))
+                if (ignoringBatteryOptimizations(context)) {
+                    context.startActivity(Intent(context, ReminderActivity::class.java))
+                } else {
+                    showDialog = true
+                }
             }
         }
     }
+}
+
+private fun ignoringBatteryOptimizations(context: Context): Boolean {
+    val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    return pm.isIgnoringBatteryOptimizations(context.packageName)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

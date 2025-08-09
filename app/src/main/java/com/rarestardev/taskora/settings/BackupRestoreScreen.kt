@@ -37,22 +37,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
+import com.rarestardev.taskora.utilities.TxtFileReader
 import com.rarestardev.taskora.view_model.UnifiedViewModel
+import java.util.Locale
 
 @Composable
 fun BackupScreen(viewModel: UnifiedViewModel) {
     val context = LocalContext.current
+    val lang = Locale.getDefault().language
     val progress by viewModel.progress.collectAsState()
     var address by remember { mutableStateOf("") }
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
-
 
     // ActivityResultContracts.CreateDocument()
     val launcherBackup =
@@ -145,7 +148,8 @@ fun BackupScreen(viewModel: UnifiedViewModel) {
         ) {
             Button(
                 onClick = { launcherBackup.launch("note_master_backup.json") },
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(12.dp)
                     .width(140.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onSecondary
@@ -161,7 +165,9 @@ fun BackupScreen(viewModel: UnifiedViewModel) {
 
             Button(
                 onClick = { launcherRestore.launch(arrayOf("application/json")) },
-                modifier = Modifier.padding(12.dp).width(140.dp),
+                modifier = Modifier
+                    .padding(12.dp)
+                    .width(140.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onSecondary
                 )
@@ -174,5 +180,34 @@ fun BackupScreen(viewModel: UnifiedViewModel) {
                 )
             }
         }
+
+        val backupDesc = when (lang) {
+            "en" -> {
+                TxtFileReader.readTxtFromAssets(context, "backup_restore_desc_en.txt")
+            }
+
+            "fa" -> {
+                TxtFileReader.readTxtFromAssets(context, "backup_restore_desc_fa.txt")
+            }
+
+            else -> {
+                ""
+            }
+        }
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        if (backupDesc.isNotEmpty()) {
+            Text(
+                text = backupDesc,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+
     }
 }

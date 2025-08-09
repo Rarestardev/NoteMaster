@@ -1,11 +1,17 @@
 package com.rarestardev.taskora.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,7 +29,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
@@ -68,6 +76,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.enums.CalenderType
@@ -147,10 +156,10 @@ private fun ReminderScreen(
         },
         bottomBar = {
             BottomAppBar(containerColor = MaterialTheme.colorScheme.background) {
-                Column (
+                Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){ BannerAds() }
+                ) { BannerAds() }
             }
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -160,6 +169,7 @@ private fun ReminderScreen(
     }
 }
 
+@SuppressLint("InlinedApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShowReminder(
@@ -170,6 +180,18 @@ private fun ShowReminder(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val calenderType by calenderViewModel.calenderType.collectAsState()
+    var permissionType by remember { mutableStateOf(ReminderType.NONE.name) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            Log.d(Constants.APP_LOG, "$permissionType permission granted")
+        } else {
+            Log.e(Constants.APP_LOG, "$permissionType permission denied")
+        }
+    }
+
     var step by remember { mutableIntStateOf(1) }
 
     var initialHour by remember { mutableIntStateOf(0) }
@@ -196,10 +218,12 @@ private fun ShowReminder(
     )
 
     val transparentColor = Color.Transparent
+    val verticalScrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .verticalScroll(verticalScrollState)
             .padding(
                 top = paddingValues.calculateTopPadding(),
                 start = 24.dp,
@@ -419,11 +443,42 @@ private fun ShowReminder(
                                     .toEpochMilli()
 
                                 if (selectedType != ReminderType.NONE) {
-                                    scope.launch {
-                                        ReminderController.saveType(context, selectedType!!.name)
-                                        ReminderController.saveTime(context, millis)
-                                        activity.finish()
+                                    if (selectedType == ReminderType.NOTIFICATION) {
+                                        permissionType = ReminderType.NOTIFICATION.name
+                                        if (hasNotificationPermission(context)) {
+                                            scope.launch {
+                                                ReminderController.saveType(
+                                                    context,
+                                                    selectedType!!.name
+                                                )
+                                                ReminderController.saveTime(context, millis)
+                                                activity.finish()
+                                            }
+                                        } else {
+                                            scope.launch {
+                                                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                                step = 1
+                                            }
+                                        }
+                                    } else if (selectedType == ReminderType.ALARM) {
+                                        permissionType = ReminderType.ALARM.name
+                                        if (hasAlarmPermission(context)) {
+                                            scope.launch {
+                                                ReminderController.saveType(
+                                                    context,
+                                                    selectedType!!.name
+                                                )
+                                                ReminderController.saveTime(context, millis)
+                                                activity.finish()
+                                            }
+                                        } else {
+                                            scope.launch {
+                                                permissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
+                                                step = 1
+                                            }
+                                        }
                                     }
+
                                 } else {
                                     Toast.makeText(
                                         activity.applicationContext,
@@ -431,7 +486,6 @@ private fun ShowReminder(
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
-                                Log.d(Constants.APP_LOG,"$millis")
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -450,6 +504,24 @@ private fun ShowReminder(
             }
         }
     }
+}
+
+private fun hasNotificationPermission(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    } else {
+        true
+    }
+}
+
+private fun hasAlarmPermission(context: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.READ_PHONE_STATE
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
 @Composable
