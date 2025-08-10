@@ -15,12 +15,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import com.adivery.sdk.Adivery
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.enums.ThemeMode
 import com.rarestardev.taskora.factory.TaskViewModelFactory
 import com.rarestardev.taskora.settings.SettingsPreferences
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.view_model.TaskViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -65,7 +64,7 @@ abstract class BaseActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalLayoutDirection provides if (language == "fa") LayoutDirection.Rtl else LayoutDirection.Ltr
             ) {
-                NoteMasterTheme(
+                TaskoraTheme(
                     themeMode = themeMode,
                 ) {
                     content()

@@ -64,7 +64,7 @@ import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
 import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.model.Note
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.previewFakeViewModel
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
@@ -90,7 +90,7 @@ class ShowAllNotesActivity : BaseActivity() {
 @Preview
 @Composable
 private fun NoteScreenPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         ActivityScreen(previewFakeViewModel(), false)
     }
 }
@@ -130,14 +130,16 @@ private fun ActivityScreen(viewModel: NoteEditorViewModel, state: Boolean) {
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp, end = 12.dp),
                 containerColor = MaterialTheme.colorScheme.background
             ) {
-                Column (
+                Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
-                ){
+                ) {
                     BannerAds()
                 }
             }
@@ -165,7 +167,7 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
     val context = LocalContext.current
     val lazyGridState = rememberLazyGridState()
     var isShowMenuBottomSheet by remember { mutableStateOf(false) }
-    var noteModel by remember { mutableStateOf(Note(0,"","",0,"","",0,0f)) }
+    var noteModel by remember { mutableStateOf(Note(0, "", "", 0, "", "", 0, 0f)) }
 
     val filterNote = if (state) {
         notes.filter { it.priority == 2 }.sortedByDescending { it.priority }
@@ -262,7 +264,11 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
                                     }
                                     .background(
                                         MaterialTheme.colorScheme.onSecondaryContainer,
-                                        RoundedCornerShape(4.dp)
+                                        MaterialTheme.shapes.extraSmall
+                                    )
+                                    .border(
+                                        0.2.dp, MaterialTheme.colorScheme.onSecondary,
+                                        MaterialTheme.shapes.extraSmall
                                     )
 
                             ) {
@@ -352,7 +358,7 @@ private fun NoteScreen(viewModel: NoteEditorViewModel, state: Boolean) {
             )
         }
 
-        if (isShowMenuBottomSheet){
+        if (isShowMenuBottomSheet) {
             MenuBottomSheet(
                 noteEditorViewModel = viewModel,
                 note = noteModel

@@ -88,7 +88,7 @@ import com.rarestardev.taskora.factory.SubTaskViewModelFactory
 import com.rarestardev.taskora.factory.TaskViewModelFactory
 import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.service.ReminderService
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
 import com.rarestardev.taskora.utilities.previewFakeViewModel
@@ -138,7 +138,7 @@ class MainActivity : BaseActivity() {
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         HomeScreen(
             previewFakeViewModel(),
             previewFakeTaskViewModel(),
@@ -524,9 +524,9 @@ private fun MyTopAppBar() {
         title = {
             Text(
                 text = stringResource(R.string.app_name),
-                modifier = Modifier.padding(6.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 24.sp,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         },

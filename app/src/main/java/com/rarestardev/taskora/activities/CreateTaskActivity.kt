@@ -91,9 +91,9 @@ import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.factory.SubTaskViewModelFactory
 import com.rarestardev.taskora.factory.TaskViewModelFactory
 import com.rarestardev.taskora.feature.CategorySelector
-import com.rarestardev.taskora.feature.ResizableImageItem
+import com.rarestardev.taskora.feature.CustomImageView
 import com.rarestardev.taskora.model.SubTask
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.CurrentTimeAndDate
 import com.rarestardev.taskora.utilities.ReminderController
@@ -153,7 +153,7 @@ class CreateTaskActivity : BaseActivity() {
 @Preview
 @Composable
 private fun TaskActivityPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         TaskEditorScreen(
             viewModel = previewFakeTaskViewModel(),
             subTaskViewModel = previewSubTaskViewModel()
@@ -227,8 +227,11 @@ private fun TaskEditorScreen(viewModel: TaskViewModel, subTaskViewModel: SubTask
 
                     ReminderLayout(viewModel)
 
+                    Spacer(Modifier.height(12.dp))
+
                     if (viewModel.imagePath.isNotEmpty()) {
-                        ResizableImageItem(viewModel.imagePath.toUri(), showDelete = true) {
+                        CustomImageView(viewModel.imagePath, showDelete = true
+                        ) {
                             viewModel.updateImagePath("")
                         }
                     }
@@ -558,6 +561,8 @@ private fun BottomAppBarView(
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             viewModel.updateImagePath(uri.toString())
+            val contentResolver = context.contentResolver
+            contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     }
 

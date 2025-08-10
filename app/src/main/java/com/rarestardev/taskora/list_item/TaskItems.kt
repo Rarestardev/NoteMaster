@@ -64,7 +64,7 @@ import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.CreateTaskActivity
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.feature.CustomText
-import com.rarestardev.taskora.feature.GlideImage
+import com.rarestardev.taskora.feature.SmallCustomImageView
 import com.rarestardev.taskora.model.Flags
 import com.rarestardev.taskora.model.ImageResource
 import com.rarestardev.taskora.model.Task
@@ -80,7 +80,8 @@ fun TaskLazyItems(
     index: Int,
     task: Task,
     subTaskViewModel: SubTaskViewModel,
-    viewModel: TaskViewModel
+    viewModel: TaskViewModel,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     var expandedIndex by remember { mutableIntStateOf(-1) }
@@ -93,9 +94,7 @@ fun TaskLazyItems(
     val percentage = (progress * 100).toInt()
 
     Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(240.dp)
+        modifier = modifier
             .padding(end = 8.dp)
             .combinedClickable(
                 onClick = {
@@ -173,7 +172,7 @@ fun TaskLazyItems(
 
                 task.imagePath?.let {
                     if (it.isNotEmpty()) {
-                        GlideImage(
+                        SmallCustomImageView(
                             imageUrl = it,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -272,8 +271,8 @@ fun TaskLazyItems(
                             .clip(RoundedCornerShape(4.dp))
                             .constrainAs(progressBarRef) {
                                 start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
+                                top.linkTo(percentageRef.top)
+                                bottom.linkTo(percentageRef.bottom)
                                 end.linkTo(percentageRef.start, 6.dp)
                                 width = Dimension.fillToConstraints
                             },
@@ -285,9 +284,9 @@ fun TaskLazyItems(
                     CustomText(
                         text = "$percentage %",
                         modifier = Modifier.constrainAs(percentageRef) {
-                            end.linkTo(parent.end)
-                            top.linkTo(progressBarRef.top)
-                            bottom.linkTo(progressBarRef.bottom)
+                            end.linkTo(parent.end,4.dp)
+                            top.linkTo(parent.top,4.dp)
+                            bottom.linkTo(parent.bottom)
                         },
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontSize = 10.sp
@@ -305,6 +304,8 @@ fun TaskLazyItems(
             )
         }
     }
+
+    Spacer(Modifier.height(6.dp))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -18,12 +18,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rarestardev.taskora.R
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 
 @Preview
 @Composable
 private fun CircleCheckBoxPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         CircleCheckBox(true) { }
     }
 }

@@ -52,7 +52,7 @@ import com.rarestardev.taskora.activities.CreateNoteActivity
 import com.rarestardev.taskora.activities.ShowAllNotesActivity
 import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.model.Note
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.previewFakeViewModel
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
@@ -60,7 +60,7 @@ import com.rarestardev.taskora.view_model.NoteEditorViewModel
 @Preview
 @Composable
 private fun NoteScreenPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         NoteScreen(previewFakeViewModel())
     }
 }
@@ -197,7 +197,11 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                                     }
                                     .background(
                                         MaterialTheme.colorScheme.onSecondaryContainer,
-                                        RoundedCornerShape(4.dp)
+                                        MaterialTheme.shapes.extraSmall
+                                    )
+                                    .border(
+                                        0.2.dp, MaterialTheme.colorScheme.onSecondary,
+                                        MaterialTheme.shapes.extraSmall
                                     )
 
                             ) {

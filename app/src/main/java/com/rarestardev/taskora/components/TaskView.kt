@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,7 +35,7 @@ import com.rarestardev.taskora.activities.ShowAllTasksActivity
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.list_item.TaskLazyItems
 import com.rarestardev.taskora.model.Task
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
 import com.rarestardev.taskora.utilities.previewSubTaskViewModel
@@ -42,7 +45,7 @@ import com.rarestardev.taskora.view_model.TaskViewModel
 @Preview
 @Composable
 private fun TaskItemPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         TaskView(previewFakeTaskViewModel(), previewSubTaskViewModel())
     }
 }
@@ -64,18 +67,24 @@ fun TaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewModel) {
         if (taskElement.isNotEmpty()) {
             LazyRow(
                 state = lazyState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp),
+                modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(4.dp)
             ) {
                 if (taskElement.isNotEmpty()) {
                     itemsIndexed(taskElement.take(10)) { index, task ->
-                        TaskLazyItems(index, task, subTaskViewModel, viewModel)
+                        TaskLazyItems(
+                            index,
+                            task,
+                            subTaskViewModel,
+                            viewModel,
+                            modifier = Modifier
+                                .width(240.dp)
+                                .height(140.dp)
+                        )
 
                         task.reminderTime?.let {
-                            if (it != 0L && it < System.currentTimeMillis()){
-                                viewModel.updateReminder(ReminderType.NONE.name,task.id)
+                            if (it != 0L && it < System.currentTimeMillis()) {
+                                viewModel.updateReminder(ReminderType.NONE.name, task.id)
                             }
                         }
                     }
@@ -104,7 +113,9 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
     val taskElement = allTasks.filter { it.isComplete == true }
 
     Column(
-        Modifier.fillMaxWidth(),
+        Modifier
+            .fillMaxWidth()
+            .height(140.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -120,7 +131,15 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
             ) {
                 if (taskElement.isNotEmpty()) {
                     itemsIndexed(taskElement.take(10)) { index, task ->
-                        TaskLazyItems(index, task, subTaskViewModel, viewModel)
+                        TaskLazyItems(
+                            index,
+                            task,
+                            subTaskViewModel,
+                            viewModel,
+                            modifier = Modifier
+                                .width(240.dp)
+                                .fillMaxHeight()
+                        )
                     }
                 }
             }
@@ -128,8 +147,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
             Text(
                 text = stringResource(R.string.task_list_is_empty),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp)
+                    .fillMaxSize()
                     .padding(top = 50.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondary,

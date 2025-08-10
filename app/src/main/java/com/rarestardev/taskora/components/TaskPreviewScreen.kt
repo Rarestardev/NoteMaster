@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,18 +46,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.net.toUri
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.enums.ReminderType
-import com.rarestardev.taskora.feature.ResizableImageItem
+import com.rarestardev.taskora.feature.CustomImageView
 import com.rarestardev.taskora.model.Task
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.CurrentTimeAndDate
 import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
@@ -71,7 +70,7 @@ import java.util.Locale
 @Preview
 @Composable
 private fun TaskActivityPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         TaskPreviewScreen(
             previewFakeTaskViewModel(),
             previewSubTaskViewModel(),
@@ -99,6 +98,10 @@ fun TaskPreviewScreen(
     val mediaPlayer = remember {
         MediaPlayer.create(context, R.raw.task_tick_sound)
     }
+
+    var taskInstance by remember { mutableStateOf(Task()) }
+    var textColor = MaterialTheme.colorScheme.onPrimary
+    var textDecoration by remember { mutableStateOf(TextDecoration.None) }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -201,140 +204,135 @@ fun TaskPreviewScreen(
         }
     ) { paddingValue ->
 
-        Column(
-            Modifier
+        filterTaskWithId.forEach { task ->
+            taskInstance = task
+            task.isComplete?.let { isDoneTask = it }
+            titleActivity = task.title
+        }
+
+        LazyColumn(
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     top = paddingValue.calculateTopPadding() + 12.dp,
                     start = 12.dp,
                     end = 12.dp
                 ),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            state = rememberLazyListState()
         ) {
-            filterTaskWithId.forEach { task ->
-                task.isComplete?.let { isDoneTask = it }
-                titleActivity = task.title
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    BannerAds()
+            item {
+                BannerAds()
 
-                    Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(12.dp))
 
-                    PriorityLayout(task)
+                PriorityLayout(taskInstance)
 
-                    CategoryView(task)
+                Spacer(Modifier.height(12.dp))
 
-                    ReminderInfoView(task)
+                CategoryView(taskInstance)
 
-                    DescriptionView(task.description)
+                Spacer(Modifier.height(12.dp))
 
-                    task.imagePath?.let { uri ->
-                        if (uri.isNotEmpty()) {
-                            ResizableImageItem(
-                                uri.toUri(),
-                                showDelete = false
-                            ) {}
-                        }
+                ReminderInfoView(taskInstance)
+
+                DescriptionView(taskInstance.description)
+
+                Spacer(Modifier.height(12.dp))
+
+                taskInstance.imagePath?.let { uri ->
+                    if (uri.isNotEmpty()) {
+                        CustomImageView(
+                            uri,
+                            showDelete = false
+                        ) {}
                     }
-
-                    Spacer(Modifier.height(8.dp))
-
-                    SubTaskLazy(task.id, subTaskViewModel)
                 }
             }
 
-            Spacer(Modifier.height(60.dp))
-        }
-    }
-}
+            val filterSubTaskWithTitle = allSubTask.filter { it.taskId == taskInstance.id }
 
-@Composable
-private fun SubTaskLazy(
-    taskId: Int,
-    subTaskViewModel: SubTaskViewModel
-) {
-    val allSubTask by subTaskViewModel.subTaskList.collectAsState(emptyList())
-    val filterSubTaskWithTitle = allSubTask.filter { it.taskId == taskId }
-    var textDecoration by remember { mutableStateOf(TextDecoration.None) }
-    var textColor = MaterialTheme.colorScheme.onPrimary
+            item {
+                Spacer(Modifier.height(12.dp))
 
-    if (filterSubTaskWithTitle.isNotEmpty()) {
-        Text(
-            text = stringResource(R.string.subTask),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSecondary,
-            fontWeight = FontWeight.Bold
-        )
-    }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        state = rememberLazyListState()
-    ) {
-        items(filterSubTaskWithTitle) { subTask ->
-            ConstraintLayout(
-                Modifier
-                    .fillMaxWidth()
-                    .background(
-                        MaterialTheme.colorScheme.onSecondaryContainer,
-                        MaterialTheme.shapes.small
-                    )
-                    .padding(6.dp)
-            ) {
-                val (checkBoxRef, descRef) = createRefs()
-                subTask.subChecked?.let {
-                    if (it) {
-                        textDecoration = TextDecoration.LineThrough
-                        textColor = colorResource(R.color.text_field_label_color)
-                    } else {
-                        textDecoration = TextDecoration.None
-                        textColor = MaterialTheme.colorScheme.onPrimary
-                    }
-                    CircleCheckBox(
-                        checked = it,
-                        onCheckedChange = { b ->
-                            subTaskViewModel.updateSubTaskIsComplete(
-                                b,
-                                subTask.subTaskId
-                            )
-                        },
-                        modifier = Modifier.constrainAs(checkBoxRef) {
-                            start.linkTo(parent.start)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }
+                if (filterSubTaskWithTitle.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.subTask),
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
                     )
                 }
 
-                Text(
-                    text = subTask.subTaskDescription,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = textColor,
-                    textDecoration = textDecoration,
-                    modifier = Modifier
+                Spacer(Modifier.height(12.dp))
+            }
+
+            items(filterSubTaskWithTitle) { subTask ->
+                ConstraintLayout(
+                    Modifier
                         .fillMaxWidth()
-                        .constrainAs(descRef) {
-                            start.linkTo(checkBoxRef.end, 6.dp)
-                            end.linkTo(parent.end, 6.dp)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            width = Dimension.fillToConstraints
+                        .background(
+                            MaterialTheme.colorScheme.onSecondaryContainer,
+                            MaterialTheme.shapes.small
+                        )
+                        .padding(6.dp)
+                ) {
+                    val (checkBoxRef, descRef) = createRefs()
+                    subTask.subChecked?.let {
+                        if (it) {
+                            textDecoration = TextDecoration.LineThrough
+                            textColor = colorResource(R.color.text_field_label_color)
+                        } else {
+                            textDecoration = TextDecoration.None
+                            textColor = MaterialTheme.colorScheme.onPrimary
                         }
-                )
+                        CircleCheckBox(
+                            checked = it,
+                            onCheckedChange = { b ->
+                                subTaskViewModel.updateSubTaskIsComplete(
+                                    b,
+                                    subTask.subTaskId
+                                )
+                            },
+                            modifier = Modifier.constrainAs(checkBoxRef) {
+                                start.linkTo(parent.start)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            }
+                        )
+                    }
+
+                    Text(
+                        text = subTask.subTaskDescription,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = textColor,
+                        textDecoration = textDecoration,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .constrainAs(descRef) {
+                                start.linkTo(checkBoxRef.end, 6.dp)
+                                end.linkTo(parent.end, 6.dp)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                                width = Dimension.fillToConstraints
+                            }
+                    )
+                }
+
+                Spacer(Modifier.height(3.dp))
             }
 
-            Spacer(Modifier.height(3.dp))
+            item {
+                Spacer(Modifier.height(120.dp))
+            }
         }
     }
 }
 
 @Composable
 private fun DescriptionView(description: String) {
-    Spacer(modifier = Modifier.height(12.dp))
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -394,7 +392,7 @@ private fun CategoryView(task: Task) {
                 category = LanguageHelper.getFaLanguageListCategory()[index]
             }
         }
-    }else{
+    } else {
         category = task.category!!
     }
 

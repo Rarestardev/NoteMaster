@@ -150,5 +150,6 @@
         <item>Study</item>
         <item>Meditation</item>
     </string-array>
+    <string name="title_activity_image_preview">ImagePreviewActivity</string>
 
 </resources>

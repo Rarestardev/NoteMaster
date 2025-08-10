@@ -42,12 +42,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.ShowAllTasksActivity
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 
 @Preview
 @Composable
 private fun CategoryPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         CategoryListView()
     }
 }
@@ -153,12 +153,12 @@ fun CategoryListView() {
                     .padding(end = 6.dp)
                     .background(
                         MaterialTheme.colorScheme.onSecondaryContainer,
-                        MaterialTheme.shapes.small
+                        MaterialTheme.shapes.extraLarge
                     )
                     .border(
-                        0.4.dp,
+                        0.2.dp,
                         MaterialTheme.colorScheme.onSecondary,
-                        MaterialTheme.shapes.small
+                        MaterialTheme.shapes.extraLarge
                     )
                     .clickable {
                         val intent = Intent(context, ShowAllTasksActivity::class.java).apply {

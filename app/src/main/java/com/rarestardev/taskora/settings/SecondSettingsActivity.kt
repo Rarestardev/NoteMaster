@@ -45,7 +45,7 @@ import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.enums.ThemeMode
 import com.rarestardev.taskora.factory.UnifiedVMFactory
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.TxtFileReader
 import com.rarestardev.taskora.view_model.UnifiedViewModel
@@ -169,7 +169,7 @@ private fun SettingsTopAppBar(title: String) {
 @Preview
 @Composable
 private fun SettingsPreview() {
-    NoteMasterTheme(ThemeMode.SYSTEM) {
+    TaskoraTheme(ThemeMode.SYSTEM) {
         ThemeView(ThemeMode.SYSTEM) {}
     }
 }

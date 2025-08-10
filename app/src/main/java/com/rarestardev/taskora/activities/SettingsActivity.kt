@@ -53,7 +53,7 @@ import com.rarestardev.taskora.enums.ThemeMode
 import com.rarestardev.taskora.factory.CalendarViewModelFactory
 import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.settings.SecondSettingsActivity
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.view_model.CalenderViewModel
 
@@ -77,7 +77,7 @@ class SettingsActivity : BaseActivity() {
 @Composable
 private fun SettingsPreview() {
     val context = LocalContext.current
-    NoteMasterTheme(ThemeMode.SYSTEM) {
+    TaskoraTheme(ThemeMode.SYSTEM) {
         SettingsScreen(CalenderViewModel(context))
     }
 }

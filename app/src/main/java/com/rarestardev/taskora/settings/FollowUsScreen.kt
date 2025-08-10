@@ -24,12 +24,12 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 
 @Preview
 @Composable
 private fun FollowUsScreenPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
 
     }
 }

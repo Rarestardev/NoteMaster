@@ -8,8 +8,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".application.MyApp"
@@ -23,6 +23,11 @@
         android:theme="@style/Theme.Taskora"
         tools:ignore="ForegroundServicePermission"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.ImagePreviewActivity"
+            android:exported="false"
+            android:label="@string/title_activity_image_preview"
+            android:theme="@style/Theme.Taskora" />
         <activity
             android:name=".activities.ReminderActivity"
             android:exported="false"
@@ -67,7 +72,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Taskora" >
+            android:theme="@style/Theme.Taskora">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -89,7 +94,6 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
-
     </application>
 
 </manifest>

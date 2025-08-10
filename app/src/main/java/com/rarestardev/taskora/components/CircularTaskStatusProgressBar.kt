@@ -17,12 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.feature.CustomText
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 
 @Preview
 @Composable
 private fun PreviewProgressBar() {
-    NoteMasterTheme {
+    TaskoraTheme {
         CircularTaskStatusBar(
             10,
             0

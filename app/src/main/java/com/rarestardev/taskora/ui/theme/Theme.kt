@@ -14,7 +14,7 @@ import com.rarestardev.taskora.R
 import com.rarestardev.taskora.enums.ThemeMode
 
 @Composable
-fun NoteMasterTheme(
+fun TaskoraTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     content: @Composable () -> Unit
 ) {

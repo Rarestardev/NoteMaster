@@ -78,7 +78,7 @@ import com.rarestardev.taskora.database.NoteDatabase
 import com.rarestardev.taskora.factory.NoteViewModelFactory
 import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.model.Note
-import com.rarestardev.taskora.ui.theme.NoteMasterTheme
+import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.CurrentTimeAndDate
 import com.rarestardev.taskora.utilities.previewFakeViewModel
@@ -127,7 +127,7 @@ class CreateNoteActivity : BaseActivity() {
 @Preview
 @Composable
 private fun CreateNoteActivityPreview() {
-    NoteMasterTheme {
+    TaskoraTheme {
         CreateNote(previewFakeViewModel())
         NotePreviewScreen(
             Note(0, "Text", "Note", 1, "2022", "20:22", 400, 14f),

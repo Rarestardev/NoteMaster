@@ -76,11 +76,6 @@ dependencies {
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.androidx.room.compiler)
 
-    // Glide
-    implementation (libs.glide)
-    //noinspection KaptUsageInsteadOfKsp
-    kapt(libs.compiler)
-
     // calender on android 8 above
     implementation(libs.threetenabp)
 
@@ -92,4 +87,7 @@ dependencies {
 
     //adivery
     implementation(libs.sdk)
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
