@@ -27,6 +27,13 @@ import androidx.compose.ui.res.stringResource
 import coil.compose.rememberAsyncImagePainter
 import com.rarestardev.taskora.R
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class ImagePreviewActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

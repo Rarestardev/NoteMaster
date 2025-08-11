@@ -6,6 +6,14 @@ plugins {
     id("kotlin-kapt")
 }
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 android {
     namespace = "com.rarestardev.taskora"
     compileSdk = 35
@@ -89,5 +97,5 @@ dependencies {
     implementation(libs.sdk)
 
     // Coil
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.coil.compose)
 }

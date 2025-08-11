@@ -27,6 +27,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 class UnifiedViewModel(
     private val noteDao: NoteDao,
     private val taskDao: TaskItemDao,

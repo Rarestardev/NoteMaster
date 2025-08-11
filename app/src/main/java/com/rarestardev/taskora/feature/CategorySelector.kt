@@ -24,6 +24,13 @@ import androidx.compose.ui.unit.dp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.view_model.TaskViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategorySelector(viewModel: TaskViewModel) {

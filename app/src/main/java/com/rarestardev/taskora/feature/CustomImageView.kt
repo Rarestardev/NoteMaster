@@ -29,6 +29,13 @@ import coil.compose.rememberAsyncImagePainter
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.ImagePreviewActivity
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomImageView(

@@ -73,6 +73,13 @@ import saman.zamani.persiandate.PersianDateFormat.PersianDateNumberCharacter
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class CalenderActivity : BaseActivity() {
 
     private val calenderViewModel: CalenderViewModel by viewModels {

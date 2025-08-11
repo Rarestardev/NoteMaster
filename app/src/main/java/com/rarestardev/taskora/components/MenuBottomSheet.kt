@@ -42,6 +42,13 @@ import com.rarestardev.taskora.model.ImageResource
 import com.rarestardev.taskora.model.Note
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuBottomSheet(

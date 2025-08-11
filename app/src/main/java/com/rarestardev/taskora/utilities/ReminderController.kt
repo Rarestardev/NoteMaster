@@ -10,6 +10,13 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.rarestardev.taskora.enums.ReminderType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 
 object ReminderController {
 

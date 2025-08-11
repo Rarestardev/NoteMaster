@@ -3,6 +3,14 @@ package com.rarestardev.taskora.repository
 import com.rarestardev.taskora.dao.TaskItemDao
 import com.rarestardev.taskora.model.Task
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 class TaskItemRepository(
     private val dao: TaskItemDao
 ) {

@@ -26,6 +26,14 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.core.net.toUri
 import com.rarestardev.taskora.ui.theme.TaskoraTheme
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 @Preview
 @Composable
 private fun FollowUsScreenPreview() {

@@ -97,6 +97,13 @@ import com.rarestardev.taskora.view_model.NoteEditorViewModel
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class MainActivity : BaseActivity() {
 
     private val viewModel: NoteEditorViewModel by viewModels {
@@ -247,7 +254,7 @@ private fun ScaffoldContent(
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         TopTaskProgress(viewModel, taskViewModel)
 

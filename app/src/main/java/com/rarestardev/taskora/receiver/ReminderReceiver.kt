@@ -16,6 +16,14 @@ import com.rarestardev.taskora.service.ReminderService
 import com.rarestardev.taskora.utilities.Constants
 import kotlin.random.Random
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 @Suppress("CAST_NEVER_SUCCEEDS")
 class ReminderReceiver : BroadcastReceiver() {
 

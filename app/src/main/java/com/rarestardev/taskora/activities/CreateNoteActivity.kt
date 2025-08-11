@@ -84,6 +84,13 @@ import com.rarestardev.taskora.utilities.CurrentTimeAndDate
 import com.rarestardev.taskora.utilities.previewFakeViewModel
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class CreateNoteActivity : BaseActivity() {
 
     private val viewModel: NoteEditorViewModel by viewModels {

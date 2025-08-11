@@ -26,6 +26,14 @@ import kotlinx.coroutines.runBlocking
 import java.util.Locale
 import kotlin.getValue
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 abstract class BaseActivity : ComponentActivity() {
 
     private val taskViewModel: TaskViewModel by viewModels {

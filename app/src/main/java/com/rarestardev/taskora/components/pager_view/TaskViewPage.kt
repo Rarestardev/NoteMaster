@@ -36,6 +36,13 @@ import com.rarestardev.taskora.activities.ShowAllTasksActivity
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.view_model.TaskViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Composable
 fun TaskViewPager(taskViewModel: TaskViewModel) {
     val taskList by taskViewModel.taskElement.collectAsState(emptyList())

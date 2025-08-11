@@ -31,6 +31,13 @@ import com.adivery.sdk.BannerSize
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.utilities.Constants
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Composable
 fun BannerAds() {
     var shouldShowAd by remember { mutableStateOf(false) }

@@ -8,6 +8,14 @@ import com.rarestardev.taskora.enums.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 object SettingsPreferences {
 
     const val APP_SETTINGS = "com.rarestardev.taskora.APP_SETTINGS"

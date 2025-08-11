@@ -8,6 +8,13 @@ import androidx.room.Query
 import com.rarestardev.taskora.model.SubTask
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Dao
 interface SubTaskDao {
 

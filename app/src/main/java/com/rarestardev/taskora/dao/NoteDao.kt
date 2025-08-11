@@ -9,6 +9,13 @@ import androidx.room.Update
 import com.rarestardev.taskora.model.Note
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Dao
 interface NoteDao {
 

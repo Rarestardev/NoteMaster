@@ -30,11 +30,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel for managing text editing and styling operations.
- *
- * @author Rarestardev
- *
- * 2025/06/08  JUN
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
  */
 @SuppressLint("MutableCollectionMutableState", "AutoboxingStateCreation")
 open class NoteEditorViewModel(private val noteDao: NoteDao) : ViewModel() {

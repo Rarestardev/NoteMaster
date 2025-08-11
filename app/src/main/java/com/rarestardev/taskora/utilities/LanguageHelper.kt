@@ -6,6 +6,14 @@ import androidx.compose.ui.platform.LocalContext
 import com.rarestardev.taskora.R
 import java.util.Locale
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 object LanguageHelper {
 
     @Composable

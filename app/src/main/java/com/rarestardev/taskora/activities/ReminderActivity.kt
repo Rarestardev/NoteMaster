@@ -99,6 +99,13 @@ import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.TimeZone
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class ReminderActivity : BaseActivity() {
 
     private val calenderViewModel: CalenderViewModel by viewModels {

@@ -46,6 +46,13 @@ import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class ShowAllTasksActivity : BaseActivity() {
 
     private val taskViewModel: TaskViewModel by viewModels {

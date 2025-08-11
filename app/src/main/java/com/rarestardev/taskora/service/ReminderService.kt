@@ -15,6 +15,14 @@ import com.rarestardev.taskora.activities.MainActivity
 import com.rarestardev.taskora.receiver.ReminderReceiver
 import com.rarestardev.taskora.utilities.Constants
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 class ReminderService : Service() {
 
     private lateinit var ringtone: Ringtone

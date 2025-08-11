@@ -31,6 +31,14 @@ import androidx.compose.ui.unit.dp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.enums.ThemeMode
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ThemeView(themeMode: ThemeMode, onModeChange: (ThemeMode) -> Unit) {

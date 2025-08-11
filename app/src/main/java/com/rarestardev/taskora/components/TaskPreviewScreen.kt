@@ -66,6 +66,13 @@ import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 import java.util.Locale
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 
 @Preview
 @Composable

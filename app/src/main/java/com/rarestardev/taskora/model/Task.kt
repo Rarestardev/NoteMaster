@@ -3,6 +3,14 @@ package com.rarestardev.taskora.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 @Entity(tableName = "task_items")
 data class Task(
     @PrimaryKey(autoGenerate = false) val id: Int = 0,

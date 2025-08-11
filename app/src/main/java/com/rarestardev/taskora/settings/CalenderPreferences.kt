@@ -10,6 +10,14 @@ import com.rarestardev.taskora.enums.CalenderType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 object CalenderPreferences {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "com.rarestardev.taskora.Calender")

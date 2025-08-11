@@ -67,6 +67,13 @@ import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class SearchActivity : BaseActivity() {
 
     private val noteEditorViewModel: NoteEditorViewModel by viewModels {

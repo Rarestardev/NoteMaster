@@ -44,6 +44,13 @@ import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.ShowAllTasksActivity
 import com.rarestardev.taskora.ui.theme.TaskoraTheme
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Preview
 @Composable
 private fun CategoryPreview() {

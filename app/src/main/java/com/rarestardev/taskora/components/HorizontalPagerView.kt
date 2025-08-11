@@ -31,6 +31,13 @@ import com.rarestardev.taskora.view_model.NoteEditorViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 import kotlinx.coroutines.delay
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun HorizontalPagerView(

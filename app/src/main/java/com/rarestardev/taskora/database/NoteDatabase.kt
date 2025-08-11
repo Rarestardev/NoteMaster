@@ -12,6 +12,13 @@ import com.rarestardev.taskora.model.SubTask
 import com.rarestardev.taskora.model.Task
 import com.rarestardev.taskora.utilities.Constants
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Database(entities = [Note::class, Task::class, SubTask::class], version = 1, exportSchema = false)
 abstract class NoteDatabase : RoomDatabase(){
 

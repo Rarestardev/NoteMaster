@@ -36,7 +36,13 @@ import com.rarestardev.taskora.utilities.CurrentTimeAndDate
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 
-
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Preview
 @Composable
 private fun DailyTask() {

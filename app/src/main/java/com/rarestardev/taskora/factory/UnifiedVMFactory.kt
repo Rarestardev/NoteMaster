@@ -7,6 +7,13 @@ import com.rarestardev.taskora.dao.SubTaskDao
 import com.rarestardev.taskora.dao.TaskItemDao
 import com.rarestardev.taskora.view_model.UnifiedViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Suppress("UNCHECKED_CAST")
 class UnifiedVMFactory(
     private val noteDao: NoteDao,

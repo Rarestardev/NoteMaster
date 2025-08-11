@@ -11,6 +11,16 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!--
+        /**
+         * ┌────────────────────────────────────────────┐
+         * │ Developer: RareStar.dev                    │
+         * │ App: Taskora | Productivity Redefined      │
+         * │ GitHub: github.com/Rarestardev             │
+         * └────────────────────────────────────────────┘
+         */
+    -->
+
     <application
         android:name=".application.MyApp"
         android:allowBackup="true"
@@ -83,7 +93,8 @@
         <receiver
             android:name=".receiver.ReminderReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.rarestardev.taskora.CANCEL_ALARM" />
             </intent-filter>

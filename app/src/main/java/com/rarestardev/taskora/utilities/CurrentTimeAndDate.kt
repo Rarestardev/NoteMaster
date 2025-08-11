@@ -8,6 +8,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 class CurrentTimeAndDate {
 
     fun currentTime(): String {
@@ -19,12 +27,6 @@ class CurrentTimeAndDate {
         val dateFormat = SimpleDateFormat("yyy/MM/dd", Locale.getDefault())
         return dateFormat.format(Date())
     }
-
-    fun getCurrentTimeDate(): String {
-        val dateFormat = SimpleDateFormat("yyy/MM/dd - HH:mm", Locale.getDefault())
-        return dateFormat.format(Date())
-    }
-
     @Composable
     fun getTodayDayAsString(): String {
         val today = remember { LocalDate.now() }

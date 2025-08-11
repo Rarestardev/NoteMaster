@@ -13,6 +13,14 @@ import com.rarestardev.taskora.view_model.TaskViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
+
 fun previewFakeViewModel() : NoteEditorViewModel{
     val fakeDao = object : NoteDao {
         override suspend fun insertNote(note: Note) {

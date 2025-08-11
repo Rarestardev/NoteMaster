@@ -36,6 +36,13 @@ import com.rarestardev.taskora.activities.ShowAllNotesActivity
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Composable
 fun NoteViewPager(noteEditorViewModel: NoteEditorViewModel) {
     val noteList by noteEditorViewModel.allNote.collectAsState(initial = emptyList())

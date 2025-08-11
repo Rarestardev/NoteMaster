@@ -42,6 +42,13 @@ import com.rarestardev.taskora.utilities.previewSubTaskViewModel
 import com.rarestardev.taskora.view_model.SubTaskViewModel
 import com.rarestardev.taskora.view_model.TaskViewModel
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 @Preview
 @Composable
 private fun TaskItemPreview() {
@@ -114,8 +121,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
 
     Column(
         Modifier
-            .fillMaxWidth()
-            .height(140.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -124,9 +130,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
         if (taskElement.isNotEmpty()) {
             LazyRow(
                 state = lazyState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp),
+                modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(4.dp)
             ) {
                 if (taskElement.isNotEmpty()) {
@@ -138,7 +142,7 @@ fun CompleteTaskView(viewModel: TaskViewModel, subTaskViewModel: SubTaskViewMode
                             viewModel,
                             modifier = Modifier
                                 .width(240.dp)
-                                .fillMaxHeight()
+                                .height(140.dp)
                         )
                     }
                 }

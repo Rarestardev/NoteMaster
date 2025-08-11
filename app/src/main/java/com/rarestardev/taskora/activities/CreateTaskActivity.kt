@@ -105,6 +105,13 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.random.Random
 
+/**
+ * ┌────────────────────────────────────────────┐
+ * │ Developer: RareStar.dev                    │
+ * │ App: Taskora | Productivity Redefined      │
+ * │ GitHub: github.com/Rarestardev             │
+ * └────────────────────────────────────────────┘
+ */
 class CreateTaskActivity : BaseActivity() {
 
     private val viewModel: TaskViewModel by viewModels {
