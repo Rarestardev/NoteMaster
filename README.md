@@ -52,6 +52,13 @@ Taskora empowers you to plan smarter, live better, and stay in sync with your go
 
 ---
 
+## Connect with Me
+
+- [Instagram](https://www.instagram.com/rarestar.dev)
+- [Telegram](https://t.me/Rarestar_dev)
+
+---
+
 ## 🔒 License
 
 This project is proprietary and all rights are reserved by the author.
