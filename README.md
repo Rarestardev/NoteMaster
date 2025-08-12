@@ -49,3 +49,15 @@ Taskora empowers you to plan smarter, live better, and stay in sync with your go
 
 🎯 Start your journey toward a more organized life.  
 📲 Download Taskora and experience productivity reimagined.
+
+---
+
+## 🔒 License
+
+This project is proprietary and all rights are reserved by the author.
+
+Unauthorized use, copying, modification, or distribution of any part of this software is strictly prohibited.
+
+For licensing inquiries or permission requests, please contact: [your email or website]
+
+See the full license in the [LICENSE](./LICENSE) file.
