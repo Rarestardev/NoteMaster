@@ -243,6 +243,8 @@ fun TaskPreviewScreen(
 
                 ReminderInfoView(taskInstance)
 
+                Spacer(Modifier.height(12.dp))
+
                 DescriptionView(taskInstance.description)
 
                 Spacer(Modifier.height(12.dp))

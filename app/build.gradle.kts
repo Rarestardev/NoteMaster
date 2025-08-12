@@ -16,11 +16,13 @@ plugins {
 
 android {
     namespace = "com.rarestardev.taskora"
+    //noinspection GradleDependency
     compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rarestardev.taskora"
         minSdk = 27
+        //noinspection OldTargetApi
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.1"

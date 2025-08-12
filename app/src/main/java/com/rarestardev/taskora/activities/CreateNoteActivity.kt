@@ -629,7 +629,7 @@ private fun MoreFeatureMenu(viewModel: NoteEditorViewModel) {
         DropdownMenu(
             expanded = viewModel.showMoreFeatureMenu,
             onDismissRequest = { viewModel.updateShowMoreFeatureMenu(false) },
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
             shape = RoundedCornerShape(8.dp)
         ) {
             DropdownMenuItem(

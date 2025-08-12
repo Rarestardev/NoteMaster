@@ -62,6 +62,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.CreateTaskActivity
+import com.rarestardev.taskora.components.AdiveryNativeAdLayoutWithTitle
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.feature.SmallCustomImageView
@@ -464,6 +465,10 @@ private fun CustomDropdownMenu(
                 }
             }
         }
+
+        Spacer(Modifier.height(12.dp))
+
+        AdiveryNativeAdLayoutWithTitle(false)
     }
 }
 

@@ -29,27 +29,26 @@ class ReminderService : Service() {
 
     private lateinit var title: String
     private lateinit var message: String
-    private var id: Int = 0
 
     companion object {
         private const val CHANNEL_ID = "reminder_channel"
+        private const val NOTIFICATION_ID = 234
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             title = it.getStringExtra(Constants.ALARM_TITLE) ?: ""
             message = it.getStringExtra(Constants.ALARM_MESSAGE) ?: ""
-            id = it.getIntExtra(Constants.ALARM_ID, 0)
         }
 
-        showNotification(id, title, message)
+        showNotification(title, message)
 
         Log.d(Constants.APP_LOG, "Running reminder service ...")
         return START_NOT_STICKY
     }
 
     @SuppressLint("ForegroundServiceType")
-    private fun showNotification(id: Int?, title: String, message: String) {
+    private fun showNotification(title: String, message: String) {
         createNotificationChannel()
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -69,7 +68,7 @@ class ReminderService : Service() {
             )
             .build()
 
-        startForeground(id!!, notification)
+        startForeground(NOTIFICATION_ID, notification)
 
         startAlarmSound()
     }

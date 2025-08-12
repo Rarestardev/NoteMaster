@@ -3,7 +3,9 @@ package com.rarestardev.taskora.components
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +22,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import com.adivery.sdk.AdiveryAdListener
 import com.adivery.sdk.AdiveryBannerAdView
 import com.adivery.sdk.AdiveryNativeAdView
@@ -44,7 +46,7 @@ fun BannerAds() {
 
     if (Constants.ADS_VIEW) {
         AndroidView(
-            factory = { mContext->
+            factory = { mContext ->
                 AdiveryBannerAdView(mContext).apply {
                     setBannerSize(BannerSize.BANNER)
                     setPlacementId(Constants.AD_BANNER_ID)
@@ -76,12 +78,15 @@ fun BannerAds() {
     }
 }
 
-@SuppressLint("InflateParams")
+@SuppressLint("InflateParams", "ResourceAsColor")
 @Composable
-fun AdiveryNativeAdLayoutWithTitle(){
+fun AdiveryNativeAdLayoutWithTitle(showTitle: Boolean) {
     var isShowAd by remember { mutableStateOf(false) }
 
-    if (isShowAd){
+    val isDark = isSystemInDarkTheme()
+
+
+    if (isShowAd && showTitle) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -96,36 +101,46 @@ fun AdiveryNativeAdLayoutWithTitle(){
         }
     }
 
-    AndroidView(
-        factory = { context ->
-           AdiveryNativeAdView(context).apply {
-                setNativeAdLayout(R.layout.adivery_native_ad_layout)
-                setPlacementId(Constants.AD_NATIVE_ID)
-                setListener(object : AdiveryAdListener(){
-                    override fun onError(reason: String?) {
-                        Log.e(Constants.ADS_LOG,reason ?: "Native ad error load")
-                        isShowAd = false
-                    }
+    Box(
+        modifier = Modifier.padding(
+            start = 12.dp,
+            end = 12.dp
+        )
+    ) {
+        AndroidView(
+            factory = { context ->
+                val backgroundColor = ContextCompat.getColor(
+                    context,
+                    if (isDark) R.color.second_night_mode else R.color.second_light_mode
+                )
 
-                    override fun onAdLoaded() {
-                        Log.d(Constants.ADS_LOG,"Loaded native ad")
-                        isShowAd = true
-                    }
-                })
+                AdiveryNativeAdView(context).apply {
+                    setNativeAdLayout(R.layout.adivery_native_ad_layout)
+                    setPlacementId(Constants.AD_NATIVE_ID)
+                    setBackgroundColor(backgroundColor)
+                    setListener(object : AdiveryAdListener() {
+                        override fun onError(reason: String?) {
+                            Log.e(Constants.ADS_LOG, reason ?: "Native ad error load")
+                            isShowAd = false
+                        }
 
-                loadAd()
-            }
+                        override fun onAdLoaded() {
+                            Log.d(Constants.ADS_LOG, "Loaded native ad")
+                            isShowAd = true
+                        }
+                    })
 
-
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(colorResource(R.color.second_night_mode))
-            .wrapContentHeight()
-            .padding(12.dp)
-            .let {
-                if (isShowAd) it else Modifier.height(0.dp)
-            }
-    )
+                    loadAd()
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.onSecondaryContainer)
+                .wrapContentHeight()
+                .let {
+                    if (isShowAd) it else Modifier.height(0.dp)
+                }
+        )
+    }
 }

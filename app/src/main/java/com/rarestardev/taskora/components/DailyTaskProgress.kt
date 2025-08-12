@@ -54,8 +54,7 @@ private fun DailyTask() {
 @Composable
 fun DailyTaskProgress(modifier: Modifier = Modifier, taskViewModel: TaskViewModel) {
     val allTask by taskViewModel.taskElement.collectAsState(emptyList())
-    val filterTask = allTask.filter { it.reminderType != ReminderType.NONE.name }
-        .sortedByDescending { it.reminderTime }
+    val filterTask = allTask.sortedByDescending { it.reminderTime }
 
     val context = LocalContext.current
 
@@ -102,7 +101,35 @@ fun DailyTaskProgress(modifier: Modifier = Modifier, taskViewModel: TaskViewMode
             val (reminderTypeRef, taskTitleRef) = createRefs()
             closestItem?.let {
                 taskViewModel.scheduleNextReminderFromDb(context)
-                if (it.reminderType == ReminderType.NONE.name || it.isComplete == true){
+                when (it.reminderType) {
+                    ReminderType.NOTIFICATION.name -> {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = stringResource(R.string.notification),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.constrainAs(reminderTypeRef) {
+                                start.linkTo(parent.start, 6.dp)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            }
+                        )
+                    }
+
+                    ReminderType.ALARM.name -> {
+                        Icon(
+                            painter = painterResource(R.drawable.icons_alarm_clock),
+                            contentDescription = stringResource(R.string.alarm_desc),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.constrainAs(reminderTypeRef) {
+                                start.linkTo(parent.start, 6.dp)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            }
+                        )
+                    }
+                }
+
+                if (it.reminderType == ReminderType.NONE.name){
                     Text(
                         text = ReminderType.NONE.name,
                         modifier = Modifier.constrainAs(taskTitleRef) {
@@ -115,38 +142,9 @@ fun DailyTaskProgress(modifier: Modifier = Modifier, taskViewModel: TaskViewMode
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
                         textAlign = TextAlign.Center
                     )
-                }else{
-                    when (it.reminderType) {
-                        ReminderType.NOTIFICATION.name -> {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = stringResource(R.string.notification),
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.constrainAs(reminderTypeRef) {
-                                    start.linkTo(parent.start, 6.dp)
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(parent.bottom)
-                                }
-                            )
-                        }
-                        ReminderType.ALARM.name -> {
-                            Icon(
-                                painter = painterResource(R.drawable.icons_alarm_clock),
-                                contentDescription = stringResource(R.string.alarm_desc),
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.constrainAs(reminderTypeRef) {
-                                    start.linkTo(parent.start, 6.dp)
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(parent.bottom)
-                                }
-                            )
-                        }
-                    }
-
+                }else {
                     Text(
                         text = it.title,
                         modifier = Modifier.constrainAs(taskTitleRef) {
@@ -201,7 +199,9 @@ private fun TodayView(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Normal,
             fontSize = 10.sp,
             color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.padding(start = 12.dp)
+            modifier = Modifier.padding(start = 6.dp, end = 6.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

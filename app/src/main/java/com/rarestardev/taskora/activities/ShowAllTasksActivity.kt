@@ -35,7 +35,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.components.BannerAds
 import com.rarestardev.taskora.database.NoteDatabase
@@ -177,7 +180,7 @@ private fun ShowAllTasksActivityScreen(
                     state = lazyState,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    itemsIndexed(filteredTask) { index,tasks ->
+                    itemsIndexed(filteredTask) { index, tasks ->
                         TaskLazyItems(
                             index = index,
                             task = tasks,
@@ -189,6 +192,16 @@ private fun ShowAllTasksActivityScreen(
                         )
                     }
                 }
+            } else {
+                Text(
+                    text = stringResource(R.string.no_item),
+                    modifier = Modifier
+                        .fillMaxWidth().padding(top = 200.dp),
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

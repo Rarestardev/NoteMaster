@@ -274,7 +274,7 @@ private fun ScaffoldContent(
 
         CategoryListView()
 
-        AdiveryNativeAdLayoutWithTitle()
+        AdiveryNativeAdLayoutWithTitle(true)
 
         Spacer(modifier = Modifier.height(65.dp))
     }
@@ -541,6 +541,19 @@ private fun MyTopAppBar() {
             containerColor = MaterialTheme.colorScheme.background,
         ),
         actions = {
+            IconButton(
+                onClick = {
+                    context.startActivity(Intent(context, CalenderActivity::class.java))
+                },
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.icons_calendar),
+                    contentDescription = stringResource(R.string.calender_bottom_bar),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
             IconButton(
                 onClick = {
                     context.startActivity(Intent(context, SearchActivity::class.java))
