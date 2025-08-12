@@ -58,6 +58,6 @@ This project is proprietary and all rights are reserved by the author.
 
 Unauthorized use, copying, modification, or distribution of any part of this software is strictly prohibited.
 
-For licensing inquiries or permission requests, please contact: [your email or website]
+For licensing inquiries or permission requests, please contact: [Rarestar.dev@gmail.com]
 
 See the full license in the [LICENSE](./LICENSE) file.
