@@ -111,7 +111,8 @@ private fun SearchActivityScreen(
                     Text(
                         text = stringResource(R.string.search),
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        maxLines = 1
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(

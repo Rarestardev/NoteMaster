@@ -20,7 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.view_model.TaskViewModel
 
@@ -78,7 +80,11 @@ fun CategorySelector(viewModel: TaskViewModel) {
                         Text(
                             text = category,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSecondary
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.fillMaxWidth(),
+                            maxLines = 1,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     },
                     onClick = {

@@ -17,7 +17,7 @@ import java.util.Locale
 object LanguageHelper {
 
     @Composable
-     fun getEnLanguageListCategory() : Array<String> {
+    fun getEnLanguageListCategory(): Array<String> {
         val context = LocalContext.current
 
         val config = Configuration(context.resources.configuration)
@@ -27,7 +27,7 @@ object LanguageHelper {
     }
 
     @Composable
-     fun getFaLanguageListCategory() : Array<String> {
+    fun getFaLanguageListCategory(): Array<String> {
         val context = LocalContext.current
 
         val config = Configuration(context.resources.configuration)
@@ -37,7 +37,7 @@ object LanguageHelper {
     }
 
     @Composable
-    fun getEnLanguageListPriorityFlag(stringRes: Int) : String {
+    fun getEnLanguageListPriorityFlag(stringRes: Int): String {
         val context = LocalContext.current
 
         val config = Configuration(context.resources.configuration)
@@ -47,12 +47,19 @@ object LanguageHelper {
     }
 
     @Composable
-    fun getFaLanguageListPriorityFlag(stringRes: Int) : String {
+    fun getFaLanguageListPriorityFlag(stringRes: Int): String {
         val context = LocalContext.current
 
         val config = Configuration(context.resources.configuration)
         config.setLocale(Locale("fa"))
         val localizedContext = context.createConfigurationContext(config)
         return localizedContext.resources.getString(stringRes)
+    }
+
+    fun isPersian(text: String): Boolean {
+        return text.any {
+            it in '\u0600'..'\u06FF' || it in '\uFB50'..'\uFDFF' ||
+                    it in '\uFE70'..'\uFEFF'
+        }
     }
 }

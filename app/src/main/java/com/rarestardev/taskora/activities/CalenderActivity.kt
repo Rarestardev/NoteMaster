@@ -113,7 +113,8 @@ private fun CalenderScreen(viewModel: CalenderViewModel, taskViewModel: TaskView
                     Text(
                         text = stringResource(R.string.calender),
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        maxLines = 1
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(

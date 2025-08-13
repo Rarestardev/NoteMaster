@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.ShowAllTasksActivity
 import com.rarestardev.taskora.utilities.Constants
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.view_model.TaskViewModel
 
 /**
@@ -50,7 +51,7 @@ fun TaskViewPager(taskViewModel: TaskViewModel) {
         .filter { it.isComplete == false }
         .filter { it.priorityFlag == 2 }.sortedByDescending {
             it.priorityFlag
-        }.take(5)
+        }.take(4)
 
     val context = LocalContext.current
 
@@ -112,7 +113,12 @@ fun TaskViewPager(taskViewModel: TaskViewModel) {
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = if (LanguageHelper.isPersian(task.title)) {
+                            TextAlign.Right
+                        } else {
+                            TextAlign.Left
+                        }
                     )
                 }
 

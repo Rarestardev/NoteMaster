@@ -155,7 +155,8 @@ private fun SettingsTopAppBar(title: String) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onPrimary,
+                maxLines = 1
             )
         },
         navigationIcon = {

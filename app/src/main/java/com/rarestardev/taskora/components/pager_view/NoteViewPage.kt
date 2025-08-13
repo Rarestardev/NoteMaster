@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.rarestardev.taskora.R
 import com.rarestardev.taskora.activities.ShowAllNotesActivity
 import com.rarestardev.taskora.utilities.Constants
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 
 /**
@@ -50,7 +51,7 @@ fun NoteViewPager(noteEditorViewModel: NoteEditorViewModel) {
     val filterNoteList = noteList
         .filter { it.priority == 2 }
         .sortedByDescending { it.priority }
-        .take(5)
+        .take(4)
 
     val context = LocalContext.current
 
@@ -112,7 +113,12 @@ fun NoteViewPager(noteEditorViewModel: NoteEditorViewModel) {
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = if (LanguageHelper.isPersian(note.noteTitle)) {
+                            TextAlign.Right
+                        } else {
+                            TextAlign.Left
+                        }
                     )
                 }
 

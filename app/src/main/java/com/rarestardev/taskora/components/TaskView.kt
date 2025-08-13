@@ -172,7 +172,9 @@ private fun TitleList(title: String, taskElement: List<Task>, isComplete: Boolea
             text = title,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.padding(start = 12.dp)
+            modifier = Modifier.padding(start = 12.dp),
+            maxLines = 1,
+            textAlign = TextAlign.Start
         )
 
         if (taskElement.isNotEmpty()) {
@@ -180,6 +182,7 @@ private fun TitleList(title: String, taskElement: List<Task>, isComplete: Boolea
                 text = stringResource(R.string.see_more),
                 style = MaterialTheme.typography.labelSmall,
                 color = colorResource(R.color.text_field_label_color),
+                maxLines = 1,
                 modifier = Modifier
                     .clickable {
                         val intent = Intent(context, ShowAllTasksActivity::class.java).apply {

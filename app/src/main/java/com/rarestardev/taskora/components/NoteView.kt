@@ -54,6 +54,7 @@ import com.rarestardev.taskora.feature.CustomText
 import com.rarestardev.taskora.model.Note
 import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.utilities.previewFakeViewModel
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 
@@ -95,13 +96,16 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                 text = stringResource(R.string.note),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(start = 12.dp)
+                modifier = Modifier.padding(start = 12.dp),
+                maxLines = 1,
+                textAlign = TextAlign.Start
             )
 
             if (notes.isNotEmpty()) {
                 Text(
                     text = stringResource(R.string.see_more),
                     style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
                     color = colorResource(R.color.text_field_label_color),
                     modifier = Modifier
                         .clickable {
@@ -190,7 +194,12 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,
                                     color = MaterialTheme.colorScheme.onPrimary,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    textAlign = if (LanguageHelper.isPersian(note.noteText)) {
+                                        TextAlign.Right
+                                    } else {
+                                        TextAlign.Left
+                                    }
                                 )
                             }
 
@@ -222,7 +231,11 @@ fun NoteScreen(viewModel: NoteEditorViewModel) {
                                     fontWeight = FontWeight.Normal,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    textAlign = TextAlign.Center
+                                    textAlign = if (LanguageHelper.isPersian(note.noteTitle)) {
+                                        TextAlign.Right
+                                    } else {
+                                        TextAlign.Left
+                                    }
                                 )
                             }
 

@@ -29,9 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
@@ -138,7 +136,8 @@ private fun ReminderScreen(
                     Text(
                         text = stringResource(R.string.set_reminder),
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        maxLines = 1
                     )
                 },
                 navigationIcon = {
@@ -225,12 +224,10 @@ private fun ShowReminder(
     )
 
     val transparentColor = Color.Transparent
-    val verticalScrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(verticalScrollState)
             .padding(
                 top = paddingValues.calculateTopPadding(),
                 start = 24.dp,
@@ -469,18 +466,25 @@ private fun ShowReminder(
                                         }
                                     } else if (selectedType == ReminderType.ALARM) {
                                         permissionType = ReminderType.ALARM.name
-                                        if (hasAlarmPermission(context)) {
-                                            scope.launch {
-                                                ReminderController.saveType(
-                                                    context,
-                                                    selectedType!!.name
-                                                )
-                                                ReminderController.saveTime(context, millis)
-                                                activity.finish()
+                                        if (hasNotificationPermission(context)) {
+                                            if (hasAlarmPermission(context)) {
+                                                scope.launch {
+                                                    ReminderController.saveType(
+                                                        context,
+                                                        selectedType!!.name
+                                                    )
+                                                    ReminderController.saveTime(context, millis)
+                                                    activity.finish()
+                                                }
+                                            } else {
+                                                scope.launch {
+                                                    permissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
+                                                    step = 1
+                                                }
                                             }
                                         } else {
                                             scope.launch {
-                                                permissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
+                                                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                                 step = 1
                                             }
                                         }

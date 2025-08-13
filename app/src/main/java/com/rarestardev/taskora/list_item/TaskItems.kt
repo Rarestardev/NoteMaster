@@ -1,7 +1,6 @@
 package com.rarestardev.taskora.list_item
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -29,7 +28,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -65,7 +63,6 @@ import com.rarestardev.taskora.activities.CreateTaskActivity
 import com.rarestardev.taskora.components.AdiveryNativeAdLayoutWithTitle
 import com.rarestardev.taskora.enums.ReminderType
 import com.rarestardev.taskora.feature.CustomText
-import com.rarestardev.taskora.feature.SmallCustomImageView
 import com.rarestardev.taskora.model.Flags
 import com.rarestardev.taskora.model.ImageResource
 import com.rarestardev.taskora.model.Task
@@ -133,9 +130,9 @@ fun TaskLazyItems(
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
-            val (dateLayoutRef, verticalDividerRef, allDesignRef) = createRefs()
+            val (dateLayoutRef, verticalDividerRef, titleRef, descRef, stateLayoutRef, progressRef) = createRefs()
 
-            Column(
+            ConstraintLayout (
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(60.dp)
@@ -145,15 +142,20 @@ fun TaskLazyItems(
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
                         height = Dimension.fillToConstraints
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                    }
             ) {
+
+                val (createOnRef,timeRef,dateRef,priorityRef) = createRefs()
+
                 Text(
                     text = stringResource(R.string.create_on),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .constrainAs(createOnRef){
+                            top.linkTo(parent.top,6.dp)
+                            start.linkTo(parent.start,6.dp)
+                            end.linkTo(parent.end,6.dp)
+                        },
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
                     color = colorResource(R.color.drawer_text_icon_color),
@@ -165,7 +167,12 @@ fun TaskLazyItems(
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    color = colorResource(R.color.drawer_text_icon_color)
+                    color = colorResource(R.color.drawer_text_icon_color),
+                    modifier = Modifier.constrainAs(timeRef){
+                        top.linkTo(createOnRef.bottom,6.dp)
+                        start.linkTo(createOnRef.start)
+                        end.linkTo(createOnRef.end)
+                    }
                 )
 
                 CustomText(
@@ -173,101 +180,127 @@ fun TaskLazyItems(
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
-                    color = colorResource(R.color.drawer_text_icon_color)
+                    color = colorResource(R.color.drawer_text_icon_color),
+                    modifier = Modifier.constrainAs(dateRef){
+                        top.linkTo(timeRef.bottom,6.dp)
+                        start.linkTo(createOnRef.start)
+                        end.linkTo(createOnRef.end)
+                    }
                 )
 
-                Spacer(Modifier.height(10.dp))
-
-                task.imagePath?.let {
-                    if (it.isNotEmpty()) {
-                        SmallCustomImageView(
-                            imageUrl = it,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(40.dp)
-                                .clip(MaterialTheme.shapes.small)
-                        )
-                    }
-                }
+                FlagView(
+                    modifier = Modifier.constrainAs(priorityRef){
+                        start.linkTo(createOnRef.start)
+                        end.linkTo(createOnRef.end)
+                        bottom.linkTo(parent.bottom,6.dp)
+                    },
+                    color = task.priorityFlag
+                )
             }
 
             VerticalDivider(
                 modifier = Modifier.constrainAs(verticalDividerRef) {
-                    start.linkTo(dateLayoutRef.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                     height = Dimension.fillToConstraints
+                    start.linkTo(dateLayoutRef.end)
                 },
                 thickness = 0.3.dp,
                 color = MaterialTheme.colorScheme.onSecondary
             )
 
-            Column(
+            Text(
+                text = task.title,
+                color = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier
-                    .constrainAs(allDesignRef) {
-                        start.linkTo(verticalDividerRef.end)
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
+                    .fillMaxWidth()
+                    .constrainAs(titleRef) {
+                        start.linkTo(verticalDividerRef.end, 8.dp)
+                        top.linkTo(parent.top, 8.dp)
+                        end.linkTo(parent.end, 8.dp)
                         width = Dimension.fillToConstraints
+                    },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = if (LanguageHelper.isPersian(task.title)) {
+                    TextAlign.Right
+                } else {
+                    TextAlign.Left
+                },
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = task.description,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .constrainAs(descRef) {
+                        start.linkTo(titleRef.start)
+                        end.linkTo(titleRef.end)
+                        top.linkTo(titleRef.bottom, 8.dp)
+                        bottom.linkTo(stateLayoutRef.top, 8.dp)
                         height = Dimension.fillToConstraints
-                    }
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = task.title,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                        width = Dimension.fillToConstraints
+                    },
+                minLines = 5,
+                maxLines = 5,
+                textAlign = if (LanguageHelper.isPersian(task.description)) {
+                    TextAlign.Right
+                } else {
+                    TextAlign.Left
+                },
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 12.sp
+            )
 
-                Text(
-                    text = task.description,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                    maxLines = 3,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 12.sp
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
-                        if (task.reminderType == ReminderType.NOTIFICATION.name) {
-                            NotificationView()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .constrainAs(stateLayoutRef) {
+                        start.linkTo(titleRef.start)
+                        end.linkTo(titleRef.end)
+                        if (subtaskFilterList.isNotEmpty()) {
+                            bottom.linkTo(progressRef.top, 8.dp)
                         } else {
-                            AlarmView()
+                            bottom.linkTo(parent.bottom, 8.dp)
                         }
-
-                        Log.d(
-                            Constants.APP_LOG,
-                            "TaskView Reminder type = ${task.reminderType}"
-                        )
+                        width = Dimension.fillToConstraints
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (task.reminderType != ReminderType.NONE.name && task.reminderTime != 0L) {
+                    if (task.reminderType == ReminderType.NOTIFICATION.name) {
+                        NotificationView()
+                    } else {
+                        AlarmView()
                     }
-
-                    FlagView(
-                        color = task.priorityFlag
-                    )
                 }
 
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 0.3.dp,
-                    color = MaterialTheme.colorScheme.onSecondary
-                )
+                task.imagePath?.let {
+                    if (it.isNotEmpty()) {
+                        Icon(
+                            painter = painterResource(R.drawable.icon_image),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
 
+            if (subtaskFilterList.isNotEmpty()) {
                 ConstraintLayout(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .constrainAs(progressRef) {
+                            start.linkTo(titleRef.start)
+                            end.linkTo(titleRef.end)
+                            bottom.linkTo(parent.bottom, 8.dp)
+                            width = Dimension.fillToConstraints
+                        }
                 ) {
                     val (progressBarRef, percentageRef) = createRefs()
 
@@ -292,8 +325,8 @@ fun TaskLazyItems(
                     CustomText(
                         text = "$percentage %",
                         modifier = Modifier.constrainAs(percentageRef) {
-                            end.linkTo(parent.end,4.dp)
-                            top.linkTo(parent.top,4.dp)
+                            end.linkTo(parent.end, 4.dp)
+                            top.linkTo(parent.top, 4.dp)
                             bottom.linkTo(parent.bottom)
                         },
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -398,7 +431,7 @@ private fun CustomDropdownMenu(
                     )
                 }
 
-                flagItems.forEach { flag ->
+                flagItems.forEachIndexed { index,flag ->
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -413,25 +446,7 @@ private fun CustomDropdownMenu(
                                 MaterialTheme.shapes.small
                             )
                             .clickable {
-                                val flagIndex = when (flag.name) {
-                                    "LOW PRIORITY" -> {
-                                        0
-                                    }
-
-                                    "MEDIUM PRIORITY" -> {
-                                        1
-                                    }
-
-                                    "HIGH PRIORITY" -> {
-                                        2
-                                    }
-
-                                    else -> {
-                                        0
-                                    }
-                                }
-
-                                taskViewModel.updatePriorityFlag(flagIndex, task.id)
+                                taskViewModel.updatePriorityFlag(index, task.id)
                                 priorityFlagShowPage = false
                             }
                     ) {
@@ -587,24 +602,22 @@ private fun FlagView(modifier: Modifier = Modifier, color: Int) {
         }
     }
 
-    Box(
+    Column(
         modifier = modifier
-            .width(50.dp)
+            .width(55.dp)
+            .height(30.dp)
             .background(tint, MaterialTheme.shapes.small),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = priority,
             style = MaterialTheme.typography.labelSmall,
             color = Color.White,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = 2.dp,
-                    bottom = 2.dp,
-                    start = 4.dp,
-                    end = 4.dp
-                ),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }

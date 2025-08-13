@@ -72,6 +72,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -96,6 +97,7 @@ import com.rarestardev.taskora.model.SubTask
 import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.CurrentTimeAndDate
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.utilities.ReminderController
 import com.rarestardev.taskora.utilities.previewFakeTaskViewModel
 import com.rarestardev.taskora.utilities.previewSubTaskViewModel
@@ -434,7 +436,14 @@ private fun DescriptionTextField(viewModel: TaskViewModel) {
             unfocusedLeadingIconColor = transparentColor
         ),
         shape = MaterialTheme.shapes.medium,
-        minLines = 8
+        minLines = 8,
+        textStyle = TextStyle(
+            textAlign = if (LanguageHelper.isPersian(viewModel.descriptionState)) {
+                TextAlign.Right
+            } else {
+                TextAlign.Left
+            }
+        )
     )
 }
 
@@ -465,7 +474,14 @@ private fun TitleLabelTextField(viewModel: TaskViewModel) {
             focusedLeadingIconColor = transparentColor,
             unfocusedLeadingIconColor = transparentColor
         ),
-        maxLines = 1
+        maxLines = 1,
+        textStyle = TextStyle(
+            textAlign = if (LanguageHelper.isPersian(viewModel.titleState)) {
+                TextAlign.Right
+            } else {
+                TextAlign.Left
+            }
+        )
     )
 }
 

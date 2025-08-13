@@ -81,6 +81,7 @@ import com.rarestardev.taskora.model.Note
 import com.rarestardev.taskora.ui.theme.TaskoraTheme
 import com.rarestardev.taskora.utilities.Constants
 import com.rarestardev.taskora.utilities.CurrentTimeAndDate
+import com.rarestardev.taskora.utilities.LanguageHelper
 import com.rarestardev.taskora.utilities.previewFakeViewModel
 import com.rarestardev.taskora.view_model.NoteEditorViewModel
 
@@ -161,8 +162,8 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                     Text(
                         text = note.noteTitle,
                         color = MaterialTheme.colorScheme.onPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(
@@ -302,7 +303,11 @@ private fun NotePreviewScreen(note: Note, viewModel: NoteEditorViewModel) {
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight(note.fontWeight),
                 fontSize = note.fontSize.sp,
-                textAlign = TextAlign.Start
+                textAlign = if (LanguageHelper.isPersian(note.noteText)) {
+                    TextAlign.Right
+                } else {
+                    TextAlign.Left
+                }
             )
         }
     }
@@ -459,10 +464,15 @@ private fun NoteTextField(viewModel: NoteEditorViewModel, modifier: Modifier) {
         ),
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        textStyle = TextStyle.Default.copy(
+        textStyle = TextStyle(
             fontWeight = viewModel.fontWeight,
             fontStyle = FontStyle.Normal,
-            fontSize = viewModel.fontSize.sp
+            fontSize = viewModel.fontSize.sp,
+            textAlign = if (LanguageHelper.isPersian(viewModel.titleTextFieldState)) {
+                TextAlign.Right
+            } else {
+                TextAlign.Left
+            }
         )
     )
 }
@@ -487,7 +497,14 @@ private fun TitleTextField(viewModel: NoteEditorViewModel, modifier: Modifier) {
         ),
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        maxLines = 1
+        maxLines = 1,
+        textStyle = TextStyle(
+            textAlign = if (LanguageHelper.isPersian(viewModel.titleTextFieldState)) {
+                TextAlign.Right
+            } else {
+                TextAlign.Left
+            }
+        )
     )
 }
 

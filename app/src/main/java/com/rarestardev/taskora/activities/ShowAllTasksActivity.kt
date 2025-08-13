@@ -137,7 +137,9 @@ private fun ShowAllTasksActivityScreen(
                     Text(
                         text = titleActivity,
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors().copy(

@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -352,7 +353,12 @@ private fun DescriptionView(description: String) {
             text = description,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onPrimary,
-            minLines = 6
+            minLines = 6,
+            textAlign = if (LanguageHelper.isPersian(description)) {
+                TextAlign.Right
+            } else {
+                TextAlign.Left
+            }
         )
     }
 }
@@ -374,8 +380,15 @@ private fun ReminderInfoView(task: Task) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
+            val reminderType = if (task.reminderType == ReminderType.NOTIFICATION.name){
+                stringResource(R.string.notification)
+            }else {
+                stringResource(R.string.alarm)
+            }
+
             Text(
-                text = stringResource(R.string.reminder) + " : " + task.reminderType,
+                text = stringResource(R.string.reminder) + " : " + reminderType,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -494,7 +507,10 @@ private fun TitleActivityText(title: String) {
     Text(
         text = title,
         color = MaterialTheme.colorScheme.onPrimary,
-        style = MaterialTheme.typography.titleLarge
+        style = MaterialTheme.typography.titleLarge,
+        maxLines = 1,
+        modifier = Modifier.fillMaxWidth(),
+        overflow = TextOverflow.Ellipsis
     )
 }
 

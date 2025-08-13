@@ -38,6 +38,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,12 +79,15 @@ fun CategoryListView() {
             text = stringResource(R.string.category),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.padding(start = 12.dp)
+            modifier = Modifier.padding(start = 12.dp),
+            maxLines = 1,
+            textAlign = TextAlign.Start
         )
 
         Text(
             text = stringResource(R.string.see_more),
             style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
             color = colorResource(R.color.text_field_label_color),
             modifier = Modifier
                 .clickable {

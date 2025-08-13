@@ -154,7 +154,7 @@ private fun HomeScreenPreview() {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "InlinedApi")
 @Composable
 private fun HomeScreen(
     viewModel: NoteEditorViewModel,
@@ -238,7 +238,6 @@ private fun HomeScreen(
         ScaffoldContent(paddingValues, viewModel, taskViewModel, subTaskViewModel)
     }
 }
-
 @Composable
 private fun ScaffoldContent(
     paddingValues: PaddingValues,
@@ -534,7 +533,8 @@ private fun MyTopAppBar() {
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 fontSize = 24.sp,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onPrimary,
+                maxLines = 1
             )
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(

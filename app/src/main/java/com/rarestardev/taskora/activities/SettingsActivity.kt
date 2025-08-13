@@ -298,9 +298,9 @@ private fun CalendarSwitch(viewModel: CalenderViewModel) {
             checked = calenderType == CalenderType.PERSIAN,
             onCheckedChange = { viewModel.toggleType(context) },
             colors = SwitchDefaults.colors().copy(
-                checkedThumbColor = colorResource(R.color.priority_low),
+                checkedThumbColor = colorResource(R.color.second_color_2),
                 uncheckedThumbColor = colorResource(R.color.priority_low),
-                checkedTrackColor = MaterialTheme.colorScheme.onSecondary
+                checkedTrackColor = MaterialTheme.colorScheme.background
             )
         )
     }
